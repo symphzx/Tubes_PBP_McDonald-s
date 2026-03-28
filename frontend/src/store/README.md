@@ -1,0 +1,1 @@
+Ini Untuk slices, misal authSlice.ts

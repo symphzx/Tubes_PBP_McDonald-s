@@ -1,0 +1,1 @@
+Ini Untuk Query Migration Setiap Tabel

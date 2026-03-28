@@ -1,0 +1,1 @@
+Ini Untuk Models Setiap Tabel
