@@ -1,0 +1,46 @@
+import {
+    Table,
+    Column,
+    Model,
+    DataType,
+    PrimaryKey,
+    HasMany,
+    BelongsTo
+} from "sequelize-typescript";
+import { Menu } from "./Menu";
+
+@Table({
+    tableName: "Varian_Menu",
+    timestamps: true,
+})
+
+export class Varian_Menu extends Model {
+    @PrimaryKey
+    @Column({
+        type: DataType.UUID,
+        defaultValue: DataType.UUIDV4,
+        allowNull: false,
+    })
+    declare id: string;
+
+    @Column({
+        type: DataType.UUIDV4,
+        allowNull: true,
+    })
+    menu_id!: string;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: false,
+    })
+    nama!: string;
+
+    @Column({
+        type: DataType.REAL,
+        allowNull: false,
+    })
+    harga_tambahan!: number;
+    
+    @BelongsTo(() => Menu, "menu_id")
+    menu!: Menu
+}
