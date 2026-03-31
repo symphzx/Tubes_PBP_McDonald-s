@@ -3,7 +3,7 @@ export type KategoriMenu = 'Burger' | 'Ayam' | 'Kentang' | 'Spaghetti' | 'Sundae
 export type PaymentMethod = 'QRIS' | 'DEBIT' | 'CASHIER'
 
 export type Menu = {
-  menu_id: number
+  menu_id: string
   nama: string
   harga_awal: number
   kategori_menu: KategoriMenu
@@ -13,37 +13,37 @@ export type Menu = {
 }
 
 export type MenuVarian = {
-    mv_id: number
-    menu_id: number
+    mv_id: string
+    menu_id: string
     nama_varian: string
     harga_tambahan: number
 }
 
 export type MenuOption = {
-    mo_id: number
-    menu_id: number 
+    mo_id: string
+    menu_id: string 
     nama_option: string
     tambahan_harga: number
 }
 
 export type PaketItem = {
-    pi_id: number
-    paket_id: number
-    item_menu_id: number
+    pi_id: string
+    paket_id: string
+    item_menu_id: string
 }
 
 export type Order = { // per satu struk
-    order_id: number
+    order_id: string
     waktu_pesanan: string
     total_harga: number
     order_type: 'DINE_IN' | 'TAKE_AWAY'
     order_no: string
-    status: 'PENDING' | 'PAID' | 'CANCELLED'
+    status: 'CART' | 'PAID' | 'PROCESS' | 'DONE' | 'CANCELLED'
 }
 
 export type OrderMenu = { // isi dari struknya
-    om_id: number
-    order_id: number
+    om_id: string
+    order_id: string
     menu_id: Menu
     mv_id: MenuVarian | null
     mo_id: MenuOption | null
@@ -52,7 +52,7 @@ export type OrderMenu = { // isi dari struknya
 }
 
 export type Payment = {
-    payment_id: number
+    payment_id: string
     order_id: Order
     metode_pembayaran: PaymentMethod
     status: 'PENDING' | 'PAID' | 'CANCELLED'

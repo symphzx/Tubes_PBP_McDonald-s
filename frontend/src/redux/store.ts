@@ -3,7 +3,7 @@ import { paymentReducer } from "../store/paymentSlice"
 
 export const store = configureStore({
   reducer: {
-    payment: paymentReducer,
+    payment: paymentReducer,// ngedaftarin reducer, nanti dipanggil pake state.payment
   },
 })
 

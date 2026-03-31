@@ -1,54 +1,52 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import { type PaymentMethod, type OrderMenu } from "../types"
 
+// define apa aja yg harus diinget sama redux
 export type PaymentState = {
-  orderType: 'DINE_IN' | 'TAKE_AWAY' | undefined
-  tableNumber: string
-  paymentMethod: PaymentMethod | undefined
-  promoCode: string
+  order_type: 'DINE_IN' | 'TAKE_AWAY' | undefined
+  no_meja: string
+  metode_pembayaran: PaymentMethod
   cart: OrderMenu[]
-  totalAmount: number
+  total: number
 }
 
+// state waktu programnya jalan pertama kali baru dibuka (blm ada user login)
 const initialState: PaymentState = {
-  orderType: undefined, 
-  tableNumber: '',
-  paymentMethod: undefined,
-  promoCode: '',
+  order_type: undefined, 
+  no_meja: '',
+  metode_pembayaran: undefined,
   cart: [],
-  totalAmount: 0,
+  total: 0,
 }
 
 export const paymentSlice = createSlice({
   name: 'payment',
   initialState,
   reducers: {
-    setOrderType: (state, action: PayloadAction<'DINE_IN' | 'TAKE_AWAY' | undefined>) => {
-      state.orderType = action.payload
-      if (action.payload === 'TAKE_AWAY') state.tableNumber = ''
+    setOrderType: (state, action: PayloadAction<'DINE_IN' | 'TAKE_AWAY'>) => {
+      state.order_type = action.payload
+      if (action.payload === 'TAKE_AWAY') { // klo takeway gausa pake no_meja
+        state.no_meja = ''
+      }
     },
-    setTableNumber: (state, action: PayloadAction<string>) => {
-      state.tableNumber = action.payload
+    setno_meja: (state, action: PayloadAction<string>) => {
+      state.no_meja = action.payload
     },
-    setPaymentMethod: (state, action: PayloadAction<PaymentMethod | undefined>) => {
-      state.paymentMethod = action.payload
-    },
-    setPromoCode: (state, action: PayloadAction<string>) => {
-      state.promoCode = action.payload
+    setPaymentMethod: (state, action: PayloadAction<PaymentMethod>) => {
+      state.metode_pembayaran = action.payload
     },
     setCart: (state, action: PayloadAction<OrderMenu[]>) => {
       state.cart = action.payload
-      state.totalAmount = action.payload.reduce((total, item) => {
+      state.total = action.payload.reduce((total, item) => {
         return total + (item.harga_awal * item.quantity)
       }, 0)
     },
     resetPayment: (state) => {
-      state.orderType = undefined
-      state.tableNumber = ''
-      state.paymentMethod = undefined
-      state.promoCode = ''
+      state.order_type = undefined
+      state.no_meja = ''
+      state.metode_pembayaran = undefined
       state.cart = []
-      state.totalAmount = 0
+      state.total = 0
     }
   }
 })
