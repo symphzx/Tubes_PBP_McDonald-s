@@ -7,6 +7,8 @@ import {
     HasMany,
 } from "sequelize-typescript";
 import { Varian_Menu } from "./VarianMenu";
+import { Opsi_Menu } from "./OpsiMenu";
+import { Paket_Menu } from "./PaketMenu";
 
 @Table({
     tableName: "Menu",
@@ -60,4 +62,19 @@ export class Menu extends Model {
     
     @HasMany(() => Varian_Menu, "menu_id")
     varian_menus!: Varian_Menu[]
+
+    @HasMany(() => Opsi_Menu, "menu_id")
+    opsi_menus!: Opsi_Menu[]
+
+    @HasMany(() => Paket_Menu, {
+    foreignKey: "menu_id",
+    as: "menuRelation"
+    })
+    menuRelation!: Paket_Menu[];
+
+    @HasMany(() => Paket_Menu, {
+        foreignKey: "paket_id",
+        as: "paketRelation"
+    })
+    paketRelation!: Paket_Menu[];
 }

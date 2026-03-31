@@ -3,6 +3,8 @@ import { Sequelize } from "sequelize-typescript";
 import { Menu } from "./models/Menu";
 import { appConfig } from "./appConfig";
 import { Varian_Menu } from "./models/VarianMenu";
+import { Opsi_Menu } from "./models/OpsiMenu";
+import { Paket_Menu } from "./models/PaketMenu";
 
 const sequelize = new Sequelize({
     username: appConfig.database.username,
@@ -11,7 +13,7 @@ const sequelize = new Sequelize({
     host: appConfig.database.host,
     port: appConfig.database.port,
     dialect: appConfig.database.dialect,
-    models: [Menu, Varian_Menu],
+    models: [Menu, Varian_Menu, Opsi_Menu, Paket_Menu],
 });
 
 const app = express();
@@ -31,6 +33,17 @@ menuRouter.get("/", async (req, res) => {
             include: [
                 {
                     model: Varian_Menu,
+                },
+                {
+                    model: Opsi_Menu,
+                },
+                {
+                    model: Paket_Menu, as: "menuRelation"
+                    
+                },
+                {
+                    model: Paket_Menu, as: "paketRelation"
+                    
                 },
             ],
         }),
