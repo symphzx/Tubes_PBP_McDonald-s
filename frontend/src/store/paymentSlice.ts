@@ -3,15 +3,19 @@ import { type PaymentMethod, type OrderMenu } from "../types"
 
 // define apa aja yg harus diinget sama redux
 export type PaymentState = {
+  order_id: string | undefined
+  order_no: string | undefined
   order_type: 'DINE_IN' | 'TAKE_AWAY' | undefined
   no_meja: string
-  metode_pembayaran: PaymentMethod
+  metode_pembayaran: PaymentMethod | undefined
   cart: OrderMenu[]
   total: number
 }
 
 // state waktu programnya jalan pertama kali baru dibuka (blm ada user login)
 const initialState: PaymentState = {
+  order_id: undefined, 
+  order_no: undefined,
   order_type: undefined, 
   no_meja: '',
   metode_pembayaran: undefined,
@@ -23,6 +27,12 @@ export const paymentSlice = createSlice({
   name: 'payment',
   initialState,
   reducers: {
+    setOrderId: (state, action: PayloadAction<string>) => {
+      state.order_id = action.payload
+    },
+    setOrderNo: (state, action: PayloadAction<string>) => {
+      state.order_no = action.payload
+    },
     setOrderType: (state, action: PayloadAction<'DINE_IN' | 'TAKE_AWAY'>) => {
       state.order_type = action.payload
       if (action.payload === 'TAKE_AWAY') { // klo takeway gausa pake no_meja
@@ -42,6 +52,8 @@ export const paymentSlice = createSlice({
       }, 0)
     },
     resetPayment: (state) => {
+      state.order_id = undefined
+      state.order_no = undefined
       state.order_type = undefined
       state.no_meja = ''
       state.metode_pembayaran = undefined
