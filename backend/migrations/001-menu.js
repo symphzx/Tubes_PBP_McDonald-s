@@ -34,6 +34,10 @@ module.exports = {
                 type: Sequelize.ENUM("Tersedia", "Tidak Tersedia"),
                 allowNull: false,
             },
+            tag: {
+                type: Sequelize.ENUM("Baru!"),
+                allowNull: true,
+            },
             createdAt: {
                 type: Sequelize.DATE,
                 allowNull: false,

@@ -19,22 +19,30 @@ import FastfoodIcon from "@mui/icons-material/Fastfood";
 
 import logoMcDonalds from "../assets/logo_mcd.png";
 import { Outlet } from "react-router";
+import { useState } from "react";
 
 export function MenuLayout() {
+    const [activeIndex, setActiveIndex] = useState<number | null>(null);
+    const [isHomeActive, setIsHomeActive] = useState(true);
+
+    const homeItems = { Label: "Home", icon: <HomeIcon />};
     const menuItems = [
-        { label: "Promosi", icon: <LocalOfferIcon />, active: true },
-        { label: "Burger & McNuggets", icon: <LunchDiningIcon />, active: false },
-        { label: "Ayam McD Krispy", icon: <SetMealIcon />, active: false },
-        { label: "Ayam McD Spicy", icon: <SetMealIcon />, active: false },
-        { label: "Paket Keluarga", icon: <RestaurantIcon />, active: false },
-        { label: "Happy Meal", icon: <FastfoodIcon />, active: false },
-        { label: "Paket Hemat", icon: <RestaurantIcon />, active: false },
-        { label: "Menu Receh", icon: <FastfoodIcon />, active: false },
-        { label: "McSpaghetti", icon: <RestaurantIcon />, active: false },
-        { label: "Camilan", icon: <FastfoodIcon />, active: false },
-        { label: "Minuman", icon: <EmojiFoodBeverageIcon />, active: false },
-        { label: "Pencuci Mulut", icon: <IcecreamIcon />, active: false },
-        { label: "Nasi", icon: <RiceBowlIcon />, active: false },
+        { label: "Promosi", icon: <LocalOfferIcon />},
+        {
+            label: "Burger & McNuggets",
+            icon: <LunchDiningIcon />,
+        },
+        { label: "Ayam McD Krispy", icon: <SetMealIcon />},
+        { label: "Ayam McD Spicy", icon: <SetMealIcon />},
+        { label: "Paket Keluarga", icon: <RestaurantIcon />},
+        { label: "Happy Meal", icon: <FastfoodIcon />},
+        { label: "Paket Hemat", icon: <RestaurantIcon />},
+        { label: "Menu Receh", icon: <FastfoodIcon />},
+        { label: "McSpaghetti", icon: <RestaurantIcon />},
+        { label: "Camilan", icon: <FastfoodIcon />},
+        { label: "Minuman", icon: <EmojiFoodBeverageIcon />},
+        { label: "Pencuci Mulut", icon: <IcecreamIcon />},
+        { label: "Nasi", icon: <RiceBowlIcon />},
     ];
 
     return (
@@ -107,21 +115,39 @@ export function MenuLayout() {
                             }}
                         >
                             <ListItemButton
+                                onClick={() => {
+                                    setIsHomeActive(true);
+                                    setActiveIndex(null);
+                                }}
                                 sx={{
                                     height: 50,
                                     px: 1.5,
-                                    backgroundColor: "#ffffff",
+                                    backgroundColor: isHomeActive
+                                        ? "#f5f5f5"
+                                        : "transparent",
+                                    "&:hover": {
+                                        backgroundColor: "#f0f0f0",
+                                    },
                                 }}
                             >
-                                <ListItemIcon sx={{ minWidth: 34 }}>
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 34,
+                                        color: isHomeActive ? "#000" : "#666",
+                                    }}
+                                >
                                     <HomeIcon />
                                 </ListItemIcon>
 
                                 <ListItemText
-                                    primary="Awal"
+                                    primary={homeItems.Label}
                                     primaryTypographyProps={{
                                         fontSize: 13,
                                         fontWeight: 600,
+                                    }}
+                                    sx={{
+                                        fontWeight: isHomeActive ? 600 : 400,
+                                        color: isHomeActive ? "#000" : "#555",
                                     }}
                                 />
                             </ListItemButton>
@@ -129,6 +155,10 @@ export function MenuLayout() {
 
                         {menuItems.map((item, index) => (
                             <ListItemButton
+                                onClick={() => {
+                                    setIsHomeActive(false);
+                                    setActiveIndex(index);
+                                }}
                                 key={index}
                                 sx={{
                                     borderTopRightRadius:
@@ -141,7 +171,7 @@ export function MenuLayout() {
                                     borderLeft: "none",
                                     height: 44,
                                     px: 1.5,
-                                    backgroundColor: item.active
+                                    backgroundColor: activeIndex === index
                                         ? "#f5f5f5"
                                         : "transparent",
                                     "&:hover": {
@@ -156,7 +186,7 @@ export function MenuLayout() {
                                 <ListItemIcon
                                     sx={{
                                         minWidth: 34,
-                                        color: item.active ? "#000" : "#666",
+                                        color: activeIndex === index ? "#000" : "#666",
                                     }}
                                 >
                                     {item.icon}
@@ -166,8 +196,8 @@ export function MenuLayout() {
                                     primary={item.label}
                                     primaryTypographyProps={{
                                         fontSize: 13,
-                                        fontWeight: item.active ? 600 : 400,
-                                        color: item.active ? "#000" : "#555",
+                                        fontWeight: activeIndex === index ? 600 : 400,
+                                        color: activeIndex === index ? "#000" : "#555",
                                     }}
                                 />
                             </ListItemButton>

@@ -4,6 +4,7 @@ import { MenuLayout } from "../components/MenuLayout";
 import { TemplateLayout } from "../components/TemplateLayout";
 
 const MenuPage = lazy(() => import("../pages/Menu/MenuPage"));
+const HomePage = lazy(() => import("../pages/Home/HomePage"));
 
 export const AppRoutes = () => {
     return (
@@ -12,6 +13,7 @@ export const AppRoutes = () => {
                 <Route path="/menu" element={<MenuPage />} />
             </Route>
             <Route element={<TemplateLayout />}> // Ubah nama Layout sesuai fitur kalian
+                <Route path="/" element={<HomePage/>} />
                 // Masukkin Web Kalian Di sini
             </Route>
         </Routes>
