@@ -6,7 +6,6 @@ import {
     Card,
     CardContent,
     CardMedia,
-    Grid,
 } from "@mui/material";
 
 import PaNas2Perkedel from "../../assets/PaNas 2 Ayam McD Gulai Perkedel.webp";
@@ -128,10 +127,17 @@ export default function MenuPage() {
                             position: "relative",
                             boxShadow: "none",
                             height: "100%",
-                            aspectRatio: "2.5 / 4", // lebih tinggi dari lebar (vertical card)
+                            aspectRatio: "2.5 / 4",
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "space-between",
+                            cursor: "pointer",
+                            transition: "all 0.3s ease-in-out",
+                            "&:hover": {
+                                transform: "translateY(-5px)",
+                                boxShadow: "0px 8px 20px rgba(0,0,0,0.1)",
+                                borderColor: "#d4da1c74",
+                            },
                         }}
                     >
                         {/* TAG */}

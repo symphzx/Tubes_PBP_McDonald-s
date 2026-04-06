@@ -1,6 +1,8 @@
 import { lazy } from "react";
 import { Route, Routes } from "react-router";
 import { MenuLayout } from "../components/MenuLayout";
+import { AdminLayout } from "../components/AdminLayout";
+
 // import { TemplateLayout } from "../components/TemplateLayout";
 import OrderType from "../pages/Order/OrderType/OrderType";
 import CustomizeOrder from "../pages/Order/CustomizeOrder/CustomizeOrder";
@@ -10,6 +12,8 @@ import OrderLayout from "../components/OrderLayout";
 const MenuPage = lazy(() => import("../pages/Menu/MenuPage"));
 const PaymentPage = lazy(() => import("../pages/Payment/PaymentPage"));
 const PaymentSuccess = lazy(() => import("../pages/Payment/PaymentSuccess"))
+const LoginPage = lazy(() => import("../pages/Login/LoginPage"));
+const AdminPage = lazy(() => import("../pages/Admin/AdminPage"));
 
 export const AppRoutes = () => {
   return (
@@ -21,9 +25,9 @@ export const AppRoutes = () => {
       <Route path="/payment" element={<PaymentPage />} />
       <Route path="/payment/success" element={<PaymentSuccess />} />
 
-      <Route element={<TemplateLayout />}>
-        {" "}
-        // Ubah nama Layout sesuai fitur kalian // Masukkin Web Kalian Di sini
+      <Route element={<AdminLayout />}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/admin" element={<AdminPage />} />
       </Route>
     </Routes>
   );
