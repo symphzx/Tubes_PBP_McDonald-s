@@ -1,83 +1,65 @@
-import { Model } from "sequelize-typescript";
-import {
-    Table,
-    PrimaryKey,
-    Column,
-    DataType,
-    ForeignKey,
-    BelongsTo
-} from "sequelize-typescript";
-
-import { Orders } from "./Orders";
+import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo, } from "sequelize-typescript";
+import { Order } from "./Order";
 import { Menu } from "./Menu";
 import { Varian_Menu } from "./VarianMenu";
+import { Opsi_Menu } from "./OpsiMenu";
+
 @Table({
-    tableName: "order_menus",
-    timestamps: true,
+  tableName: "Order_Menu",
+  timestamps: true,
 })
-export class OrderMenu extends Model {
+export class Order_Menu extends Model {
+  @PrimaryKey
+  @Column({
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
+    allowNull: false,
+  })
+  declare id: string;
 
-    @PrimaryKey
-    @Column({
-        type: DataType.UUID,
-        defaultValue: DataType.UUIDV4,
-    })
-    declare om_id: string;
+  @ForeignKey(() => Order)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false
+  })
+  order_id!: string;
 
-    // FK ke Order
-    @ForeignKey(() => Orders)
-    @Column({
-        type: DataType.UUID,
-        allowNull: false,
-    })
-    declare order_id: string;
+  @ForeignKey(() => Menu)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false
+  })
+  menu_id!: string;
 
-    @ForeignKey(() => Menu)
-    @Column({
-        type: DataType.UUID,
-        allowNull: false,
-    })
-    declare menu_id: string;
+  @ForeignKey(() => Varian_Menu)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true
+  })
+  mv_id!: string;
 
-    @ForeignKey(() => Varian_Menu)
-    @Column({
-        type: DataType.UUID,
-        allowNull: true,
-    })
-    declare mv_id: string;
+  @ForeignKey(() => Opsi_Menu)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true
+  })
+  mo_id!: string;
 
-    // @ForeignKey(() => OpsiMenu)
-    @Column({
-        type: DataType.UUID,
-        allowNull: true,
-    })
-    declare mo_id: string;
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  quantity!: number;
 
-    @Column({
-        type: DataType.INTEGER,
-        allowNull: false,
-    })
-    declare quantity: number;
+  @Column({
+    type: DataType.REAL,
+    allowNull: false,
+  })
+  harga_awal!: number;
 
-    @Column({
-        type: DataType.INTEGER,
-        allowNull: false,
-    })
-    declare harga_awal: number;
+  @BelongsTo(() => Order)
+  order!: Order;
 
-    // relasi balik ke Order
-    @BelongsTo(() => Orders)
-    order!: Orders;
-
-    // relasi ke Menu
-    @BelongsTo(() => Menu)
-    menu!: Menu;
-
-    // relasi ke Varian_Menu
-    @BelongsTo(() => Varian_Menu)
-    varianMenu!: Varian_Menu;
-
-    // relasi ke OpsiMenu
-    // @BelongsTo(() => OpsiMenu)
-    // opsiMenu!: OpsiMenu;
+  @BelongsTo(() => Menu)
+  menu!: Menu;
 }

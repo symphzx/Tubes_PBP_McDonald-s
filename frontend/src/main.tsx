@@ -4,15 +4,16 @@ import { CssBaseline } from "@mui/material";
 // import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router";
 import { AppRoutes } from "./config/AppRoutes";
+import { store } from "./redux/store";
 
 createRoot(document.getElementById("root")!).render(
-    <StrictMode>
-        <CssBaseline />
-        {/* <ThemeProvider theme={{theme}}> */}
-        {/* <Provider store={store}> */}
-        <BrowserRouter>
-            <AppRoutes />
-        </BrowserRouter>
-        {/* </Provider> */}
-    </StrictMode>,
+  <StrictMode>
+    <CssBaseline />
+    {/* <ThemeProvider theme={{theme}}> */}
+    <Provider store={store}>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </Provider>
+  </StrictMode>,
 );

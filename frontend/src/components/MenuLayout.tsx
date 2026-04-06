@@ -1,10 +1,11 @@
 import {
-    Box,
-    Card,
-    List,
-    ListItemText,
-    ListItemIcon,
-    ListItemButton,
+  Box,
+  Card,
+  List,
+  ListItemText,
+  ListItemIcon,
+  ListItemButton,
+  Typography,
 } from "@mui/material";
 
 import HomeIcon from "@mui/icons-material/Home";
@@ -45,59 +46,97 @@ export function MenuLayout() {
         { label: "Nasi", icon: <RiceBowlIcon />},
     ];
 
-    return (
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        bgcolor: "#f5f5f5",
+        minHeight: "100vh",
+      }}
+    >
+      {/* WRAPPER (AREA TENGAH) */}
+      <Box
+        sx={{
+          width: "100%",
+          maxWidth: 900,
+          display: "flex",
+          backgroundColor: "#fff",
+          boxShadow: "0 0 20px rgba(0,0,0,0.1)",
+          overflow: "hidden",
+        }}
+      >
+        {/* SIDEBAR */}
         <Box
-            sx={{
-                display: "flex",
-                justifyContent: "center",
-                bgcolor: "#f5f5f5",
-                minHeight: "100vh",
-            }}
+          sx={{
+            width: 200,
+            bgcolor: "#fff",
+            display: "flex",
+            flexDirection: "column",
+            py: 2,
+            flexShrink: 0,
+          }}
         >
-            {/* WRAPPER (AREA TENGAH) */}
+          {/* LOGO */}
+          <Card
+            sx={{
+              width: "100%",
+              height: 150,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: 0,
+              mb: 3,
+            }}
+          >
             <Box
-                sx={{
-                    width: "100%",
-                    maxWidth: 900,
-                    display: "flex",
-                    backgroundColor: "#fff",
-                    boxShadow: "0 0 20px rgba(0,0,0,0.1)",
-                    overflow: "hidden",
-                }}
+              component="img"
+              src={logoMcDonalds}
+              sx={{
+                width: 60,
+                height: 60,
+                objectFit: "contain",
+              }}
+            />
+          </Card>
+
+          {/* MENU LIST */}
+          <List sx={{ p: 0 }}>
+            <Card
+              sx={{
+                mb: 3,
+                borderTopRightRadius: "10px",
+                borderBottomRightRadius: "10px",
+                borderTopLeftRadius: 0,
+                borderBottomLeftRadius: 0,
+
+                boxShadow: "0px 1px 0px 0px #767676",
+                border: "1px solid #e0e0e0",
+                borderLeft: "none",
+              }}
             >
-                {/* SIDEBAR */}
-                <Box
-                    sx={{
-                        width: 200,
-                        bgcolor: "#fff",
-                        display: "flex",
-                        flexDirection: "column",
-                        py: 2,
-                        flexShrink: 0,
-                    }}
-                >
-                    {/* LOGO */}
-                    <Card
-                        sx={{
-                            width: "100%",
-                            height: 150,
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            borderRadius: 0,
-                            mb: 3,
-                        }}
+              <ListItemButton
+                sx={{
+                  height: 50,
+                  px: 1.5,
+                  backgroundColor: "#ffffff",
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 34 }}>
+                  <HomeIcon />
+                </ListItemIcon>
+
+                <ListItemText
+                  primary={
+                    <Typography
+                      sx={{ fontSize: 13, fontWeight: 600, color: "#000" }}
                     >
-                        <Box
-                            component="img"
-                            src={logoMcDonalds}
-                            sx={{
-                                width: 60,
-                                height: 60,
-                                objectFit: "contain",
-                            }}
-                        />
-                    </Card>
+                      Awal
+                    </Typography>
+                  }
+                />
+              </ListItemButton>
+            </Card>
 
                     {/* MENU LIST */}
                     <List sx={{ p: 0 }}>
@@ -212,10 +251,38 @@ export function MenuLayout() {
                         p: 3,
                     }}
                 >
-                    {/* {props.children} */}
-                    <Outlet />
-                </Box>
-            </Box>
+                  {item.icon}
+                </ListItemIcon>
+
+                <ListItemText
+                  primary={
+                    <Typography
+                      sx={{
+                        fontSize: 13,
+                        fontWeight: item.active ? 600 : 400,
+                        color: item.active ? "#000" : "#555",
+                      }}
+                    >
+                      {item.label}
+                    </Typography>
+                  }
+                />
+              </ListItemButton>
+            ))}
+          </List>
         </Box>
-    );
+
+        {/* CONTENT */}
+        <Box
+          sx={{
+            flex: 1,
+            p: 3,
+          }}
+        >
+          {/* {props.children} */}
+          <Outlet />
+        </Box>
+      </Box>
+    </Box>
+  );
 }
