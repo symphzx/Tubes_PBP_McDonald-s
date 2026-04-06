@@ -33,54 +33,57 @@ export default function OrderType() {
   };
 
   return (<>
-  
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <img src={mcdLogo} alt="Mcdonalds Logo" width="40px" height="40px" />
-      </div>
-      <div style={{ textAlign: "center", marginTop: "50px" }}>
-        <Typography
-          variant="h1"
-          component="div"
-          sx={{
-            fontFamily: 'Speedee-Bold',
-            fontSize: "30px"
-          }}
-          gutterBottom>
-          Where would you like to eat?
-        </Typography>
 
-        <Grid container spacing={4} style={{ marginTop: "50px", justifyContent: "center" }}>
-          <Grid size={5}>
-            <Item
-              className={selected === "DINE_IN" ? "active" : ""}
-              onClick={() => handleClick("DINE_IN")}
-            >
-              <Typography
-                variant="h5"
-                sx={{
-                  color: "#00000",
-                }}
-              >Eat In</Typography>
-              <img src={dineInImg} alt="Dine In" width="100%" height="250px" style={{ objectFit: "cover" }} />
-            </Item>
-          </Grid>
+    <div style={{ display: "flex", justifyContent: "center" }}>
+      <img src={mcdLogo} alt="Mcdonalds Logo" width="40px" height="40px" />
+    </div>
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <Typography
+        variant="h1"
+        component="div"
+        sx={{
+          fontFamily: 'Speedee-Bold',
+          fontSize: "30px"
+        }}
+        gutterBottom>
+        Where would you like to eat?
+      </Typography>
 
-          <Grid size={5}>
-            <Item
-              className={selected === "TAKEAWAY" ? "active" : ""}
-              onClick={() => handleClick("TAKEAWAY")}
-            >
-              <Typography
-                variant="h5"
-                sx={{
-                  color: "#00000",
-                }}
-              >Take Away</Typography>
-              <img src={takeAwayImg} alt="Take Away" width="100%" height="250px" style={{ objectFit: "cover" }} />
-            </Item>
-          </Grid>
+      <Grid container spacing={4} style={{ marginTop: "50px", justifyContent: "center" }}>
+        <Grid size={5}>
+          <Item
+            className={selected === "DINE_IN" ? "active" : ""}
+            onClick={() => handleClick("DINE_IN")}
+          >
+            <Typography
+              variant="h5"
+              sx={{
+                color: "#00000",
+                fontFamily: "Speedee-Regular"
+              }}
+            >Eat In</Typography>
+            <img src={dineInImg} alt="Dine In" width="100%" height="250px" style={{ objectFit: "cover" }} />
+          </Item>
         </Grid>
-      </div>
-      </>
+
+        <Grid size={5}>
+          <Item
+            className={selected === "TAKEAWAY" ? "active" : ""}
+            onClick={() => handleClick("TAKEAWAY")}
+          >
+            <Typography
+              variant="h5"
+              sx={{
+                color: "#00000",
+                fontFamily: "Speedee-Regular"
+
+              }}
+            >Take Away</Typography>
+            <img src={takeAwayImg} alt="Take Away" width="100%" height="250px" style={{ objectFit: "cover" }} />
+          </Item>
+        </Grid>
+      </Grid>
+    </div>
+  </>
   );
 }

@@ -21,7 +21,7 @@ export const AppRoutes = () => {
             </Route> */}
             <Route element={<OrderLayout />}>
                 <Route path="/order" element={<OrderType />} />
-                <Route path="/customizeOrder" element={<CustomizeOrder />} />
+                <Route path="/customizeOrder/:id" element={<CustomizeOrder />} />
                 <Route path="/cart" element={<OrderCart />} />
             </Route>
             {/* <Route path="/customizeOrder" element={} /> */}

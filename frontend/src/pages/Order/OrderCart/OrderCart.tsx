@@ -11,18 +11,19 @@ import { useState } from "react";
 
 import mcdLogo from "../img/mcdonalds_logo.png";
 import friesImg from "../img/test_fries.avif";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 
 export default function OrderCart() {
 
     const navigate = useNavigate();
+
     const [cart, setCart] = useState([
         {
             id: 1,
             name: "Fries",
-            desc: "Add 1 Cheesy Smoky Chipotle Sauce",
             price: 10000,
+            menuOption: 1,
             qty: 1,
             image: friesImg,
         },
@@ -35,6 +36,23 @@ export default function OrderCart() {
             image: friesImg,
         },
     ]);
+
+    const menuOption = [{
+        id: 1,
+        menu_id: 1,
+        name: "Cheesy Sauce",
+        menu_qty: 2,
+        price: 1000,
+        imageUrl: ""
+    },
+    {
+        id: 2,
+        menu_id: 1,
+        name: "Blackpeper ",
+        menu_qty: 5,
+        price: 1000,
+        imageUrl: ""
+    }]
 
     const handleAdd = (id: number) => {
         setCart((prev) =>
@@ -59,12 +77,15 @@ export default function OrderCart() {
     };
 
     // hitung subtotal dgn tambahin semua harga * quantity
-    const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
+    const additional = menuOption.reduce((acc,item) => acc + item.price * item.menu_qty, 0);
+
+    const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0) + additional;
 
     // hitung  GST (Goods and services tax)  dikali 0.1 dan diround
-    const gst = Math.floor(subtotal * 0.1);
+    const gst = Math.floor((subtotal) * 0.1);
     const total = subtotal + gst;
 
+   
     return (<>
 
 
@@ -137,22 +158,28 @@ export default function OrderCart() {
 
                         {/* INFO */}
                         <Box sx={{ flex: 1 }}>
+
+
                             <Typography sx={{ fontWeight: "bold" }}>
                                 {item.name}
+
                             </Typography>
 
-                            {item.desc && (
-                                <Typography
-                                    variant="body2"
-                                    sx={{ color: "text.secondary", fontFamily: "Speedee-Regular" }}
-                                >
-                                    {item.desc}
-                                </Typography>
-                            )}
+                            {/* /MENU OPTION */}
+                            {menuOption.map((option) => {
+                                if (option.menu_id === item.id) {
+                                    return (
+                                        <Typography key={option.id} sx={{color:"text.secondary", fontFamily: "Speedee-Regular", fontSize: "12px"}}>
+                                           add {option.menu_qty} {option.name}
+                                        </Typography>
+                                    )
+                                }
+                            })}
 
-                            <Button size="small" sx={{ mt: 1 }}>
+                            <Button variant="outlined" size="small" color="secondary" sx={{ mt: 1 , color:"text.secondary" }}>
                                 Show Details
                             </Button>
+
                         </Box>
 
                         {/* QTY */}
@@ -234,15 +261,15 @@ export default function OrderCart() {
                     mt: 3,
                 }}
             >
-                <Button fullWidth variant="outlined" onClick={() => navigate("/menu")}>
+                <Button fullWidth variant="outlined" onClick={() => navigate("/menu")} sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", borderColor: "text.secondary" }}>
                     Order More
                 </Button>
 
-                <Button fullWidth variant="contained" color="warning">
-                    Place Order
+                <Button fullWidth variant="contained" sx={{ bgcolor: "#FFAC00", color: "black", fontFamily: "Speedee-Regular" }}>
+                    Complete Order
                 </Button>
             </Box>
-        </Box>
+        </Box >
     </>
 
     );

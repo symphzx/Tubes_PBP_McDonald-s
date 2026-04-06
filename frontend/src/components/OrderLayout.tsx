@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router";
 import { Box, CssBaseline, ThemeProvider } from "@mui/material";
 import { theme } from "../pages/Order/Theme";
 export default function OrderLayout() {
