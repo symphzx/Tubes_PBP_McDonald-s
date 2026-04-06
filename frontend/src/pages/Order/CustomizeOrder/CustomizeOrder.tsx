@@ -56,7 +56,10 @@ export default function CustomizeOrder() {
     
     // tambahin tipe tipe ayam 
     //tambahin opsi ukuran
-
+    const handleReset= () => {
+        setAdditional(0);
+        setComesWith(0);
+    }
     const selectedItem = dataMenuDummy.find((item) => item.id === Number(id));
 
     if (!selectedItem) {
@@ -128,13 +131,13 @@ export default function CustomizeOrder() {
                                     <Box sx={{ marginTop: "20px", flex: 1 }}>
                                         <Typography>{selectedItem.name}</Typography>
                                         <Typography variant="body2" sx={{ fontFamily: "Speedee-Regular" }}>
-                                            Rp {selectedItem.price}
+                                            Rp {selectedItem.price.toLocaleString("id-ID")}
                                         </Typography>
                                     </Box>
                                 </Box>
 
                                 <Button fullWidth variant="outlined" size="small" sx={{ fontFamily: "Speedee-Regular", mt: 2, borderColor: "text.secondary" }}>
-                                    <Typography sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", fontSize: "12px" }} onClick={() => { setComesWith(0); setAdditional(0) }}>Reset Changes</Typography>
+                                    <Typography sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", fontSize: "12px" }} onClick={handleReset}>Reset Changes</Typography>
                                 </Button>
                             </Box>
                         }

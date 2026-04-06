@@ -22,7 +22,7 @@ export default function OrderLayout() {
             backgroundColor: "white",
             borderRadius: 3,
             boxShadow: 3,
-            overflowY: "scroll",
+            overflowY: "auto",
             p: 2,
           }}
         >

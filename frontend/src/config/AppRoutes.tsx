@@ -6,9 +6,11 @@ import OrderType from "../pages/Order/OrderType/OrderType";
 import CustomizeOrder from "../pages/Order/CustomizeOrder/CustomizeOrder";
 import OrderCart from "../pages/Order/OrderCart/OrderCart";
 import OrderLayout from "../components/OrderLayout";
+import SetQuantityPage from "../pages/Order/SetQuantityPage/SetQuantityPage";
 
 const MenuPage = lazy(() => import("../pages/Menu/MenuPage"));
-const HomePage = lazy(() => import("../pages/Home/HomePage"));
+// const HomePage = lazy(() => import("../pages/Home/HomePage"));
+const RecomendationPage = lazy(() => import("../pages/Order/RecomendationPage/RecomendationPage"));
 
 export const AppRoutes = () => {
     return (
@@ -25,6 +27,8 @@ export const AppRoutes = () => {
                 <Route path="/order" element={<OrderType />} />
                 <Route path="/customizeOrder/:id" element={<CustomizeOrder />} />
                 <Route path="/cart" element={<OrderCart />} />
+                <Route path="/setQuantity/:id" element={<SetQuantityPage/>} />
+                <Route path="/recomendation" element={<RecomendationPage/>} />
             </Route>
             {/* <Route path="/customizeOrder" element={} /> */}
         </Routes>
