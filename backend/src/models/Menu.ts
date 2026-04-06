@@ -59,6 +59,12 @@ export class Menu extends Model {
         allowNull: false,
     })
     ketersediaan!: "Tersedia" | "Tidak Tersedia";
+
+    @Column({
+        type: DataType.ENUM("Baru!"),
+        allowNull: true,
+    })
+    tag!: "Baru!";
     
     @HasMany(() => Varian_Menu, "menu_id")
     varian_menus!: Varian_Menu[]
