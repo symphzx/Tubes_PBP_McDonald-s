@@ -1,12 +1,4 @@
-import {
-  Table,
-  Column,
-  Model,
-  DataType,
-  PrimaryKey,
-  HasMany,
-  HasOne,
-} from "sequelize-typescript";
+import { Table, Column, Model, DataType, PrimaryKey, HasMany, HasOne, } from "sequelize-typescript";
 import { Order_Menu } from "./OrderMenu";
 import { Payment } from "./Payment";
 
@@ -14,6 +6,7 @@ import { Payment } from "./Payment";
   tableName: "Order",
   timestamps: true,
 })
+
 export class Order extends Model {
   @PrimaryKey
   @Column({

@@ -1,18 +1,11 @@
-import {
-  Table,
-  Column,
-  Model,
-  DataType,
-  PrimaryKey,
-  ForeignKey,
-  BelongsTo,
-} from "sequelize-typescript";
+import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo, } from "sequelize-typescript";
 import { Order } from "./Order";
 
 @Table({
   tableName: "Payment",
   timestamps: true,
 })
+
 export class Payment extends Model {
   @PrimaryKey
   @Column({
@@ -23,7 +16,10 @@ export class Payment extends Model {
   declare id: string;
 
   @ForeignKey(() => Order)
-  @Column({ type: DataType.UUID, allowNull: false })
+  @Column({
+    type: DataType.UUID,
+    allowNull: false
+  })
   order_id!: string;
 
   @Column({
