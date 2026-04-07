@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo, } from "sequelize-typescript";
+import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo, HasMany, } from "sequelize-typescript";
 import { Order } from "./Order";
 import { Menu } from "./Menu";
 import { Varian_Menu } from "./VarianMenu";
@@ -17,28 +17,24 @@ export class Order_Menu extends Model {
   })
   declare id: string;
 
-  @ForeignKey(() => Order)
   @Column({
     type: DataType.UUID,
     allowNull: false
   })
   order_id!: string;
 
-  @ForeignKey(() => Menu)
   @Column({
     type: DataType.UUID,
     allowNull: false
   })
   menu_id!: string;
 
-  @ForeignKey(() => Varian_Menu)
   @Column({
     type: DataType.UUID,
     allowNull: true
   })
   mv_id!: string;
 
-  @ForeignKey(() => Opsi_Menu)
   @Column({
     type: DataType.UUID,
     allowNull: true
@@ -57,9 +53,15 @@ export class Order_Menu extends Model {
   })
   harga_awal!: number;
 
-  @BelongsTo(() => Order)
+  @BelongsTo(() => Order, "order_id")
   order!: Order;
 
-  @BelongsTo(() => Menu)
+  @BelongsTo(() => Menu, "menu_id")
   menu!: Menu;
+
+  @BelongsTo(() => Varian_Menu, "mv_id")
+  varian_menu!: Varian_Menu;
+
+  @BelongsTo(() => Opsi_Menu, "mv_id")
+  opsi_menu!: Opsi_Menu;
 }

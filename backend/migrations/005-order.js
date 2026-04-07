@@ -5,7 +5,7 @@
 module.exports = {
     async up(queryInterface, Sequelize) {
         await queryInterface.createTable("Orders", {
-            order_id: {
+            id: {
                 type: Sequelize.UUID,
                 defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
@@ -25,8 +25,12 @@ module.exports = {
                 allowNull: false,
             },
             status: {
-                type: Sequelize.ENUM("CART", "PENDING", "PAID", "CANCELLED"),
+                type: Sequelize.ENUM("CART", "PENDING", "PROCESS", "COMPLETED"),
                 allowNull: false,
+            },
+            no_meja: {
+                type: Sequelize.INTEGER,
+                allowNull: true,
             },
             createdAt: {
                 type: Sequelize.DATE,

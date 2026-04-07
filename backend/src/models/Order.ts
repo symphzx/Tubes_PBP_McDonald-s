@@ -1,56 +1,61 @@
-import {
-  Table,
-  Column,
-  Model,
-  DataType,
-  PrimaryKey,
-  HasMany,
-  HasOne,
-} from "sequelize-typescript";
+import { Model } from "sequelize-typescript";
+import { Table, PrimaryKey, Column, DataType, HasMany } from "sequelize-typescript";
 import { Order_Menu } from "./OrderMenu";
-import { Payment } from "./Payment";
+
 
 @Table({
-  tableName: "Order",
-  timestamps: true,
+    tableName: "orders",
+    timestamps: true,
 })
+
 export class Order extends Model {
-  @PrimaryKey
-  @Column({
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4,
-    allowNull: false,
-  })
-  declare id: string;
 
-  @Column({
-    type: DataType.REAL,
-    allowNull: false,
-  })
-  total_harga!: number;
+    @PrimaryKey
+    @Column({
+        type: DataType.UUID,
+        defaultValue: DataType.UUIDV4,
+    })
+    declare id: string;
 
-  @Column({
-    type: DataType.ENUM("DINE_IN", "TAKE_AWAY"),
-    allowNull: false,
-  })
-  order_type!: "DINE_IN" | "TAKE_AWAY";
+    @Column({
+        type: DataType.STRING,
+        allowNull: false,
+    })
+    declare waktu_pesanan: string;
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  order_no!: string;
+    @Column({
+        type: DataType.INTEGER,
+        allowNull: false,
+    })
+    declare total_harga: number;
 
-  @Column({
-    type: DataType.ENUM("CART", "PAID", "PROCESS", "DONE", "CANCELLED"),
-    allowNull: false,
-    defaultValue: "CART",
-  })
-  status!: "CART" | "PAID" | "PROCESS" | "DONE" | "CANCELLED";
+    @Column({
+        type: DataType.ENUM("DINE_IN", "TAKEAWAY"),
+        allowNull: false,
+    })
+    declare order_type: string;
 
-  @HasMany(() => Order_Menu)
-  items!: Order_Menu[];
+    @Column({
+        type: DataType.INTEGER,
+        allowNull: false,
+    })
+    declare order_no: number;
 
-  @HasOne(() => Payment)
-  payment_detail!: Payment;
+    @Column({
+        type: DataType.ENUM("PENDING", "PAID", "CANCELLED"),
+        allowNull: false,
+    })
+    declare status: string;
+
+    @Column({
+        type: DataType.INTEGER,
+        allowNull: false,
+    })
+    declare no_meja: number;
+
+    @HasMany(() => Order_Menu, {
+        foreignKey: "order_id",
+        as: "orderMenuRelation"
+    })
+    orderMenuRelation!: Order_Menu[];
 }
