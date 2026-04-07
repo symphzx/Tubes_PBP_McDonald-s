@@ -2,7 +2,7 @@ import dineInImg from "../img/dine_in.jpg";
 import takeAwayImg from "../img/take_away.jpg";
 import mcdLogo from "../img/mcdonalds_logo.png";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import Grid from "@mui/material/Grid";
 import { styled, Paper, Typography } from "@mui/material";
 

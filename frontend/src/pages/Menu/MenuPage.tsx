@@ -6,57 +6,73 @@ import {
     Card,
     CardContent,
     CardMedia,
-    Grid,
 } from "@mui/material";
-
-import PaNas2Perkedel from "../../assets/PaNas 2 Ayam McD Gulai Perkedel.webp";
-import PaNas2Fries from "../../assets/PaNas 2 Fries Ayam McD Gulai.webp";
-import PaketSpesialGulai from "../../assets/Paket Spesial Ayam McD Gulai Perkedel.webp";
 
 const filters = ["Semua", "Ayam Spicy", "Ayam Mix"];
 
 const menuData = [
     {
-        title: "PaNas 2 Ayam McD Gulai Spicy Perkedel",
-        price: "Rp65.500",
-        category: "Ayam Spicy",
-        image: PaNas2Perkedel,
+        nama: "PaNas 2 Ayam McD Gulai Spicy Perkedel",
+        harga_awal: "Rp65.500",
+        kategori: "Ayam Spicy",
+        tipe: "Paket",
+        gambar: "http://localhost:3000/uploads/assets/PaNas 2 Ayam McD Gulai Perkedel.webp",
+        ketersediaan: "Tersedia",
         tag: "Baru!",
     },
     {
-        title: "PaNas 2 with Fries Ayam McD Gulai Spicy",
-        price: "Rp80.500",
-        category: "Ayam Spicy",
-        image: PaNas2Fries,
+        nama: "PaNas 2 with Fries Ayam McD Gulai Spicy",
+        harga_awal: "Rp80.500",
+        kategori: "Ayam Spicy",
+        tipe: "Paket",
+        gambar: "http://localhost:3000/uploads/assets/PaNas 2 Fries Ayam McD Gulai.webp",
+        ketersediaan: "Tersedia",
         tag: "Baru!",
     },
     {
-        title: "Paket Spesial Ayam McD Gulai Spicy Perkedel",
-        price: "Rp57.500",
-        category: "Ayam Spicy",
-        image: PaketSpesialGulai,
+        nama: "Paket Spesial Ayam McD Gulai Spicy Perkedel",
+        harga_awal: "Rp57.500",
+        kategori: "Ayam Spicy",
+        tipe: "Paket",
+        gambar: "http://localhost:3000/uploads/assets/Paket Spesial Ayam McD Gulai Perkedel.webp",
+        ketersediaan: "Tersedia",
         tag: "Baru!",
     },
     {
-        title: "PaNas 1 Ayam McD Gulai Spicy Perkedel",
-        price: "Rp49.500",
-        category: "Ayam Spicy",
-        image: "https://via.placeholder.com/200",
-        tag: "Baru!",
-    },
-    {
-        title: "Paket 5 Ayam McD Gulai Spicy Perkedel",
-        price: "Rp181.000",
-        category: "Ayam Spicy",
-        image: "https://via.placeholder.com/200",
+        nama: "PaNas 1 Spicy",
+        harga_awal: "Rp48.500",
+        kategori: "Ayam Spicy",
+        tipe: "Paket",
+        gambar: "http://localhost:3000/uploads/assets/PaNas 1 Spicy.png",
+        ketersediaan: "Tersedia",
         tag: "",
     },
     {
-        title: "PaMer 5 Ayam McD Gulai Mix Perkedel",
-        price: "Rp181.000",
-        category: "Ayam Mix",
-        image: "https://via.placeholder.com/200",
-        tag: "Baru!",
+        nama: "PaNas 2 with Fries Spicy",
+        harga_awal: "Rp58.500",
+        kategori: "Ayam Mix",
+        tipe: "Paket",
+        gambar: "http://localhost:3000/uploads/assets/PaNas 2 with Fries Spicy.png",
+        ketersediaan: "Tersedia",
+        tag: "",
+    },
+    {
+        nama: "PaMer 5 Spicy",
+        harga_awal: "Rp88.000",
+        kategori: "Ayam Spicy",
+        tipe: "Paket",
+        gambar: "http://localhost:3000/uploads/assets/PaMer 5 Spicy.png",
+        ketersediaan: "Tersedia",
+        tag: "",
+    },
+    {
+        nama: "Ayam Spicy McDonald's",
+        harga_awal: "Rp22.000",
+        kategori: "Ayam Spicy",
+        tipe: "Ala Carte",
+        gambar: "http://localhost:3000/uploads/assets/Ayam Spicy McDonald's.webp",
+        ketersediaan: "Tersedia",
+        tag: "",
     },
 ];
 
@@ -66,12 +82,9 @@ export default function MenuPage() {
     const filteredData =
         activeFilter === "Semua"
             ? menuData
-            : menuData.filter((item) => item.category === activeFilter);
+            : menuData.filter((item) => item.kategori === activeFilter);
 
     return (
-        // <div>
-        //     <h1>Menu</h1>
-        // </div>
         <Box>
             {/* TITLE */}
             <Typography
@@ -132,6 +145,15 @@ export default function MenuPage() {
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "space-between",
+                            cursor: "pointer",
+
+                            transition: "all 0.25s ease",
+
+                            "&:hover": {
+                                transform: "translateY(-6px)", // naik sedikit
+                                boxShadow: "0 10px 25px rgba(0,0,0,0.08)", // soft shadow
+                                borderColor: "#d5d5d5",
+                            },
                         }}
                     >
                         {/* TAG */}
@@ -154,11 +176,17 @@ export default function MenuPage() {
 
                         <CardMedia
                             component="img"
-                            image={item.image}
+                            image={item.gambar}
                             sx={{
                                 height: "100%",
                                 objectFit: "contain",
                                 p: 1,
+
+                                transition: "transform 0.3s ease",
+
+                                ".MuiCard-root:hover &": {
+                                    transform: "scale(1.05)", // zoom halus
+                                },
                             }}
                         />
 
@@ -172,11 +200,11 @@ export default function MenuPage() {
                                     minHeight: 32,
                                 }}
                             >
-                                {item.title}
+                                {item.nama}
                             </Typography>
 
                             <Typography sx={{ fontSize: 12, color: "#555" }}>
-                                {item.price}
+                                {item.harga_awal}
                             </Typography>
                         </CardContent>
                     </Card>

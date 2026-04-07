@@ -5,6 +5,7 @@ import { CssBaseline } from "@mui/material";
 import { BrowserRouter } from "react-router";
 import { AppRoutes } from "./config/AppRoutes";
 import { store } from "./redux/store";
+import { Provider } from "react-redux";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

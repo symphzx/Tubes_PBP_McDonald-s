@@ -17,7 +17,6 @@ import IcecreamIcon from "@mui/icons-material/Icecream";
 import RiceBowlIcon from "@mui/icons-material/RiceBowl";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 
-import logoMcDonalds from "../assets/logo_mcd.png";
 import { Outlet } from "react-router";
 import { useState } from "react";
 
@@ -90,7 +89,7 @@ export function MenuLayout() {
                     >
                         <Box
                             component="img"
-                            src={logoMcDonalds}
+                            src="http://localhost:3000/uploads/assets/logo_mcd.png"
                             sx={{
                                 width: 60,
                                 height: 60,

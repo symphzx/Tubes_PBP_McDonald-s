@@ -21,10 +21,10 @@ export const AppRoutes = () => {
       <Route path="/payment" element={<PaymentPage />} />
       <Route path="/payment/success" element={<PaymentSuccess />} />
 
-      <Route element={<TemplateLayout />}>
+      {/* <Route element={<TemplateLayout />}>
         {" "}
         // Ubah nama Layout sesuai fitur kalian // Masukkin Web Kalian Di sini
-      </Route>
+      </Route> */}
     </Routes>
   );
 };

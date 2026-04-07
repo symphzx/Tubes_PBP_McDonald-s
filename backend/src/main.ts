@@ -53,6 +53,8 @@ menuRouter.get("/", async (req, res) => {
     });
 });
 
+app.use("/uploads", express.static("uploads"));
+
 const PORT = appConfig.server.port;
 app.listen(PORT, () => {
     console.log("Server started!");
