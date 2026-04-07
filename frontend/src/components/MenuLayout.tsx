@@ -50,7 +50,8 @@ export function MenuLayout() {
                 display: "flex",
                 justifyContent: "center",
                 bgcolor: "#f5f5f5",
-                minHeight: "100vh",
+                height: "100vh",
+                overflow: "hidden",
             }}
         >
             {/* WRAPPER (AREA TENGAH) */}
@@ -73,6 +74,10 @@ export function MenuLayout() {
                         flexDirection: "column",
                         py: 2,
                         flexShrink: 0,
+                        overflow: "auto",
+                        "&::-webkit-scrollbar": {
+                            display: "none",
+                        },
                     }}
                 >
                     {/* LOGO */}
@@ -209,6 +214,11 @@ export function MenuLayout() {
                     sx={{
                         flex: 1,
                         p: 3,
+                        height: "100vh",
+                        overflowY: "auto",
+                        "&::-webkit-scrollbar": {
+                            display: "none",
+                        },
                     }}
                 >
                     {/* {props.children} */}

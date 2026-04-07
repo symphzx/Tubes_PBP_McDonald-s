@@ -7,6 +7,7 @@ import {
     CardContent,
     CardMedia,
 } from "@mui/material";
+import { useNavigate } from "react-router";
 
 const filters = ["Semua", "Ayam Spicy", "Ayam Mix"];
 
@@ -74,10 +75,39 @@ const menuData = [
         ketersediaan: "Tersedia",
         tag: "",
     },
+    {   
+        id: 99,
+        nama: "Big Mac",
+        harga_awal: "Rp43.000",
+        kategori: "Burger & McNuggets",
+        tipe: "Ala Carte",
+        gambar: "https://d2vuyvo9qdtgo9.cloudfront.net/foods/October2023/S2b8K7g2tM6cDksrAdVv.webp",
+        ketersediaan: "Tersedia",
+        tag: "",
+        recommendation: {
+                        title: "Paket Big Mac",
+                        price: "Rp60.000",
+                        image: "https://d2vuyvo9qdtgo9.cloudfront.net/foods/July2024/Od0aM1u2WwlUFkMz4s5H.png"
+                    }
+    }
 ];
 
 export default function MenuPage() {
     const [activeFilter, setActiveFilter] = useState("Semua");
+
+    const navigate = useNavigate();
+
+    const handleCardClick = (item: any) => {
+      // kalo menu satuan, arahin ke package selection
+      if (item.tipe === "Ala Carte" && item.recommendation) {
+          navigate("/order/package-selection", { 
+              state: { selectedItem: item } 
+          });
+      } else {
+          // klo udah paket, lgsg custom
+          navigate(`/customize/${item.id || 0}`);
+      }
+    };
 
     const filteredData =
         activeFilter === "Semua"
@@ -134,6 +164,7 @@ export default function MenuPage() {
             >
                 {filteredData.map((item, index) => (
                     <Card
+                        onClick={() => handleCardClick(item)}
                         key={index}
                         sx={{
                             borderRadius: "8px",
