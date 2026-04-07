@@ -7,13 +7,19 @@ import {
     CardContent,
     CardMedia,
     Grid,
+    Modal,
+    IconButton,
+    Paper,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close"; 
+import { useNavigate } from "react-router"; 
 
 import PaNas2Perkedel from "../../assets/PaNas 2 Ayam McD Gulai Perkedel.webp";
 import PaNas2Fries from "../../assets/PaNas 2 Fries Ayam McD Gulai.webp";
 import PaketSpesialGulai from "../../assets/Paket Spesial Ayam McD Gulai Perkedel.webp";
 
 const filters = ["Semua", "Ayam Spicy", "Ayam Mix"];
+
 
 const menuData = [
     {
@@ -22,6 +28,7 @@ const menuData = [
         category: "Ayam Spicy",
         image: PaNas2Perkedel,
         tag: "Baru!",
+        isAlaCarte: false, // false kl udh paket, true kl menu satuan
     },
     {
         title: "PaNas 2 with Fries Ayam McD Gulai Spicy",
@@ -29,6 +36,7 @@ const menuData = [
         category: "Ayam Spicy",
         image: PaNas2Fries,
         tag: "Baru!",
+        isAlaCarte: false,
     },
     {
         title: "Paket Spesial Ayam McD Gulai Spicy Perkedel",
@@ -36,6 +44,7 @@ const menuData = [
         category: "Ayam Spicy",
         image: PaketSpesialGulai,
         tag: "Baru!",
+        isAlaCarte: false,
     },
     {
         title: "PaNas 1 Ayam McD Gulai Spicy Perkedel",
@@ -43,6 +52,7 @@ const menuData = [
         category: "Ayam Spicy",
         image: "https://via.placeholder.com/200",
         tag: "Baru!",
+        isAlaCarte: false,
     },
     {
         title: "Paket 5 Ayam McD Gulai Spicy Perkedel",
@@ -50,6 +60,7 @@ const menuData = [
         category: "Ayam Spicy",
         image: "https://via.placeholder.com/200",
         tag: "",
+        isAlaCarte: false,
     },
     {
         title: "PaMer 5 Ayam McD Gulai Mix Perkedel",
@@ -57,17 +68,46 @@ const menuData = [
         category: "Ayam Mix",
         image: "https://via.placeholder.com/200",
         tag: "Baru!",
+        isAlaCarte: false,
+    },
+    {
+        id: 99,
+        title: "Big Mac",
+        price: "Rp43.000",
+        category: "Burger",
+        image: "https://d2vuyvo9qdtgo9.cloudfront.net/foods/October2023/S2b8K7g2tM6cDksrAdVv.webp",
+        tag: "",
+        isAlaCarte: true,
+        recommendation: {
+                title: "Paket Big Mac",
+                price: "Rp60.000",
+                image: "https://d2vuyvo9qdtgo9.cloudfront.net/foods/July2024/Od0aM1u2WwlUFkMz4s5H.png"
+            }
     },
 ];
 
 export default function MenuPage() {
     const [activeFilter, setActiveFilter] = useState("Semua");
 
+    const navigate = useNavigate();
+
+    const handleCardClick = (item: any) => {
+    // kalo menu satuan, arahin ke package selection
+    if (item.isAlaCarte && item.recommendation) {
+        navigate("/order/package-selection", { 
+            state: { selectedItem: item } 
+        });
+    } else {
+        // klo udah paket, lgsg custom
+        navigate(`/customize/${item.id || 0}`);
+    }
+};
+
     const filteredData =
         activeFilter === "Semua"
             ? menuData
             : menuData.filter((item) => item.category === activeFilter);
-
+    
     return (
         // <div>
         //     <h1>Menu</h1>
@@ -121,6 +161,7 @@ export default function MenuPage() {
             >
                 {filteredData.map((item, index) => (
                     <Card
+                        onClick={() => handleCardClick(item)}
                         key={index}
                         sx={{
                             borderRadius: "8px",
@@ -182,6 +223,8 @@ export default function MenuPage() {
                     </Card>
                 ))}
             </Box>
+
+            
         </Box>
     );
 }

@@ -1,6 +1,6 @@
 import { Model } from "sequelize-typescript";
 import { Table, PrimaryKey, Column, DataType, HasMany } from "sequelize-typescript";
-import { OrderMenu } from "./OrderMenu";
+import { Order_Menu } from "./OrderMenu";
 
 
 @Table({
@@ -47,7 +47,7 @@ export class Orders extends Model {
     })
     declare status: string;
 
-    @HasMany(() => OrderMenu, 'order_id')
-    orderMenu!: OrderMenu[];
+    @HasMany(() => Order_Menu, 'order_id')
+    orderMenu!: Order_Menu[];
 }
 
