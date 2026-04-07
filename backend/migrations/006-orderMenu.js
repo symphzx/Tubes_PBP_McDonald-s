@@ -10,15 +10,46 @@ module.exports = {
                 allowNull: false,
                 primaryKey: true,
             },
-            
-            // mo_id:{
-            //     type: Sequelize.UUID,
-            //     allowNull: true,
-            //     references: {
-            //         model: "opsiMenu",
-            //         key: "mo_id"
-            //     }
-            // },
+            order_id: {
+                type: Sequelize.UUID,
+                allowNull: false,
+                references: {
+                    model: "Orders",
+                    key: "id",
+                },
+                onUpdate: "CASCADE",
+                onDelete: "CASCADE",
+            },
+            menu_id: {
+                type: Sequelize.UUID,
+                allowNull: false,
+                references: {
+                    model: "Menu",
+                    key: "id",
+                },
+                onUpdate: "CASCADE",
+                onDelete: "CASCADE",
+            },
+            mv_id: {
+                type: Sequelize.UUID,
+                allowNull: false,
+                references: {
+                    model: "Varian_Menu",
+                    key: "id",
+                },
+                onUpdate: "CASCADE",
+                onDelete: "CASCADE",
+            },
+            mo_id: {
+                type: Sequelize.UUID,
+                allowNull: true,
+                references: {
+                    model: "Opsi_Menu",
+                    key: "id",
+                },
+                onUpdate: "CASCADE",
+                onDelete: "CASCADE",
+            },
             quantity: {
                 type: Sequelize.INTEGER,
                 allowNull: false
@@ -40,42 +71,6 @@ module.exports = {
             deletedAt: {
                 type: Sequelize.DATE,
                 allowNull: true
-            }
-        });
-        
-        await queryInterface.addColumn("OrderMenu", "order_id", {
-            type: Sequelize.UUID,
-            allowNull: false,
-            references: {
-                model: "Orders",
-                key: "order_id"
-            }
-        });
-
-        await queryInterface.addColumn("OrderMenu", "menu_id", {
-            type: Sequelize.UUID,
-            allowNull: false,
-            references: {
-                model: "Menu",
-                key: "menu_id"
-            }
-        });
-
-        await queryInterface.addColumn("OrderMenu", "mv_id", {
-            type: Sequelize.UUID,
-            allowNull: false,
-            references: {
-                model: "Varian_Menu",
-                key: "mv_id"
-            }
-        });
-
-        await queryInterface.addColumn("OrderMenu", "mo_id", {
-            type: Sequelize.UUID,
-            allowNull: false,
-            references: {
-                model: "opsiMenu",
-                key: "mo_id"
             }
         });
     },

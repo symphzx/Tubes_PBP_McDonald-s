@@ -5,10 +5,13 @@ import {
     DataType,
     PrimaryKey,
     HasMany,
+    ForeignKey,
+    BelongsTo,
 } from "sequelize-typescript";
 import { Varian_Menu } from "./VarianMenu";
 import { Opsi_Menu } from "./OpsiMenu";
 import { Paket_Menu } from "./PaketMenu";
+import { Order_Menu } from "./OrderMenu";
 
 @Table({
     tableName: "Menu",
@@ -83,4 +86,10 @@ export class Menu extends Model {
         as: "paketRelation"
     })
     paketRelation!: Paket_Menu[];
+    
+    @HasMany(() => Order_Menu, {
+        foreignKey: "menu_id",
+        as: "orderMenuRelation"
+    })
+    orderMenuRelation!: Order_Menu[];
 }

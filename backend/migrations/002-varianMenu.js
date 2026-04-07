@@ -14,11 +14,12 @@ module.exports = {
                 type: Sequelize.UUID,
                 defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
-                primaryKey: true,
                 references: {
                     model: "Menu",
                     key: "id",
-                }
+                },
+                onUpdate: "CASCADE",
+                onDelete: "CASCADE",
             },
             nama: {
                 type: Sequelize.STRING,

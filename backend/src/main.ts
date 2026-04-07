@@ -7,7 +7,6 @@ import { Opsi_Menu } from "./models/OpsiMenu";
 import { Paket_Menu } from "./models/PaketMenu";
 import { Order } from "./models/Order";
 import { Order_Menu } from "./models/OrderMenu";
-import { Payment } from "./models/Payment";
 
 const sequelize = new Sequelize({
     username: appConfig.database.username,
@@ -16,7 +15,7 @@ const sequelize = new Sequelize({
     host: appConfig.database.host,
     port: appConfig.database.port,
     dialect: appConfig.database.dialect,
-    models: [Menu, Varian_Menu, Opsi_Menu, Paket_Menu, Order, Order_Menu, Payment],
+    models: [Menu, Varian_Menu, Opsi_Menu, Paket_Menu, Order, Order_Menu],
 });
 
 const app = express();
