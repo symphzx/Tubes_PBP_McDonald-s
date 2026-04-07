@@ -1,8 +1,6 @@
-import React from "react";
-import { Box, Typography, Paper, Button, Grid, Card } from "@mui/material";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Box, Typography, Paper, Button, Grid } from "@mui/material";
+import { useLocation, useNavigate } from "react-router";
 
-import logoMcDonalds from "../../../assets/logo_mcd.png";
 
 import { Outlet } from "react-router";
 

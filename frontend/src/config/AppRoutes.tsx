@@ -12,9 +12,7 @@ const MenuPage = lazy(() => import("../pages/Menu/MenuPage"));
 const PaymentPage = lazy(() => import("../pages/Payment/PaymentPage"));
 const PaymentSuccess = lazy(() => import("../pages/Payment/PaymentSuccess"));
 
-const PackageSelection = lazy(
-  () => import("../pages/Order/PackageSelection/PackageSelectionPage"),
-);
+const PackageSelection = lazy(() => import("../pages/Order/PackageSelection/PackageSelectionBurger"));
 
 export const AppRoutes = () => {
   return (
