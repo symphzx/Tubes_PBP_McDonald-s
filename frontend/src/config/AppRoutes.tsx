@@ -10,7 +10,7 @@ import SetQuantityPage from "../pages/Order/SetQuantityPage/SetQuantityPage";
 
 const MenuPage = lazy(() => import("../pages/Menu/MenuPage"));
 // const HomePage = lazy(() => import("../pages/Home/HomePage"));
-const RecomendationPage = lazy(() => import("../pages/Order/RecomendationPage/RecomendationPage"));
+const RecomendationPage = lazy(() => import("../pages/Order/Recomendation/RecomendationPage"));
 
 export const AppRoutes = () => {
     return (
