@@ -176,8 +176,8 @@ export default function OrderCart() {
                                 }
                             })}
 
-                            <Button variant="outlined" size="small" color="secondary" sx={{ mt: 1 , color:"text.secondary" }}>
-                                Show Details
+                            <Button variant="outlined" size="small" color="secondary" sx={{ mt: 1, color:"text.secondary" }} onClick={() => navigate(`/customizeOrder/${item.id}`)}>
+                                Edit
                             </Button>
 
                         </Box>

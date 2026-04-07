@@ -3,7 +3,12 @@ import {
     Typography,
     Button,
     IconButton,
-    Container
+    Container,
+    FormGroup,
+    FormControlLabel,
+    Checkbox,
+    Grid,
+    Paper
 } from "@mui/material";
 import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
@@ -20,18 +25,24 @@ export default function CustomizeOrder() {
 
     const [comesWith, setComesWith] = useState(0);
     const navigate = useNavigate();
+    const [tipeAyam, setTipeAyam] = useState<string[]>([]);
+    const tipeAyamOptions = ["Sayap", "Paha bawah", "Paha atas", "Dada Mentok", "Dada Tulang"];
+
+
 
     const dataMenuDummy = [
         {
             id: 1,
             name: "Fries",
             price: 25000,
+            foodCategory: "Chicken",
             imageUrl: testMenuImg,
         },
         {
             id: 2,
             name: "Chicken",
             price: 5050050,
+            foodCategory: "Chicken",
             imageUrl: testMenuImg,
         },
 
@@ -53,9 +64,26 @@ export default function CustomizeOrder() {
             imageUrl: testMenuImg
         },
     ]
-    
+
     // tambahin tipe tipe ayam 
     //tambahin opsi ukuran
+
+    const handleChange = (item: string) => {
+        setTipeAyam((prev) =>
+            prev.includes(item)
+                ? prev.filter((val) => val !== item)
+                : [...prev, item]
+        );
+    };
+
+    const handleReset = () => {
+        setAdditional(0);
+        setComesWith(0);
+    }
+
+    function checkFoodType(theFood: string) {
+        return dataMenuDummy.find((item) => item.foodCategory === theFood);
+    }
 
     const selectedItem = dataMenuDummy.find((item) => item.id === Number(id));
 
@@ -128,13 +156,13 @@ export default function CustomizeOrder() {
                                     <Box sx={{ marginTop: "20px", flex: 1 }}>
                                         <Typography>{selectedItem.name}</Typography>
                                         <Typography variant="body2" sx={{ fontFamily: "Speedee-Regular" }}>
-                                            Rp {selectedItem.price}
+                                            Rp {selectedItem.price.toLocaleString("id-ID")}
                                         </Typography>
                                     </Box>
                                 </Box>
 
                                 <Button fullWidth variant="outlined" size="small" sx={{ fontFamily: "Speedee-Regular", mt: 2, borderColor: "text.secondary" }}>
-                                    <Typography sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", fontSize: "12px" }} onClick={() => { setComesWith(0); setAdditional(0) }}>Reset Changes</Typography>
+                                    <Typography sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", fontSize: "12px" }} onClick={handleReset}>Reset Changes</Typography>
                                 </Button>
                             </Box>
                         }
@@ -223,7 +251,39 @@ export default function CustomizeOrder() {
                             ))}
                         </Box>
 
+                        {checkFoodType(selectedItem.foodCategory) ? 
+                        <Box sx={{ border: "1px solid #ddd", p: 2, mb: 2, mt: 2 }}>
+                            <FormGroup>
+                                <Typography sx={{fontFamily:"Speedee-Regular",mb:2}}>Permintaan Khusus</Typography>
+                                <Grid container spacing={2}>
+                                    {tipeAyamOptions.map((item) => (
+                                        <Grid key={item}>
+                                            <Paper
+                                                variant="outlined"
+                                                sx={{
+                                                    borderRadius: 2,
+                                                    p: 1,
+                                                }}
+                                            >
+                                                <FormControlLabel
+                                                    control={
+                                                        <Checkbox
+                                                            checked={tipeAyam.includes(item)}
+                                                            onChange={() => handleChange(item)}
+                                                        />
+                                                    }
+                                                    label={item}
+                                                />
+                                            </Paper>
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                            </FormGroup>
 
+                        </Box> : null
+                    }
+                        { /* TIPE TIPE AYAM */}
+                        
                         {/* ACTION */}
                         <Box sx={{ display: "flex", gap: 2, mt: 3, color: "text.secondary" }}>
                             <Button fullWidth variant="outlined" sx={{ fontFamily: "Speedee-Regular", color: "text.secondary" }} onClick={() => navigate(-1)}>
@@ -239,7 +299,7 @@ export default function CustomizeOrder() {
                             </Button>
                         </Box>
                     </Box>
-                </Container>
+                </Container >
 
             </>
         );

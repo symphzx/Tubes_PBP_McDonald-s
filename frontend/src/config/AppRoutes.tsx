@@ -6,6 +6,7 @@ import OrderType from "../pages/Order/OrderType/OrderType";
 import CustomizeOrder from "../pages/Order/CustomizeOrder/CustomizeOrder";
 import OrderCart from "../pages/Order/OrderCart/OrderCart";
 import OrderLayout from "../components/OrderLayout";
+import SetQuantityPage from "../pages/Order/SetQuantityPage/SetQuantityPage";
 
 const MenuPage = lazy(() => import("../pages/Menu/MenuPage"));
 const PaymentPage = lazy(() => import("../pages/Payment/PaymentPage"));
