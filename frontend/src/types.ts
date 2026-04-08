@@ -66,3 +66,10 @@ export type Payment = {
   status: "PENDING" | "PAID" | "CANCELLED";
   paid_at: string;
 };
+
+export type UserInfo = {
+  id: string;
+  email: string;
+  password: string;
+  role: "Admin" | "Cashier";
+}

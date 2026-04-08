@@ -1,11 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit"
-import { paymentReducer } from "../store/paymentSlice" 
+import { authReducer } from "../store/authSlice" 
 
 export const store = configureStore({
   reducer: {
-    payment: paymentReducer,// ngedaftarin reducer, nanti dipanggil pake state.payment
+    auth: authReducer,// ngedaftarin reducer, nanti dipanggil pake state.payment
   },
 })
 
-export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
+export type RootState = ReturnType<typeof store.getState>

@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { Route, Routes } from "react-router";
 import { MenuLayout } from "../components/MenuLayout";
-
 import OrderLayout from "../components/OrderLayout";
 import SetQuantityPage from "../pages/Order/SetQuantityPage/SetQuantityPage";
 

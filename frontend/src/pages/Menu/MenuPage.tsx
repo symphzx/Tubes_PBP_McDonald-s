@@ -172,18 +172,18 @@ export default function MenuPage() {
                             position: "relative",
                             boxShadow: "none",
                             height: "100%",
-                            aspectRatio: "2.5 / 4", // lebih tinggi dari lebar (vertical card)
+                            aspectRatio: "2.5 / 4",
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "space-between",
                             cursor: "pointer",
 
-                            transition: "all 0.25s ease",
+                            transition: "all 0.3s ease-in-out",
 
                             "&:hover": {
                                 transform: "translateY(-6px)", // naik sedikit
                                 boxShadow: "0 10px 25px rgba(0,0,0,0.08)", // soft shadow
-                                borderColor: "#d5d5d5",
+                                borderColor: "#d4da1c74",
                             },
                         }}
                     >

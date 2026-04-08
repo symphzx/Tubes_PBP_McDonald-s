@@ -59,6 +59,7 @@ export function MenuLayout() {
                 sx={{
                     width: "100%",
                     maxWidth: 900,
+                    height: "100%",
                     display: "flex",
                     backgroundColor: "#fff",
                     boxShadow: "0 0 20px rgba(0,0,0,0.1)",
