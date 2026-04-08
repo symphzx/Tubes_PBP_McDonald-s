@@ -81,13 +81,11 @@ export default function LoginPage() {
   return (
     <Box
       sx={{
-        // Ganti height: "88.6vh" dengan ini:
         flex: 1,
         width: "100%",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        // Gunakan minHeight agar jika di layar kecil konten tidak terpotong
         minHeight: "calc(100vh - 70px)",
         background: `radial-gradient(circle at center, ${colors.red} 0%, ${colors.black} 100%)`,
         overflow: "hidden",
