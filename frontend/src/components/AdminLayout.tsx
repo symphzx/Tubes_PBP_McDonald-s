@@ -13,7 +13,6 @@ import { Link, Outlet, useNavigate } from "react-router";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AddIcon from "@mui/icons-material/Add";
 import { useAppDispatch } from "../hooks/useAppDispatch";
-import logoMcd from "../assets/logo_mcd.png";
 import { authActions } from "../store/authSlice";
 import { useAppSelector } from "../hooks/useAppSelector";
 
@@ -62,7 +61,7 @@ export function AdminLayout() {
                         >
                             <Box
                                 component="img"
-                                src={logoMcd}
+                                src="http://localhost:3000/uploads/assets/logo_mcd.png"
                                 alt="Logo"
                                 sx={{
                                     height: 40,

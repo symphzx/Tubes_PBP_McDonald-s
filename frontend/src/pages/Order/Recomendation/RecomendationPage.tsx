@@ -25,13 +25,13 @@ const menuData = [
   {
     title: "Biscoff McFlurry",
     price: "Rp17.500",
-    image: "http://localhost:3000/uploads/assets/Biscoff%20McFlurry.webp",
+    image: "http://localhost:3000/uploads/assets/Biscoff%20McFlurry.png",
     tag: "Baru!",
   },
   {
     title: "Pie Ketan Hitam Kelapa",
     price: "Rp17.000",
-    image: "http://localhost:3000/uploads/assets/Pie Ketan Hitam Kelapa.webp",
+    image: "http://localhost:3000/uploads/assets/Pie Ketan Hitam Kelapa.png",
     tag: "Baru!",
   },
   {

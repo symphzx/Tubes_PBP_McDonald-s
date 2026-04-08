@@ -178,7 +178,7 @@ export default function MenuPage() {
                             justifyContent: "space-between",
                             cursor: "pointer",
 
-                            transition: "all 0.3s ease-in-out",
+                            transition: "all 0.2s ease-in-out",
 
                             "&:hover": {
                                 transform: "translateY(-6px)", // naik sedikit
@@ -213,7 +213,7 @@ export default function MenuPage() {
                                 objectFit: "contain",
                                 p: 1,
 
-                                transition: "transform 0.3s ease",
+                                transition: "transform 0.2.3s ease-in-out",
 
                                 ".MuiCard-root:hover &": {
                                     transform: "scale(1.05)", // zoom halus
