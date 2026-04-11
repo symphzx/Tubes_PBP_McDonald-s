@@ -11,6 +11,7 @@ export type Menu = {
   tipe: TipeMenu;         
   gambar: string | null;  
   ketersediaan: Ketersediaan;
+  tag: "Baru!" | null;
   createdAt?: string;
   updatedAt?: string;
   varian_menus?: MenuVarian[];
