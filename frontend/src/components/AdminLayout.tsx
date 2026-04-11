@@ -68,7 +68,7 @@ export function AdminLayout() {
                                     width: "auto",
                                     cursor: "pointer",
                                 }}
-                                onClick={() => navigate("/")}
+                                onClick={() => navigate("/admin")}
                             />
                         </Box>
 
