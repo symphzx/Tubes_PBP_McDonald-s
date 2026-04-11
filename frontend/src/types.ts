@@ -74,3 +74,5 @@ export type UserInfo = {
   password: string;
   role: "Admin" | "Cashier";
 }
+
+export type AsyncDataState = 'pending' | 'loading' | 'fullfilled' | 'error';
