@@ -42,7 +42,7 @@ export class Order extends Model {
     declare order_no: number;
 
     @Column({
-        type: DataType.ENUM("PENDING", "PAID", "CANCELLED"),
+        type: DataType.ENUM("CART", "PENDING", "PROCESS", "COMPLETED"), // nath ngubah inii biar sama kaya di migration
         allowNull: false,
     })
     declare status: string;
