@@ -8,19 +8,19 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router";
 import { useParams } from "react-router";
-import { useAppSelector } from "../../hooks/useAppSelector";
 import { useMenus } from "../../hooks/useMenus";
-import { categoryActions } from "../../store/categorySlice";
-import type { KategoriMenu } from "../../types";
-import { useAppDispatch } from "../../hooks/useAppDispatch";
+import { useKategori } from "../../hooks/useKategori";
 
 export default function MenuPage() {
     const { menus, reload } = useMenus();
-    const selectedCategory = useAppSelector((state) => state.category.category);
 
+    const { kategori } = useKategori();
     const { category } = useParams();
-    const dispatch = useAppDispatch();
     const navigate = useNavigate();
+
+    const selectedCategory = useMemo(() => {
+        return kategori.find((item) => item.nama === category);
+    }, [kategori, category]);
 
     const handleCardClick = (item: any) => {
       // kalo menu satuan, arahin ke package selection
@@ -40,17 +40,14 @@ export default function MenuPage() {
 
     useEffect(() => {
         reload();
-        if (category) {
-          dispatch(categoryActions.setCategory(category as KategoriMenu));
-        }
-    }, [category, dispatch, reload]);
+    }, [reload]);
 
     const filteredAndSortedData = useMemo(() => {
         let data = [...menus];
 
         // filter berdasarkan sidebar
-        if (selectedCategory !== undefined) {
-            data = data.filter((item) => item.kategori === selectedCategory);
+        if (selectedCategory) {
+            data = data.filter((item) => item.kategori_id === selectedCategory.id);
         }
 
         // sort "Baru!" ke atas
@@ -67,7 +64,7 @@ export default function MenuPage() {
             <Typography
                 sx={{ fontSize: 26, fontWeight: 700, color: "#333", mb: 1 }}
             >
-                {selectedCategory}
+                {selectedCategory?.nama}
             </Typography>
 
             {/* SUBTITLE */}

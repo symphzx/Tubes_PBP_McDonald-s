@@ -20,45 +20,45 @@ import RiceBowlIcon from "@mui/icons-material/RiceBowl";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 
 import { Outlet } from "react-router";
-import { useState } from "react";
-import { useAppDispatch } from "../hooks/useAppDispatch";
-import type { KategoriMenu } from "../types";
-import { categoryActions } from "../store/categorySlice";
+import { useEffect, type JSX } from "react";
+import { useKategori } from "../hooks/useKategori";
 
 const homeItems = { Label: "Home", icon: <HomeIcon />};
-const menuItems = [
-    { label: "Promosi", icon: <LocalOfferIcon />},
-    {
-        label: "Burger & McNuggets",
-        icon: <LunchDiningIcon />,
-    },
-    { label: "Ayam McD Krispy", icon: <SetMealIcon />},
-    { label: "Ayam McD Spicy", icon: <SetMealIcon />},
-    { label: "Paket Keluarga", icon: <RestaurantIcon />},
-    { label: "Happy Meal", icon: <FastfoodIcon />},
-    { label: "Paket Hemat", icon: <RestaurantIcon />},
-    { label: "Menu Receh", icon: <FastfoodIcon />},
-    { label: "McSpaghetti", icon: <RestaurantIcon />},
-    { label: "Camilan", icon: <FastfoodIcon />},
-    { label: "Minuman", icon: <EmojiFoodBeverageIcon />},
-    { label: "Pencuci Mulut", icon: <IcecreamIcon />},
-    { label: "Nasi", icon: <RiceBowlIcon />},
-];
+const iconMap: Record<string, JSX.Element> = {
+    "Promosi": <LocalOfferIcon />,
+    "Burger & McNuggets": <LunchDiningIcon />,
+    "Ayam McD Krispy": <SetMealIcon />,
+    "Ayam McD Spicy": <SetMealIcon />,
+    "Paket Keluarga": <RestaurantIcon />,
+    "Happy Meal": <FastfoodIcon />,
+    "Paket Hemat": <RestaurantIcon />,
+    "Menu Receh": <FastfoodIcon />,
+    "McSpaghetti": <RestaurantIcon />,
+    "Camilan": <FastfoodIcon />,
+    "Minuman": <EmojiFoodBeverageIcon />,
+    "Pencuci Mulut": <IcecreamIcon />,
+    "Nasi": <RiceBowlIcon />,
+};
 
 export function MenuLayout() {
     const location = useLocation();
     const { category } = useParams();
 
+    const { kategori, reload } = useKategori();
+
+    useEffect(() => {
+        reload();
+    }, [reload]);
+
     const isHomeActive = location.pathname === "/";
-    const activeIndex = menuItems.findIndex(
-        (item) => item.label === category
+
+    const activeIndex = kategori.findIndex(
+        (item) => item.nama === category
     );
 
     const navigate = useNavigate();
-    const dispatch = useAppDispatch();
 
     const handleMenuClick = (label: string) => {
-        dispatch(categoryActions.setCategory(label as KategoriMenu));
         navigate(`/menu/${label}`);
     };
 
@@ -176,18 +176,18 @@ export function MenuLayout() {
                             </ListItemButton>
                         </Card>
 
-                        {menuItems.map((item, index) => (
+                        {kategori.map((item, index) => (
                             <ListItemButton
                                 onClick={() => {
-                                    handleMenuClick(item.label)
+                                    handleMenuClick(item.nama)
                                     // setActiveIndex(index);
                                 }}
-                                key={index}
+                                key={item.id}
                                 sx={{
                                     borderTopRightRadius:
                                         index === 0 ? "4px" : "0px",
                                     borderBottomRightRadius:
-                                        index === menuItems.length - 1
+                                        index === kategori.length - 1
                                             ? "4px"
                                             : "0px",
                                     border: "1px solid #e0e0e0",
@@ -201,7 +201,7 @@ export function MenuLayout() {
                                         backgroundColor: "#f0f0f0",
                                     },
                                     boxShadow:
-                                        index === menuItems.length - 1
+                                        index === kategori.length - 1
                                             ? "0px 1px 0px 0px #767676"
                                             : "none",
                                 }}
@@ -212,11 +212,11 @@ export function MenuLayout() {
                                         color: activeIndex === index ? "#000" : "#666",
                                     }}
                                 >
-                                    {item.icon}
+                                    {iconMap[item.nama] || <RestaurantIcon />}
                                 </ListItemIcon>
 
                                 <ListItemText
-                                    primary={item.label}
+                                    primary={item.nama}
                                     primaryTypographyProps={{
                                         fontSize: 13,
                                         fontWeight: activeIndex === index ? 600 : 400,

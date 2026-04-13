@@ -10,16 +10,22 @@ module.exports = {
                 allowNull: false,
                 primaryKey: true,
             },
+            kategori_id: {
+                type: Sequelize.UUID,
+                allowNull: false,
+                references: {
+                    model: "Kategori",
+                    key: "id",
+                },
+                onUpdate: "CASCADE",
+                onDelete: "CASCADE",
+            },
             nama: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
             harga_awal: {
                 type: Sequelize.REAL,
-                allowNull: false,
-            },
-            kategori: {
-                type: Sequelize.ENUM("Burger & McNuggets", "Ayam McD Krispy", "Ayam McD Spicy", "Paket Keluarga", "Happy Meal", "Paket HeBat", "Menu Receh", "McSpaghetti", "Camilan", "Minuman", "Pencuci Mulut", "Nasi"),
                 allowNull: false,
             },
             tipe: {
