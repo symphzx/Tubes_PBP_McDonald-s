@@ -6,6 +6,7 @@ import SetQuantityPage from "../pages/Order/SetQuantityPage/SetQuantityPage";
 import { AdminLayout } from "../components/AdminLayout";
 import LoginPage from "../pages/Admin/Login/LoginPage";
 import AdminPage from "../pages/Admin/AdminPage";
+import CreaeteMenuPage from "../pages/Admin/CRUD/CreateMenuPage";
 
 const MenuPage = lazy(() => import("../pages/Menu/MenuPage"));
 
@@ -47,6 +48,7 @@ export const AppRoutes = () => {
       <Route element={<AdminLayout />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin/create-menu" element={<CreaeteMenuPage />} />
       </Route>
     </Routes>
   );
