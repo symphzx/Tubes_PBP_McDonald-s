@@ -104,6 +104,7 @@ export function MenuLayout() {
                         sx={{
                             width: "100%",
                             height: 150,
+                            flexShrink: 0,
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
