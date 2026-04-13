@@ -30,12 +30,63 @@ export class MenuController {
       });
     }
   }
-  // static async create(req: Request, res: Response) {
-  //   const { title, author } = req.body;
-  //   const book = await Book.create({
-  //     title,
-  //     author,
-  //   });
-  //   res.json(book);
-  // }
+  static async create(req: Request, res: Response) {
+    try{
+      const { nama, harga_awal, kategori, tipe, ketersediaan, tag, gambar } = req.body;
+
+      if(!nama){
+        return res.status(400).json({
+          message: "Menu name is required",
+        });
+      }
+
+      if(!harga_awal){
+        return res.status(400).json({
+          message: "Menu price is required",
+        });
+      }
+
+      if(!kategori){
+        return res.status(400).json({
+          message: "Menu category is required",
+        });
+      }
+
+      if(!tipe){
+        return res.status(400).json({
+          message: "Menu type is required",
+        });
+      }
+
+      if(!gambar){
+        return res.status(400).json({
+          message: "Menu image is required",
+        });
+      }
+
+      if(!ketersediaan){
+        return res.status(400).json({
+          message: "Menu availability is required",
+        });
+      }
+
+      const menu = await Menu.create({
+        nama,
+        harga_awal,
+        kategori,
+        tipe,
+        gambar,
+        ketersediaan
+      });
+      res.json({
+        message: "Success",
+        data: menu,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: "Failed to create menu",
+        error,
+      });
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
     Box,
     Container,
@@ -14,17 +14,20 @@ import SaveIcon from "@mui/icons-material/Save";
 
 export default function CreateMenuPage() {
     const themeColor = "#DA291C";
+    const [nama, setNama] = useState<string>("");
+    const [harga, setHarga] = useState<number | "">("");
+    const [kategori, setKategori] = useState<string>("");
+    const [tipe, setTipe] = useState<string>("");
+    const [ketersediaan, setKetersediaan] = useState<string>("");
+    const [tag, setTag] = useState<string>("");
+    const [image, setImage] = useState<File | null>(null);
+    const [preview, setPreview] = useState<string>("");
 
-    const [form, setForm] = useState({
-        name: "",
-        price: "",
-        category: "",
-        type: "",
-        availability: "",
-        tag: "",
-        image: null as File | null,
-        preview: "",
-    });
+    // const { menus } = useMenus();
+
+    // const categories = Array.from(
+    //     new Set(menus.map((menu: Menu) => menu.kategori))
+    // );
 
     const categories = [
         "Burger & McNuggets",
@@ -41,26 +44,8 @@ export default function CreateMenuPage() {
         "Nasi",
     ];
 
-    const handleChange = (e: any) => {
-        setForm({
-            ...form,
-            [e.target.name]: e.target.value,
-        });
-    };
-
-    const handleImageUpload = (e: any) => {
-        const file = e.target.files[0];
-        if (file) {
-            setForm({
-                ...form,
-                image: file,
-                preview: URL.createObjectURL(file),
-            });
-        }
-    };
-
     const handleSubmit = () => {
-        console.log(form);
+        // console.log(form);
     };
 
     return (
@@ -99,8 +84,8 @@ export default function CreateMenuPage() {
                             fullWidth
                             label="Nama Menu"
                             name="name"
-                            value={form.name}
-                            onChange={handleChange}
+                            value={nama}
+                            onChange={(e) => setNama(e.target.value)}
                         />
                     </Box>
 
@@ -111,8 +96,11 @@ export default function CreateMenuPage() {
                             type="number"
                             label="Harga"
                             name="price"
-                            value={form.price}
-                            onChange={handleChange}
+                            value={harga}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                setHarga(value === "" ? "" : Number(value));
+                            }}
                         />
                     </Box>
 
@@ -123,8 +111,8 @@ export default function CreateMenuPage() {
                             fullWidth
                             label="Kategori"
                             name="category"
-                            value={form.category}
-                            onChange={handleChange}
+                            value={kategori}
+                            onChange={(e) => setKategori(e.target.value)}
                         >
                             {categories.map((cat) => (
                                 <MenuItem key={cat} value={cat}>
@@ -141,8 +129,8 @@ export default function CreateMenuPage() {
                             fullWidth
                             label="Tipe"
                             name="type"
-                            value={form.type}
-                            onChange={handleChange}
+                            value={tipe}
+                            onChange={(e) => setTipe(e.target.value)}
                         >
                             <MenuItem value="Ala Carte">Ala Carte</MenuItem>
                             <MenuItem value="Paket">Paket</MenuItem>
@@ -156,8 +144,8 @@ export default function CreateMenuPage() {
                             fullWidth
                             label="Ketersediaan"
                             name="availability"
-                            value={form.availability}
-                            onChange={handleChange}
+                            value={ketersediaan}
+                            onChange={(e) => setKetersediaan(e.target.value)}
                         >
                             <MenuItem value="Tersedia">Tersedia</MenuItem>
                             <MenuItem value="Tidak Tersedia">
@@ -173,8 +161,8 @@ export default function CreateMenuPage() {
                             fullWidth
                             label="Tag"
                             name="tag"
-                            value={form.tag}
-                            onChange={handleChange}
+                            value={tag}
+                            onChange={(e) => setTag(e.target.value)}
                         >
                             <MenuItem value="">None</MenuItem>
                             <MenuItem value="Baru!">Baru!</MenuItem>
@@ -200,12 +188,18 @@ export default function CreateMenuPage() {
                                 hidden
                                 type="file"
                                 accept="image/*"
-                                onChange={handleImageUpload}
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                        setImage(file);
+                                        setPreview(URL.createObjectURL(file));
+                                    }
+                                }}
                             />
 
-                            {form.preview ? (
+                            {preview ? (
                                 <Avatar
-                                    src={form.preview}
+                                    src={preview}
                                     variant="rounded"
                                     sx={{
                                         width: 120,
