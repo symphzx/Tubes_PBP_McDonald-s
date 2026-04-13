@@ -32,7 +32,19 @@ export class MenuController {
   }
   static async create(req: Request, res: Response) {
     try{
-      const { nama, harga_awal, kategori, tipe, ketersediaan, tag, gambar } = req.body;
+      const { kategori_id, nama, harga_awal, tipe, ketersediaan, tag } = req.body;
+
+      const file = (req as any).file;
+
+      const imageUrl = file
+      ? `http://localhost:3000/uploads/assets/${file.filename}`
+      : null;
+
+      if(!kategori_id){
+        return res.status(400).json({
+          message: "Menu category is required",
+        });
+      }
 
       if(!nama){
         return res.status(400).json({
@@ -46,21 +58,9 @@ export class MenuController {
         });
       }
 
-      if(!kategori){
-        return res.status(400).json({
-          message: "Menu category is required",
-        });
-      }
-
       if(!tipe){
         return res.status(400).json({
           message: "Menu type is required",
-        });
-      }
-
-      if(!gambar){
-        return res.status(400).json({
-          message: "Menu image is required",
         });
       }
 
@@ -71,18 +71,20 @@ export class MenuController {
       }
 
       const menu = await Menu.create({
+        kategori_id,
         nama,
         harga_awal,
-        kategori,
         tipe,
-        gambar,
-        ketersediaan
+        gambar: imageUrl,
+        ketersediaan,
+        tag: tag ? tag : null
       });
       res.json({
         message: "Success",
         data: menu,
       });
     } catch (error) {
+      console.error("ERROR CREATE MENU:", error);
       res.status(500).json({
         message: "Failed to create menu",
         error,
