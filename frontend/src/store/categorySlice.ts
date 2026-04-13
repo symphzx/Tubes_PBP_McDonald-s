@@ -2,18 +2,18 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { KategoriMenu } from "../types";
 
 export type CategoryState = {
-    category: KategoriMenu | undefined;
+    category: KategoriMenu[];
 };
 
 const initialState: CategoryState = {
-    category: undefined,
+    category: []
 };
 
 export const categorySlice = createSlice({
     name: "category",
     initialState,
     reducers: {
-        setCategory: (state, action: PayloadAction<KategoriMenu>) => { 
+        setCategory: (state, action: PayloadAction<KategoriMenu[]>) => { 
             state.category = action.payload 
         }
     }
