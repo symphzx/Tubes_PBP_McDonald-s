@@ -6,6 +6,7 @@ import { Order_Menu } from "./OrderMenu";
 @Table({
     tableName: "orders",
     timestamps: true,
+    paranoid: true
 })
 
 export class Order extends Model {

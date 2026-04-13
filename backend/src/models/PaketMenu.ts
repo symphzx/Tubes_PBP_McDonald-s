@@ -12,6 +12,7 @@ import { Menu } from "./Menu";
 @Table({
     tableName: "Paket_Menu",
     timestamps: true,
+    paranoid: true
 })
 
 export class Paket_Menu extends Model {

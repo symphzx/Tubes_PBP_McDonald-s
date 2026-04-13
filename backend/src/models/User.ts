@@ -9,6 +9,7 @@ import {
 @Table({
     tableName: "User",
     timestamps: true,
+    paranoid: true
 })
 
 export class User extends Model {
