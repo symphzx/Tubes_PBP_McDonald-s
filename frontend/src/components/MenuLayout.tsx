@@ -6,6 +6,8 @@ import {
     ListItemIcon,
     ListItemButton,
 } from "@mui/material";
+import { useNavigate } from "react-router";
+import { useLocation, useParams } from "react-router";
 
 import HomeIcon from "@mui/icons-material/Home";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
@@ -19,30 +21,46 @@ import FastfoodIcon from "@mui/icons-material/Fastfood";
 
 import { Outlet } from "react-router";
 import { useState } from "react";
+import { useAppDispatch } from "../hooks/useAppDispatch";
+import type { KategoriMenu } from "../types";
+import { categoryActions } from "../store/categorySlice";
+
+const homeItems = { Label: "Home", icon: <HomeIcon />};
+const menuItems = [
+    { label: "Promosi", icon: <LocalOfferIcon />},
+    {
+        label: "Burger & McNuggets",
+        icon: <LunchDiningIcon />,
+    },
+    { label: "Ayam McD Krispy", icon: <SetMealIcon />},
+    { label: "Ayam McD Spicy", icon: <SetMealIcon />},
+    { label: "Paket Keluarga", icon: <RestaurantIcon />},
+    { label: "Happy Meal", icon: <FastfoodIcon />},
+    { label: "Paket Hemat", icon: <RestaurantIcon />},
+    { label: "Menu Receh", icon: <FastfoodIcon />},
+    { label: "McSpaghetti", icon: <RestaurantIcon />},
+    { label: "Camilan", icon: <FastfoodIcon />},
+    { label: "Minuman", icon: <EmojiFoodBeverageIcon />},
+    { label: "Pencuci Mulut", icon: <IcecreamIcon />},
+    { label: "Nasi", icon: <RiceBowlIcon />},
+];
 
 export function MenuLayout() {
-    const [activeIndex, setActiveIndex] = useState<number | null>(null);
-    const [isHomeActive, setIsHomeActive] = useState(true);
+    const location = useLocation();
+    const { category } = useParams();
 
-    const homeItems = { Label: "Home", icon: <HomeIcon />};
-    const menuItems = [
-        { label: "Promosi", icon: <LocalOfferIcon />},
-        {
-            label: "Burger & McNuggets",
-            icon: <LunchDiningIcon />,
-        },
-        { label: "Ayam McD Krispy", icon: <SetMealIcon />},
-        { label: "Ayam McD Spicy", icon: <SetMealIcon />},
-        { label: "Paket Keluarga", icon: <RestaurantIcon />},
-        { label: "Happy Meal", icon: <FastfoodIcon />},
-        { label: "Paket Hemat", icon: <RestaurantIcon />},
-        { label: "Menu Receh", icon: <FastfoodIcon />},
-        { label: "McSpaghetti", icon: <RestaurantIcon />},
-        { label: "Camilan", icon: <FastfoodIcon />},
-        { label: "Minuman", icon: <EmojiFoodBeverageIcon />},
-        { label: "Pencuci Mulut", icon: <IcecreamIcon />},
-        { label: "Nasi", icon: <RiceBowlIcon />},
-    ];
+    const isHomeActive = location.pathname === "/";
+    const activeIndex = menuItems.findIndex(
+        (item) => item.label === category
+    );
+
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+
+    const handleMenuClick = (label: string) => {
+        dispatch(categoryActions.setCategory(label as KategoriMenu));
+        navigate(`/menu/${label}`);
+    };
 
     return (
         <Box
@@ -86,6 +104,7 @@ export function MenuLayout() {
                         sx={{
                             width: "100%",
                             height: 150,
+                            flexShrink: 0,
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
@@ -121,8 +140,7 @@ export function MenuLayout() {
                         >
                             <ListItemButton
                                 onClick={() => {
-                                    setIsHomeActive(true);
-                                    setActiveIndex(null);
+                                    navigate("/");
                                 }}
                                 sx={{
                                     height: 50,
@@ -161,8 +179,8 @@ export function MenuLayout() {
                         {menuItems.map((item, index) => (
                             <ListItemButton
                                 onClick={() => {
-                                    setIsHomeActive(false);
-                                    setActiveIndex(index);
+                                    handleMenuClick(item.label)
+                                    // setActiveIndex(index);
                                 }}
                                 key={index}
                                 sx={{
