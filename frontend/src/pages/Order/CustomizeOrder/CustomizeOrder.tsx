@@ -32,14 +32,14 @@ export default function CustomizeOrder() {
 
     const dataMenuDummy = [
         {
-            id: 1,
+            id: "662e9121-32c6-43c3-9a67-7e2bd43a9644",
             name: "Fries",
             price: 25000,
-            foodCategory: "Chicken",
+            foodCategory: "fries",
             imageUrl: testMenuImg,
         },
         {
-            id: 2,
+            id: "80f089b8-4001-49c5-b19f-42d7a9ce9870",
             name: "Chicken",
             price: 5050050,
             foodCategory: "Chicken",
@@ -50,7 +50,7 @@ export default function CustomizeOrder() {
     const additionalMenuDummy = [
         {
             id: 1,
-            menu_id: 1,
+            menu_id: "80f089b8-4001-49c5-b19f-42d7a9ce9870",
             name: "Cheesy Sauce",
             menu_qty: 2,
             price: 5000,
@@ -80,17 +80,22 @@ export default function CustomizeOrder() {
         setAdditional(0);
         setComesWith(0);
     }
-
-    function checkFoodType(theFood: string) {
-        return dataMenuDummy.find((item) => item.foodCategory === theFood);
+    const handleSaveChanges = () => {
+        alert("Changes saved");
+        navigate("/menu");
     }
 
-    const selectedItem = dataMenuDummy.find((item) => item.id === Number(id));
+    function checkFoodType(theFood: string) {
+        const food = dataMenuDummy.find((item) => item.foodCategory === theFood);
+        return food?.foodCategory;
+    }
+
+    const selectedItem = dataMenuDummy.find((item) => item.id === id);
 
     if (!selectedItem) {
         return (<>
             <Box sx={{ display: "flex", justifyContent: "center", opacity: 1, flexDirection: "column" }}>
-                <Box sx={{ display: "flex", justifyContent: "center", opacity: 1 }}>
+                <Box sx={{ display: "flex", justifyContent: "center", opacity: 1 ,mt:15}}>
                     <img src={noItemFound} width="70%" height="70%" />
                 </Box>
                 <Typography sx={{ fontFamily: "Speedee-Bold", fontSize: "20px", textAlign: "center" }}>
@@ -161,8 +166,8 @@ export default function CustomizeOrder() {
                                     </Box>
                                 </Box>
 
-                                <Button fullWidth variant="outlined" size="small" sx={{ fontFamily: "Speedee-Regular", mt: 2, borderColor: "text.secondary" }}>
-                                    <Typography sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", fontSize: "12px" }} onClick={handleReset}>Reset Changes</Typography>
+                                <Button fullWidth variant="outlined" size="small" sx={{ fontFamily: "Speedee-Regular", mt: 2, borderColor: "text.secondary" }} onClick={handleReset}>
+                                    <Typography sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", fontSize: "12px" }} >Reset Changes</Typography>
                                 </Button>
                             </Box>
                         }
@@ -251,39 +256,39 @@ export default function CustomizeOrder() {
                             ))}
                         </Box>
 
-                        {checkFoodType(selectedItem.foodCategory) ? 
-                        <Box sx={{ border: "1px solid #ddd", p: 2, mb: 2, mt: 2 }}>
-                            <FormGroup>
-                                <Typography sx={{fontFamily:"Speedee-Regular",mb:2}}>Permintaan Khusus</Typography>
-                                <Grid container spacing={2}>
-                                    {tipeAyamOptions.map((item) => (
-                                        <Grid key={item}>
-                                            <Paper
-                                                variant="outlined"
-                                                sx={{
-                                                    borderRadius: 2,
-                                                    p: 1,
-                                                }}
-                                            >
-                                                <FormControlLabel
-                                                    control={
-                                                        <Checkbox
-                                                            checked={tipeAyam.includes(item)}
-                                                            onChange={() => handleChange(item)}
-                                                        />
-                                                    }
-                                                    label={item}
-                                                />
-                                            </Paper>
-                                        </Grid>
-                                    ))}
-                                </Grid>
-                            </FormGroup>
+                        {checkFoodType(selectedItem.foodCategory) === "Chicken" ?
+                            <Box sx={{ border: "1px solid #ddd", p: 2, mb: 2, mt: 2 }}>
+                                <FormGroup>
+                                    <Typography sx={{ fontFamily: "Speedee-Regular", mb: 2 }}>Permintaan Khusus</Typography>
+                                    <Grid container spacing={2}>
+                                        {tipeAyamOptions.map((item) => (
+                                            <Grid key={item}>
+                                                <Paper
+                                                    variant="outlined"
+                                                    sx={{
+                                                        borderRadius: 2,
+                                                        p: 1,
+                                                    }}
+                                                >
+                                                    <FormControlLabel
+                                                        control={
+                                                            <Checkbox
+                                                                checked={tipeAyam.includes(item)}
+                                                                onChange={() => handleChange(item)}
+                                                            />
+                                                        }
+                                                        label={item}
+                                                    />
+                                                </Paper>
+                                            </Grid>
+                                        ))}
+                                    </Grid>
+                                </FormGroup>
 
-                        </Box> : null
-                    }
+                            </Box> : null
+                        }
                         { /* TIPE TIPE AYAM */}
-                        
+
                         {/* ACTION */}
                         <Box sx={{ display: "flex", gap: 2, mt: 3, color: "text.secondary" }}>
                             <Button fullWidth variant="outlined" sx={{ fontFamily: "Speedee-Regular", color: "text.secondary" }} onClick={() => navigate(-1)}>
@@ -294,6 +299,7 @@ export default function CustomizeOrder() {
                                 fullWidth
                                 variant="contained"
                                 sx={{ backgroundColor: "#FFD700", color: "black", fontFamily: "Speedee-Regular" }}
+                                onClick={handleSaveChanges}
                             >
                                 Save Changes
                             </Button>

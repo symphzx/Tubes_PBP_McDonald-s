@@ -11,17 +11,30 @@ export default function SetQuantityPage() {
     const navigate = useNavigate();
 
     const dataMenuDummy = [
-        { id: 1, name: "Fries", price: 25000, imageUrl: testMenuImg },
-        { id: 2, name: "Chicken", price: 5050050, imageUrl: testMenuImg },
+        {
+            id: "662e9121-32c6-43c3-9a67-7e2bd43a9644",
+            name: "Fries",
+            price: 25000,
+            foodCategory: "fries",
+            imageUrl: testMenuImg,
+        },
+        {
+            id: "80f089b8-4001-49c5-b19f-42d7a9ce9870",
+            name: "Chicken",
+            price: 50500,
+            foodCategory: "Chicken",
+            imageUrl: testMenuImg,
+        },
+
     ];
 
-    const selectedItem = dataMenuDummy.find((item) => item.id === Number(id));
+    const selectedItem = dataMenuDummy.find((item) => item.id === id);
 
     if (!selectedItem) {
         return (
             <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80vh" }}>
                 <Typography sx={{ fontFamily: "Speedee-Bold", fontSize: "20px", textAlign: "center" }}>
-                Item Not noItemFound</Typography>
+                    Item Not noItemFound</Typography>
             </Box>
         );
     }
@@ -48,7 +61,7 @@ export default function SetQuantityPage() {
                 <img
                     src={selectedItem.imageUrl}
                     alt={selectedItem.name}
-                    style={{ width: "60%", objectFit: "cover", borderRadius: "8px"  }}
+                    style={{ width: "60%", objectFit: "cover", borderRadius: "8px" }}
                 />
             </Box>
 
@@ -72,7 +85,7 @@ export default function SetQuantityPage() {
                         color: "text.primary",
                         borderRadius: "4px",
                     }}
-                    onClick={() => navigate(`/customizeOrder/${selectedItem.id}`)}
+                    onClick={() => navigate(`/customize/${selectedItem.id}`)}
                 >
                     Customize
                 </Button>

@@ -38,7 +38,7 @@ export const AppRoutes = () => {
 
       <Route element={<OrderLayout />}>
         <Route path="/order" element={<OrderTypePage />} />
-        <Route path="/customizeOrder/:id" element={<CustomizeOrderPage />} />
+        <Route path="/customize/:id" element={<CustomizeOrderPage />} />
         <Route path="/cart" element={<OrderCartPage />} />
         <Route path="/setQuantity/:id" element={<SetQuantityPage />} />
         <Route path="/recomendation" element={<RecomendationPage />} />
