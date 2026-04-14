@@ -1,36 +1,31 @@
-import React from "react";
+import { useEffect } from "react";
 import { 
     Box, 
     Container, 
     Typography, 
-    Grid, 
     Paper, 
-    Avatar, 
-    Divider 
+    Avatar 
 } from "@mui/material";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 import ArticleIcon from "@mui/icons-material/Article";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import { useMenus } from "../../hooks/useMenus";
 // import { useAppSelector } from "../hooks/useAppSelector";
 
-export default function AdminDashboard() {
-    // Mengambil data user dari Redux (menyesuaikan dengan store Anda)
-    // const userInfo = useAppSelector((state) => state.auth.userInfo);
-    
-    const themeColor = "#DA291C"; // McDonald's Red
-    const secondaryColor = "#FFC72C"; // McDonald's Yellow
-
-    // Fungsi sederhana untuk sapaan berdasarkan waktu
-    const getGreeting = () => {
-        const hour = new Date().getHours();
-        if (hour < 12) return "Good Morning";
-        if (hour < 18) return "Good Afternoon";
-        return "Good Evening";
-    };
-
-    // Komponen Card reusable untuk statistik
-    const StatCard = ({ title, value, icon, color }) => (
+// Komponen Card reusable untuk statistik
+    const StatCard = ({
+        title,
+        value,
+        icon,
+        color,
+    }: {
+        title: string;
+        value: string | number;
+        icon: React.ReactNode;
+        color: string;
+    }) => {
+    return (
         <Paper
             elevation={0}
             sx={{
@@ -67,7 +62,30 @@ export default function AdminDashboard() {
                 </Typography>
             </Box>
         </Paper>
-    );
+        );
+    };
+
+export default function AdminDashboard() {
+    // Mengambil data user dari Redux (menyesuaikan dengan store Anda)
+    // const userInfo = useAppSelector((state) => state.auth.userInfo);
+    
+    const themeColor = "#DA291C"; // McDonald's Red
+    const secondaryColor = "#FFC72C"; // McDonald's Yellow
+
+    const { menus, reload: reloadMenu } = useMenus();
+
+    useEffect(() => {
+        reloadMenu()
+    }, [reloadMenu]);
+
+    // Fungsi sederhana untuk sapaan berdasarkan waktu
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return "Good Morning";
+        if (hour < 18) return "Good Afternoon";
+        return "Good Evening";
+    };
+
 
     return (
         <Container maxWidth="xl" sx={{ py: 4 }}>
@@ -152,40 +170,50 @@ export default function AdminDashboard() {
             <Typography variant="h5" sx={{ fontWeight: 700, color: "#333", mb: 3 }}>
                 Quick Stats
             </Typography>
-            <Grid container spacing={3}>
-                <Grid item xs={12} sm={6} md={3}>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    mx: -1.5,
+                }}
+            >
+                <Box sx={{ px: 1.5, mb: 3, width: { xs: "100%", sm: "50%", md: "25%" } }}>
                     <StatCard 
-                        title="Total Posts" 
-                        value="142" 
+                        title="Total Menu" 
+                        value={menus.length} 
                         icon={<ArticleIcon fontSize="large" />} 
                         color={themeColor} 
                     />
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
+                </Box>
+
+                <Box sx={{ px: 1.5, mb: 3, width: { xs: "100%", sm: "50%", md: "25%" } }}>
                     <StatCard 
                         title="Active Promos" 
                         value="8" 
                         icon={<StarBorderIcon fontSize="large" />} 
                         color={secondaryColor} 
                     />
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
+                </Box>
+
+                <Box sx={{ px: 1.5, mb: 3, width: { xs: "100%", sm: "50%", md: "25%" } }}>
                     <StatCard 
                         title="New Menus" 
-                        value="12" 
+                        value={menus.filter(menu => menu.tag === "Baru!").length}
                         icon={<FastfoodIcon fontSize="large" />} 
                         color="#000000" 
                     />
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
+                </Box>
+
+                <Box sx={{ px: 1.5, mb: 3, width: { xs: "100%", sm: "50%", md: "25%" } }}>
                     <StatCard 
                         title="Total Visitors" 
                         value="45.2K" 
                         icon={<TrendingUpIcon fontSize="large" />} 
-                        color="#4CAF50" // Aksen hijau untuk growth
+                        color="#4CAF50"
                     />
-                </Grid>
-            </Grid>
+                </Box>
+            </Box>
+
 
             {/* --- SECTION TAMBAHAN (Contoh: Aktivitas Terakhir) --- */}
             <Box sx={{ mt: 5 }}>

@@ -14,9 +14,6 @@ export class MenuController {
           { model: Paket_Menu, as: "menuRelation" },
           { model: Paket_Menu, as: "paketRelation" },
         ],
-        where: {
-          ketersediaan: "Tersedia",
-        }
       });
 
       res.json({

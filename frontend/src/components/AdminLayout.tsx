@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { Link, Outlet, useNavigate } from "react-router";
 import LogoutIcon from "@mui/icons-material/Logout";
-import AddIcon from "@mui/icons-material/Add";
+import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import { useAppDispatch } from "../hooks/useAppDispatch";
 import { authActions } from "../store/authSlice";
 import { useAppSelector } from "../hooks/useAppSelector";
@@ -89,32 +89,25 @@ export function AdminLayout() {
                                         Dashboard
                                     </Button>
                                     <Button
-                                        sx={{
-                                            color: "#555",
-                                            fontWeight: 500,
-                                            textTransform: "none",
-                                            fontSize: "0.95rem",
-                                            px: 2,
-                                            position: "relative",
-                                        }}
-                                    >
-                                        Post Management
-                                    </Button>
-                                    <Button
-                                        variant="contained"
-                                        startIcon={<AddIcon />}
+                                      variant="contained"
+                                        startIcon={<RestaurantMenuIcon />}
                                         component={Link}
-                                        to="/admin/create-menu"
-                                        sx={{
-                                            bgcolor: themeColor,
-                                            borderRadius: "8px",
-                                            textTransform: "none",
-                                            fontWeight: 600,
-                                            "&:hover": { bgcolor: "#b22217" },
-                                            display: { xs: "none", sm: "flex" },
-                                        }}
+                                        to="/admin/list-menu"
+                                      sx={{
+                                        bgcolor: "#FFC72C",
+                                        color: "#000",
+                                        borderRadius: "12px",
+                                        textTransform: "none",
+                                        fontWeight: 600,
+                                        px: 2.5,
+                                        py: 1,
+                                        boxShadow: "0 4px 14px rgba(255, 199, 44, 0.4)",
+                                        "&:hover": {
+                                          bgcolor: "#e6b325",
+                                        },
+                                      }}
                                     >
-                                        Create Post
+                                      Menu Management
                                     </Button>
                                 </>
                             )}
