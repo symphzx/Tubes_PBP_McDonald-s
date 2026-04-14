@@ -12,6 +12,8 @@ import {
   Slide,
   type SlideProps,
 } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import IconButton from "@mui/material/IconButton";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import EmailIcon from "@mui/icons-material/Email";
 import LockIcon from "@mui/icons-material/Lock";
@@ -25,6 +27,8 @@ export default function LoginPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [openSuccess, setOpenSuccess] = useState(false);
+  const [modeLogin, setModeLogin] = useState(true);
+  const [recoveryEmail, setRecoveryEmail] = useState<string>("");
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -35,6 +39,29 @@ export default function LoginPage() {
     red: "#DA291C",
     black: "#000000",
     white: "#FFFFFF",
+  };
+
+  const handleLoginMode = () => {
+    if (modeLogin) {
+      setModeLogin(false);
+    } else {
+      setModeLogin(true);
+    }
+  };
+
+  const handleRecovery = async () => {
+    if (!isEmail(recoveryEmail)) {
+      alert("Email is not valid");
+      return;
+    }
+
+    await fetch("http://localhost:5173/api/auth/forgot-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: recoveryEmail }),
+    });
+
+    alert("Recovery email sent!");
   };
 
   const handleLogin = async () => {
@@ -81,13 +108,11 @@ export default function LoginPage() {
   return (
     <Box
       sx={{
-        // Ganti height: "88.6vh" dengan ini:
         flex: 1,
         width: "100%",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        // Gunakan minHeight agar jika di layar kecil konten tidak terpotong
         minHeight: "calc(100vh - 70px)",
         background: `radial-gradient(circle at center, ${colors.red} 0%, ${colors.black} 100%)`,
         overflow: "hidden",
@@ -116,111 +141,155 @@ export default function LoginPage() {
           },
         }}
       >
+        {modeLogin === false && (
+          <IconButton
+            onClick={handleLoginMode}
+            sx={{
+              position: "absolute",
+              top: 16,
+              left: 16,
+              color: colors.black,
+            }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+        )}
         <Typography
           variant="h4"
           fontWeight="800"
           sx={{ color: colors.black, mb: 1, letterSpacing: -1 }}
         >
-          WELCOME BACK
+          {modeLogin === true ? "WELCOME BACK" : "FORGOT PASSWORD"}
         </Typography>
         <Typography variant="body2" sx={{ color: "gray", mb: 4 }}>
-          Please enter your credentials to access your account
+          {modeLogin === true
+            ? "Please enter your credentials to access your account"
+            : "Enter your email to receive password recovery instructions"}
         </Typography>
 
         <Box component="form" noValidate sx={{ mt: 1 }}>
-          <TextField
-            fullWidth
-            label="Email Address"
-            variant="filled"
-            margin="normal"
-            onChange={(e) => setEmail(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <EmailIcon sx={{ color: colors.red }} />
-                </InputAdornment>
-              ),
-            }}
-            sx={{
-              bgcolor: colors.white,
-              borderRadius: 1,
-              "& .MuiFilledInput-underline:after": {
-                borderBottomColor: colors.yellow,
-              },
-            }}
-          />
+          {modeLogin === true ? (
+            <>
+              {/* EMAIL */}
+              <TextField
+                fullWidth
+                label="Email Address"
+                variant="filled"
+                margin="normal"
+                onChange={(e) => setEmail(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <EmailIcon sx={{ color: colors.red }} />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  bgcolor: colors.white,
+                  borderRadius: 1,
+                  "& .MuiFilledInput-underline:after": {
+                    borderBottomColor: colors.yellow,
+                  },
+                }}
+              />
 
-          <TextField
-            fullWidth
-            label="Password"
-            variant="filled"
-            type="password"
-            margin="normal"
-            onChange={(e) => setPassword(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <LockIcon sx={{ color: colors.red }} />
-                </InputAdornment>
-              ),
-            }}
-            sx={{
-              bgcolor: colors.white,
-              borderRadius: 1,
-              "& .MuiFilledInput-underline:after": {
-                borderBottomColor: colors.yellow,
-              },
-            }}
-          />
+              {/* PASSWORD */}
+              <TextField
+                fullWidth
+                label="Password"
+                type="password"
+                variant="filled"
+                margin="normal"
+                onChange={(e) => setPassword(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LockIcon sx={{ color: colors.red }} />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  bgcolor: colors.white,
+                  borderRadius: 1,
+                  "& .MuiFilledInput-underline:after": {
+                    borderBottomColor: colors.yellow,
+                  },
+                }}
+              />
 
-          <Button
-            fullWidth
-            variant="contained"
-            onClick={handleLogin}
-            sx={{
-              mt: 4,
-              mb: 2,
-              py: 1.5,
-              fontSize: "1.1rem",
-              fontWeight: "bold",
-              backgroundColor: colors.red,
-              color: colors.white,
-              borderRadius: "50px",
-              transition: "all 0.3s ease",
-              "&:hover": {
-                backgroundColor: colors.black,
-                transform: "scale(1.02)",
-                boxShadow: `0 4px 20px ${colors.yellow}44`,
-              },
-            }}
-          >
-            SIGN IN
-          </Button>
+              {/* LOGIN BUTTON */}
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={handleLogin}
+                sx={{
+                  mt: 4,
+                  mb: 2,
+                  py: 1.5,
+                  fontSize: "1.1rem",
+                  fontWeight: "bold",
+                  backgroundColor: colors.red,
+                  color: colors.white,
+                  borderRadius: "50px",
+                }}
+              >
+                SIGN IN
+              </Button>
 
-          <Button
-            // onClick={handleForgotPassword} // Tambahkan fungsi navigasi Anda di sini
-            sx={{
-              textTransform: "none", // Menghilangkan gaya huruf kapital semua
-              padding: 0, // Menghilangkan padding agar ukurannya pas dengan teks
-              minWidth: 0, // Menghilangkan lebar minimal bawaan Button
-              verticalAlign: "baseline", // Memastikan teks sejajar secara horizontal
-              "&:hover": {
-                backgroundColor: "transparent", // Menghilangkan background abu-abu saat di-hover
-                textDecoration: "underline", // Opsional: memberi efek garis bawah saat hover
-              },
-            }}
-          >
-            <Typography
-              variant="caption"
-              sx={{
-                color: colors.black,
-                mt: 2,
-                display: "block",
-              }}
-            >
-              Forgot Password?
-            </Typography>
-          </Button>
+              {/* FORGOT BUTTON */}
+              <Button onClick={handleLoginMode} sx={{ p: 0, minWidth: 0, mt: 2 }}>
+                <Typography
+                  variant="caption"
+                  sx={{ color: colors.black }}
+                >
+                  Forgot Password?
+                </Typography>
+              </Button>
+            </>
+          ) : (
+            <>
+              {/* RECOVERY EMAIL */}
+              <TextField
+                fullWidth
+                label="Recovery Email"
+                variant="filled"
+                margin="normal"
+                onChange={(e) => setRecoveryEmail(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <EmailIcon sx={{ color: colors.red }} />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  bgcolor: colors.white,
+                  borderRadius: 1,
+                  "& .MuiFilledInput-underline:after": {
+                    borderBottomColor: colors.yellow,
+                  },
+                }}
+              />
+
+              {/* RECOVERY BUTTON */}
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={handleRecovery}
+                sx={{
+                  mt: 4,
+                  py: 1.5,
+                  fontSize: "1.1rem",
+                  fontWeight: "bold",
+                  backgroundColor: colors.red,
+                  color: colors.white,
+                  borderRadius: "50px",
+                }}
+              >
+                SEND RECOVERY EMAIL
+              </Button>
+            </>
+          )}
         </Box>
       </Paper>
 

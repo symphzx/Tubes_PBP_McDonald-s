@@ -1,101 +1,26 @@
-import React, { useState } from "react";
+import { useEffect, useMemo } from "react";
 import {
     Box,
     Typography,
-    Button,
     Card,
     CardContent,
     CardMedia,
 } from "@mui/material";
 import { useNavigate } from "react-router";
-
-const filters = ["Semua", "Ayam Spicy", "Ayam Mix"];
-
-const menuData = [
-    {
-        nama: "PaNas 2 Ayam McD Gulai Spicy Perkedel",
-        harga_awal: "Rp65.500",
-        kategori: "Ayam Spicy",
-        tipe: "Paket",
-        gambar: "http://localhost:3000/uploads/assets/PaNas 2 Ayam McD Gulai Perkedel.webp",
-        ketersediaan: "Tersedia",
-        tag: "Baru!",
-    },
-    {
-        nama: "PaNas 2 with Fries Ayam McD Gulai Spicy",
-        harga_awal: "Rp80.500",
-        kategori: "Ayam Spicy",
-        tipe: "Paket",
-        gambar: "http://localhost:3000/uploads/assets/PaNas 2 Fries Ayam McD Gulai.webp",
-        ketersediaan: "Tersedia",
-        tag: "Baru!",
-    },
-    {
-        nama: "Paket Spesial Ayam McD Gulai Spicy Perkedel",
-        harga_awal: "Rp57.500",
-        kategori: "Ayam Spicy",
-        tipe: "Paket",
-        gambar: "http://localhost:3000/uploads/assets/Paket Spesial Ayam McD Gulai Perkedel.webp",
-        ketersediaan: "Tersedia",
-        tag: "Baru!",
-    },
-    {
-        nama: "PaNas 1 Spicy",
-        harga_awal: "Rp48.500",
-        kategori: "Ayam Spicy",
-        tipe: "Paket",
-        gambar: "http://localhost:3000/uploads/assets/PaNas 1 Spicy.png",
-        ketersediaan: "Tersedia",
-        tag: "",
-    },
-    {
-        nama: "PaNas 2 with Fries Spicy",
-        harga_awal: "Rp58.500",
-        kategori: "Ayam Mix",
-        tipe: "Paket",
-        gambar: "http://localhost:3000/uploads/assets/PaNas 2 with Fries Spicy.png",
-        ketersediaan: "Tersedia",
-        tag: "",
-    },
-    {
-        nama: "PaMer 5 Spicy",
-        harga_awal: "Rp88.000",
-        kategori: "Ayam Spicy",
-        tipe: "Paket",
-        gambar: "http://localhost:3000/uploads/assets/PaMer 5 Spicy.png",
-        ketersediaan: "Tersedia",
-        tag: "",
-    },
-    {
-        nama: "Ayam Spicy McDonald's",
-        harga_awal: "Rp22.000",
-        kategori: "Ayam Spicy",
-        tipe: "Ala Carte",
-        gambar: "http://localhost:3000/uploads/assets/Ayam Spicy McDonald's.webp",
-        ketersediaan: "Tersedia",
-        tag: "",
-    },
-    {   
-        id: 99,
-        nama: "Big Mac",
-        harga_awal: "Rp43.000",
-        kategori: "Burger & McNuggets",
-        tipe: "Ala Carte",
-        gambar: "https://d2vuyvo9qdtgo9.cloudfront.net/foods/October2023/S2b8K7g2tM6cDksrAdVv.webp",
-        ketersediaan: "Tersedia",
-        tag: "",
-        recommendation: {
-                        title: "Paket Big Mac",
-                        price: "Rp60.000",
-                        image: "https://d2vuyvo9qdtgo9.cloudfront.net/foods/July2024/Od0aM1u2WwlUFkMz4s5H.png"
-                    }
-    }
-];
+import { useParams } from "react-router";
+import { useMenus } from "../../hooks/useMenus";
+import { useKategori } from "../../hooks/useKategori";
 
 export default function MenuPage() {
-    const [activeFilter, setActiveFilter] = useState("Semua");
+    const { menus, reload } = useMenus();
 
+    const { kategori } = useKategori();
+    const { category } = useParams();
     const navigate = useNavigate();
+
+    const selectedCategory = useMemo(() => {
+        return kategori.find((item) => item.nama === category);
+    }, [kategori, category]);
 
     const handleCardClick = (item: any) => {
       // kalo menu satuan, arahin ke package selection
@@ -109,10 +34,29 @@ export default function MenuPage() {
       }
     };
 
-    const filteredData =
-        activeFilter === "Semua"
-            ? menuData
-            : menuData.filter((item) => item.kategori === activeFilter);
+    const formatHarga = (harga: number) => {
+      return new Intl.NumberFormat("en-US").format(harga);
+    };
+
+    useEffect(() => {
+        reload();
+    }, [reload]);
+
+    const filteredAndSortedData = useMemo(() => {
+        let data = [...menus];
+
+        // filter berdasarkan sidebar
+        if (selectedCategory) {
+            data = data.filter((item) => item.kategori_id === selectedCategory.id);
+        }
+
+        // sort "Baru!" ke atas
+        data.sort((a, b) =>
+            Number(b.tag === "Baru!") - Number(a.tag === "Baru!")
+        );
+
+        return data;
+    }, [menus, selectedCategory]);
 
     return (
         <Box>
@@ -120,39 +64,13 @@ export default function MenuPage() {
             <Typography
                 sx={{ fontSize: 26, fontWeight: 700, color: "#333", mb: 1 }}
             >
-                Ayam McD
+                {selectedCategory?.nama}
             </Typography>
 
             {/* SUBTITLE */}
             <Typography sx={{ fontSize: 13, color: "#777", mb: 2 }}>
                 Gunakan filter berikut untuk memudahkan pencarian
             </Typography>
-
-            {/* FILTER */}
-            <Box sx={{ display: "flex", gap: 1.5, mb: 3 }}>
-                {filters.map((filter) => (
-                    <Button
-                        key={filter}
-                        onClick={() => setActiveFilter(filter)}
-                        sx={{
-                            borderRadius: "20px",
-                            textTransform: "none",
-                            fontSize: 12,
-                            px: 2.5,
-                            py: 0.5,
-                            border: "1px solid #ddd",
-                            backgroundColor:
-                                activeFilter === filter ? "#eee" : "#fff",
-                            color: "#333",
-                            "&:hover": {
-                                backgroundColor: "#f5f5f5",
-                            },
-                        }}
-                    >
-                        {filter}
-                    </Button>
-                ))}
-            </Box>
 
             {/* GRID MENU */}
             <Box
@@ -162,7 +80,7 @@ export default function MenuPage() {
                     gap: 12 / 8, // 12px
                 }}
             >
-                {filteredData.map((item, index) => (
+                {filteredAndSortedData.map((item, index) => (
                     <Card
                         onClick={() => handleCardClick(item)}
                         key={index}
@@ -207,7 +125,7 @@ export default function MenuPage() {
 
                         <CardMedia
                             component="img"
-                            image={item.gambar}
+                            image={item.gambar || "https://via.placeholder.com/150"}
                             sx={{
                                 height: "100%",
                                 objectFit: "contain",
@@ -235,7 +153,7 @@ export default function MenuPage() {
                             </Typography>
 
                             <Typography sx={{ fontSize: 12, color: "#555" }}>
-                                {item.harga_awal}
+                                Rp{formatHarga(item.harga_awal)}
                             </Typography>
                         </CardContent>
                     </Card>

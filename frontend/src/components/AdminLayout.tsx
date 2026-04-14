@@ -68,13 +68,13 @@ export function AdminLayout() {
                                     width: "auto",
                                     cursor: "pointer",
                                 }}
-                                onClick={() => navigate("/")}
+                                onClick={() => navigate("/admin")}
                             />
                         </Box>
 
                         {/* --- MENU NAVIGASI (Hanya jika Login) --- */}
                         <Box sx={{ flexGrow: 1, display: "flex", gap: 1 }}>
-                            {userInfo && (
+                            {!userInfo && (
                                 <>
                                     <Button
                                         sx={{
@@ -104,7 +104,7 @@ export function AdminLayout() {
                                         variant="contained"
                                         startIcon={<AddIcon />}
                                         component={Link}
-                                        to="/post/create"
+                                        to="/admin/create-menu"
                                         sx={{
                                             bgcolor: themeColor,
                                             borderRadius: "8px",
@@ -128,7 +128,7 @@ export function AdminLayout() {
                                 gap: 2,
                             }}
                         >
-                            {userInfo ? (
+                            {!userInfo ? (
                                 <>
                                     <Box
                                         sx={{

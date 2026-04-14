@@ -6,6 +6,8 @@ import {
     ListItemIcon,
     ListItemButton,
 } from "@mui/material";
+import { useNavigate } from "react-router";
+import { useLocation, useParams } from "react-router";
 
 import HomeIcon from "@mui/icons-material/Home";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
@@ -18,31 +20,47 @@ import RiceBowlIcon from "@mui/icons-material/RiceBowl";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 
 import { Outlet } from "react-router";
-import { useState } from "react";
+import { useEffect, type JSX } from "react";
+import { useKategori } from "../hooks/useKategori";
+
+const homeItems = { Label: "Home", icon: <HomeIcon />};
+const iconMap: Record<string, JSX.Element> = {
+    "Promosi": <LocalOfferIcon />,
+    "Burger & McNuggets": <LunchDiningIcon />,
+    "Ayam McD Krispy": <SetMealIcon />,
+    "Ayam McD Spicy": <SetMealIcon />,
+    "Paket Keluarga": <RestaurantIcon />,
+    "Happy Meal": <FastfoodIcon />,
+    "Paket Hemat": <RestaurantIcon />,
+    "Menu Receh": <FastfoodIcon />,
+    "McSpaghetti": <RestaurantIcon />,
+    "Camilan": <FastfoodIcon />,
+    "Minuman": <EmojiFoodBeverageIcon />,
+    "Pencuci Mulut": <IcecreamIcon />,
+    "Nasi": <RiceBowlIcon />,
+};
 
 export function MenuLayout() {
-    const [activeIndex, setActiveIndex] = useState<number | null>(null);
-    const [isHomeActive, setIsHomeActive] = useState(true);
+    const location = useLocation();
+    const { category } = useParams();
 
-    const homeItems = { Label: "Home", icon: <HomeIcon />};
-    const menuItems = [
-        { label: "Promosi", icon: <LocalOfferIcon />},
-        {
-            label: "Burger & McNuggets",
-            icon: <LunchDiningIcon />,
-        },
-        { label: "Ayam McD Krispy", icon: <SetMealIcon />},
-        { label: "Ayam McD Spicy", icon: <SetMealIcon />},
-        { label: "Paket Keluarga", icon: <RestaurantIcon />},
-        { label: "Happy Meal", icon: <FastfoodIcon />},
-        { label: "Paket Hemat", icon: <RestaurantIcon />},
-        { label: "Menu Receh", icon: <FastfoodIcon />},
-        { label: "McSpaghetti", icon: <RestaurantIcon />},
-        { label: "Camilan", icon: <FastfoodIcon />},
-        { label: "Minuman", icon: <EmojiFoodBeverageIcon />},
-        { label: "Pencuci Mulut", icon: <IcecreamIcon />},
-        { label: "Nasi", icon: <RiceBowlIcon />},
-    ];
+    const { kategori, reload } = useKategori();
+
+    useEffect(() => {
+        reload();
+    }, [reload]);
+
+    const isHomeActive = location.pathname === "/";
+
+    const activeIndex = kategori.findIndex(
+        (item) => item.nama === category
+    );
+
+    const navigate = useNavigate();
+
+    const handleMenuClick = (label: string) => {
+        navigate(`/menu/${label}`);
+    };
 
     return (
         <Box
@@ -86,6 +104,7 @@ export function MenuLayout() {
                         sx={{
                             width: "100%",
                             height: 150,
+                            flexShrink: 0,
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
@@ -121,8 +140,7 @@ export function MenuLayout() {
                         >
                             <ListItemButton
                                 onClick={() => {
-                                    setIsHomeActive(true);
-                                    setActiveIndex(null);
+                                    navigate("/");
                                 }}
                                 sx={{
                                     height: 50,
@@ -158,18 +176,18 @@ export function MenuLayout() {
                             </ListItemButton>
                         </Card>
 
-                        {menuItems.map((item, index) => (
+                        {kategori.map((item, index) => (
                             <ListItemButton
                                 onClick={() => {
-                                    setIsHomeActive(false);
-                                    setActiveIndex(index);
+                                    handleMenuClick(item.nama)
+                                    // setActiveIndex(index);
                                 }}
-                                key={index}
+                                key={item.id}
                                 sx={{
                                     borderTopRightRadius:
                                         index === 0 ? "4px" : "0px",
                                     borderBottomRightRadius:
-                                        index === menuItems.length - 1
+                                        index === kategori.length - 1
                                             ? "4px"
                                             : "0px",
                                     border: "1px solid #e0e0e0",
@@ -183,7 +201,7 @@ export function MenuLayout() {
                                         backgroundColor: "#f0f0f0",
                                     },
                                     boxShadow:
-                                        index === menuItems.length - 1
+                                        index === kategori.length - 1
                                             ? "0px 1px 0px 0px #767676"
                                             : "none",
                                 }}
@@ -194,11 +212,11 @@ export function MenuLayout() {
                                         color: activeIndex === index ? "#000" : "#666",
                                     }}
                                 >
-                                    {item.icon}
+                                    {iconMap[item.nama] || <RestaurantIcon />}
                                 </ListItemIcon>
 
                                 <ListItemText
-                                    primary={item.label}
+                                    primary={item.nama}
                                     primaryTypographyProps={{
                                         fontSize: 13,
                                         fontWeight: activeIndex === index ? 600 : 400,

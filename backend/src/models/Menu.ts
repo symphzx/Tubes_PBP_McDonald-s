@@ -5,17 +5,18 @@ import {
     DataType,
     PrimaryKey,
     HasMany,
-    ForeignKey,
     BelongsTo,
 } from "sequelize-typescript";
 import { Varian_Menu } from "./VarianMenu";
 import { Opsi_Menu } from "./OpsiMenu";
 import { Paket_Menu } from "./PaketMenu";
 import { Order_Menu } from "./OrderMenu";
+import { Kategori } from "./Kategori";
 
 @Table({
     tableName: "Menu",
     timestamps: true,
+    paranoid: true
 })
 
 export class Menu extends Model {
@@ -28,6 +29,12 @@ export class Menu extends Model {
     declare id: string;
 
     @Column({
+        type: DataType.UUID,
+        allowNull: false,
+    })
+    kategori_id!: string;
+
+    @Column({
         type: DataType.STRING,
         allowNull: false,
     })
@@ -38,12 +45,6 @@ export class Menu extends Model {
         allowNull: false,
     })
     harga_awal!: number;
-
-    @Column({
-        type: DataType.ENUM("Burger & McNuggets", "Ayam McD Krispy", "Ayam McD Spicy", "Paket Keluarga", "Happy Meal", "Paket HeBat", "Menu Receh", "McSpaghetti", "Camilan", "Minuman", "Pencuci Mulut", "Nasi"),
-        allowNull: false,
-    })
-    kategori!: "Burger & McNuggets" | "Ayam McD Krispy" | "Ayam McD Spicy" | "Paket Keluarga" | "Happy Meal" | "Paket HeBat" | "Menu Receh" | "McSpaghetti" | "Camilan" | "Minuman" | "Pencuci Mulut" | "Nasi";
 
     @Column({
         type: DataType.ENUM("Ala Carte", "Paket"),
@@ -68,6 +69,9 @@ export class Menu extends Model {
         allowNull: true,
     })
     tag!: "Baru!";
+
+    @BelongsTo(() => Kategori, "kategori_id")
+    kategoriRelation!: Kategori
     
     @HasMany(() => Varian_Menu, "menu_id")
     varian_menus!: Varian_Menu[]
