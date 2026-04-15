@@ -30,5 +30,5 @@ export class Kategori extends Model {
     nama!: string;
 
     @HasMany(() => Menu, "kategori_id")
-    menuRelation!: Menu
+    menuRelation!: Menu[] // nath nambahin [] karena 1 kategori punya banyak menuuu
 }
