@@ -5,12 +5,12 @@
 // kenapa pake trancaction? krn bikin 1 order kudu pake 2 table (Orders sama Order_Menu)
 // get list order
 
-import { Request, Response } from "express";
-import { sequelize } from "../config/database";
-import { Order } from "../models/Order";
-import { Order_Menu } from "../models/OrderMenu";
-import { Op } from "sequelize";
-import { isBIC } from "class-validator";
+import { Request, Response } from "express"
+import { sequelize } from "../config/database"
+import { Order } from "../models/Order"
+import { Order_Menu } from "../models/OrderMenu"
+import { Op } from "sequelize"
+import { isBIC } from "class-validator"
 
 
 export class OrderController {
@@ -63,33 +63,13 @@ export class OrderController {
                     })
                 }
             }
-
-            // cek no_meja sama order_no nya kedouble ga
-            if (order_type === "DINE_IN" && no_meja) {
-                const existingOrder = await Order.findOne({
-                    where: {
-                        no_meja: no_meja,
-                        order_no: nextOrder_no,
-                        status: { [Op.not] : "COMPLETED"}
-                    },
-                    transaction
-                })
-
-                // kalo kedouble
-                if (existingOrder) {
-                    await transaction.rollback()
-                    return res.status(400).json({
-                        message: `Meja ${no_meja} dengan nomor antrian ${nextOrder_no} sudah terdaftar!`
-                    })
-                }
-            }
             
             // bikin order
             const newOrder = await Order.create({
                 waktu_pesanan: new Date().toISOString(),
                 total_harga,
                 order_type,
-                no_meja: order_type === "TAKEAWAY" ? 0 : no_meja,
+                no_meja: order_type === "TAKEAWAY" ? 0 : assignedTable,
                 status: "PENDING",
                 order_no: nextOrder_no
             },
@@ -152,5 +132,73 @@ export class OrderController {
     }
 
     // get by id
-    
+    static async getOrderById(req: Request, res: Response) {
+        try {
+            const { id } = req.params
+
+            if (!id) {
+                return res.status(400).json({
+                    message: "ID Order harus diisi"
+                })
+            }
+
+            const order = await Order.findByPk(id as string, {
+                include: [
+                    { 
+                        model: Order_Menu, 
+                        as: "orderMenuRelation",
+                        include: ["menu", "varian_menu", "opsi_menu"]
+                    }
+                ]
+            })
+
+            if (!order) {
+                return res.status(404).json({
+                    message: "Order tidak ditemukan"
+                })
+            }
+
+            return res.status(200).json({
+                data: order
+            })
+        } catch (err: any) {
+            return res.status(500).json({
+                message: err.message
+            })
+        }
+    }
+
+    // update order status 
+    static async updateOrderStatus(req: Request, res: Response) {
+        try {
+            const { id } = req.params
+            const { status } = req.body 
+
+            if (!id) {
+                return res.status(400).json({
+                    message: "ID Order harus diisi"
+                })
+            }
+
+            const order = await Order.findByPk(id as string) // klo gapake as string error aih kneapa ya
+
+            if (!order) {
+                return res.status(404).json({
+                    message: "Order tidak ditemukan"
+                })
+            }
+
+            order.status = status
+            await order.save()
+
+            return res.status(200).json({
+                message: `Status order berhasil diupdate ke ${status}`,
+                data: order
+            })
+        } catch (err: any) {
+            return res.status(500).json({
+                message: err.message
+            })
+        }
+    }
 }

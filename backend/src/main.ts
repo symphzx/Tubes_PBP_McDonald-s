@@ -8,6 +8,8 @@ import { Paket_Menu } from "./models/PaketMenu";
 import { Order } from "./models/Order";
 import { Order_Menu } from "./models/OrderMenu";
 
+import orderRoutes from "./routes/orderRoutes"
+
 const sequelize = new Sequelize({
     username: appConfig.database.username,
     password: appConfig.database.password,
@@ -53,6 +55,9 @@ menuRouter.get("/", async (req, res) => {
 });
 
 app.use("/uploads", express.static("uploads"));
+
+// buat route order
+app.use("/api/orders", orderRoutes)
 
 const PORT = appConfig.server.port;
 app.listen(PORT, () => {

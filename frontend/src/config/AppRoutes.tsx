@@ -22,9 +22,14 @@ const RecomendationPage = lazy(
   () => import("../pages/Order/Recomendation/RecomendationPage"),
 );
 
-const PackageSelection = lazy(
-  () => import("../pages/Order/PackageSelection/PackageSelectionBurger"),
-);
+// const PackageSelection = lazy(
+//   () => import("../pages/Order/PackageSelection/PackageSelectionBurger"),
+// );
+
+const PackageSelectionBurger = lazy(() => import("../pages/Order/PackageSelection/PackageSelectionBurger"))
+
+const PackageSelectionAyam = lazy(() => import("../pages/Order/PackageSelection/PackageSelectionAyam"))
+
 
 export const AppRoutes = () => {
   return (
@@ -36,7 +41,8 @@ export const AppRoutes = () => {
       <Route path="/payment" element={<PaymentPage />} />
       <Route path="/payment/success" element={<PaymentSuccess />} />
 
-      <Route path="/order/package-selection" element={<PackageSelection />} />
+      <Route path="/order/package-selection-burger" element={<PackageSelectionBurger />} />
+      <Route path="/order/package-selection-ayam" element={<PackageSelectionAyam />} />
 
       <Route element={<OrderLayout />}>
         <Route path="/order" element={<OrderTypePage />} />
