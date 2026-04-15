@@ -73,23 +73,19 @@ export default function ListMenuPage() {
       });
   }, [menus, search, selectedKategori, selectedStatus, selectedTag, sortHarga]);
 
-  // const selectedKategori = kategori.find(
-  //   (cat) => cat.id === menu.kategori_id
-  // );
+  const handleDelete = async (id: string) => {
+    if (!confirm("Yakin ingin menghapus menu ini?")) return;
 
-  // const handleDelete = async (id: string) => {
-  //   if (!confirm("Yakin ingin menghapus menu ini?")) return;
+    try {
+      await fetch(`http://localhost:3000/menu/${id}`, {
+        method: "DELETE",
+      });
 
-  //   try {
-  //     await fetch(`http://localhost:3000/menu/${id}`, {
-  //       method: "DELETE",
-  //     });
-
-  //     setMenus((prev) => prev.filter((m) => m.id !== id));
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
+      reloadMenu();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -488,7 +484,7 @@ export default function ListMenuPage() {
               </IconButton>
 
               <IconButton
-                // onClick={() => handleDelete(menu.id)}
+                onClick={() => handleDelete(menu.id)}
                 sx={{
                   border: "1px solid #E0E0E0",
                   borderRadius: "10px",

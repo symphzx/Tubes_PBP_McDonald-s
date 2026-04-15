@@ -29,6 +29,7 @@ const AdminPage = lazy(() => import("../pages/Admin/AdminPage"));
 const LoginPage = lazy(() => import("../pages/Admin/Login/LoginPage"));
 const CreateMenuPage = lazy(() => import("../pages/Admin/CRUD/CreateMenuPage"));
 const ListMenuPage = lazy(() => import("../pages/Admin/CRUD/ListMenuPage"));
+const EditMenuPage = lazy(() => import("../pages/Admin/CRUD/EditMenuPage"))
 
 export const AppRoutes = () => {
   return (
@@ -55,6 +56,7 @@ export const AppRoutes = () => {
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/admin/create-menu" element={<CreateMenuPage />} />
         <Route path="/admin/list-menu" element={<ListMenuPage />} />
+        <Route path="/admin/edit-menu/:id" element={<EditMenuPage />} />
       </Route>
     </Routes>
   );
