@@ -8,6 +8,7 @@ import { Paket_Menu } from "../models/PaketMenu";
 import { Order } from "../models/Order";
 import { Order_Menu } from "../models/OrderMenu";
 import { User } from "../models/User";
+import { Kategori } from "../models/Kategori";
 
 export const sequelize = new Sequelize({
   username: appConfig.database.username,
@@ -16,5 +17,5 @@ export const sequelize = new Sequelize({
   host: appConfig.database.host,
   port: appConfig.database.port,
   dialect: appConfig.database.dialect,
-  models: [Menu, Varian_Menu, Opsi_Menu, Paket_Menu, Order, Order_Menu, User],
+  models: [Kategori, Menu, Varian_Menu, Opsi_Menu, Paket_Menu, Order, Order_Menu, User],
 });

@@ -7,6 +7,7 @@ import { Opsi_Menu } from "./OpsiMenu";
 @Table({
   tableName: "Order_Menu",
   timestamps: true,
+  paranoid: true
 })
 export class Order_Menu extends Model {
   @PrimaryKey

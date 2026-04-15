@@ -1,13 +1,18 @@
-export type KategoriMenu = "Burger & McNuggets" | "Ayam McD Krispy" | "Ayam McD Spicy" | "Paket Keluarga" | "Happy Meal" | "Paket HeBat" | "Menu Receh" | "McSpaghetti" | "Camilan" | "Minuman" | "Pencuci Mulut" | "Nasi";
+// export type KategoriMenu = "Burger & McNuggets" | "Ayam McD Krispy" | "Ayam McD Spicy" | "Paket Keluarga" | "Happy Meal" | "Paket HeBat" | "Menu Receh" | "McSpaghetti" | "Camilan" | "Minuman" | "Pencuci Mulut" | "Nasi";
 export type TipeMenu = "Ala Carte" | "Paket";
 export type Ketersediaan = "Tersedia" | "Tidak Tersedia";
 export type PaymentMethod = "DEBIT" | "QRIS" | "CASHIER";
 
+export type KategoriMenu ={
+  id: string;
+  nama: string;
+}
+
 export type Menu = {
   id: string; 
+  kategori_id: string; 
   nama: string;
   harga_awal: number;
-  kategori: KategoriMenu; 
   tipe: TipeMenu;         
   gambar: string | null;  
   ketersediaan: Ketersediaan;

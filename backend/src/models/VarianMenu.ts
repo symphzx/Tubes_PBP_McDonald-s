@@ -13,6 +13,7 @@ import { Order_Menu } from "./OrderMenu";
 @Table({
     tableName: "Varian_Menu",
     timestamps: true,
+    paranoid: true
 })
 
 export class Varian_Menu extends Model {
