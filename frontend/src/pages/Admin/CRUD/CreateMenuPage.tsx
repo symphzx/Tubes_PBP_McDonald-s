@@ -12,6 +12,7 @@ import {
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SaveIcon from "@mui/icons-material/Save";
 import { useKategori } from "../../../hooks/useKategori";
+import { useNavigate } from "react-router";
 
 export default function CreateMenuPage() {
   const themeColor = "#DA291C";
@@ -25,6 +26,7 @@ export default function CreateMenuPage() {
   const [preview, setPreview] = useState<string>("");
 
   const { kategori, reload } = useKategori();
+  const navigate = useNavigate();
 
   useEffect(() => {
     reload();
@@ -58,6 +60,7 @@ export default function CreateMenuPage() {
       }
 
       alert("Menu berhasil dibuat!");
+      navigate("/admin/list-menu");
     } catch (error) {
       console.error(error);
       alert("Terjadi kesalahan");
