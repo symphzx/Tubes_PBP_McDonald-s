@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { KategoriController } from "../controllers/KategoriController";
+import { KategoriController } from "../controllers/kategori.controller";
 import auth from "../middlewares/auth.middleware";
 
 const router: Router = Router();

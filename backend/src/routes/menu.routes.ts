@@ -1,6 +1,6 @@
 
 import { Router } from "express";
-import { MenuController } from "../controllers/MenuController";
+import { MenuController } from "../controllers/menu.controller";
 import upload from "../middlewares/upload";
 import auth from "../middlewares/auth.middleware";
 

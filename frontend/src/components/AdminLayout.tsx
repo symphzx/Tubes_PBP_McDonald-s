@@ -13,13 +13,14 @@ import { Link, Outlet, useNavigate } from "react-router";
 import LogoutIcon from "@mui/icons-material/Logout";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import CategoryIcon from '@mui/icons-material/Category';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 import { useAppDispatch } from "../hooks/useAppDispatch";
 import { authActions } from "../store/authSlice";
-import { useAppSelector } from "../hooks/useAppSelector";
 import { useEffect } from "react";
+import { useAuth } from "../hooks/useAuth";
 
 export function AdminLayout() {
-    const userInfo = useAppSelector((state) => state.auth.userInfo);
+    const { userInfo, reload: reloadAuth } = useAuth();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
@@ -27,32 +28,8 @@ export function AdminLayout() {
     const secondaryColor = "#FFC72C";
 
     useEffect(() => {
-      const token = localStorage.getItem("token");
-
-      if (!token) return;
-
-      const fetchUser = async () => {
-        try {
-          const res = await fetch("http://localhost:3000/auth/me", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          if (!res.ok) throw new Error();
-
-          const data = await res.json();
-
-          dispatch(authActions.setUserInfo(data.data.user));
-        } catch (err) {
-          console.log(err);
-          localStorage.removeItem("token");
-          dispatch(authActions.setUserInfo(undefined));
-        }
-      };
-
-      fetchUser();
-    }, [dispatch]);
+      reloadAuth();
+    }, [reloadAuth]);
 
     const handleLogout = () => {
         dispatch(authActions.setUserInfo(undefined));
@@ -173,9 +150,9 @@ export function AdminLayout() {
                                       </Button>
                                     <Button
                                         variant="contained"
-                                        startIcon={<RestaurantMenuIcon />}
+                                        startIcon={<AssignmentIcon />}
                                         component={Link}
-                                        to="/admin/list-menu"
+                                        to="/admin/list-order"
                                         sx={{
                                           position: "relative",
                                           borderRadius: "12px",
@@ -184,17 +161,17 @@ export function AdminLayout() {
                                           fontSize: "0.95rem",
                                           px: 2.5,
                                           py: 1,
-                                          color: "#1a1a1a",
+                                          color: "#ffffff",
 
-                                          background: "linear-gradient(135deg, #FFD54F, #FFC72C)",
+                                          background: "linear-gradient(135deg, #556b2f, #3e4f1c)",
 
-                                          boxShadow: "0 4px 14px rgba(255, 199, 44, 0.35)",
+                                          boxShadow: "0 4px 14px rgba(62, 79, 28, 0.35)",
                                           transition: "all 0.25s ease",
 
                                           "&:hover": {
                                             transform: "translateY(-1px)",
-                                            boxShadow: "0 6px 18px rgba(255, 199, 44, 0.45)",
-                                            background: "linear-gradient(135deg, #FFCA28, #FFB300)",
+                                            boxShadow: "0 6px 18px rgba(79, 98, 40, 0.35)",
+                                            background: "linear-gradient(135deg, #6b8e23, #4f6228)",
                                           },
 
                                           "&:active": {
@@ -262,7 +239,10 @@ export function AdminLayout() {
                                                 fontSize: "0.9rem",
                                             }}
                                         >
-                                            A
+                                            {userInfo.nama
+                                                .split(" ")
+                                                .map((name) => name[0])
+                                                .join("")}
                                         </Avatar>
                                     </Box>
 

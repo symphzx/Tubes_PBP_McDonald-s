@@ -1,9 +1,12 @@
-import { lazy } from "react";
+import { lazy, useEffect } from "react";
 import { Route, Routes } from "react-router";
 import { MenuLayout } from "../components/MenuLayout";
 import OrderLayout from "../components/OrderLayout";
 import SetQuantityPage from "../pages/Order/SetQuantityPage/SetQuantityPage";
 import { AdminLayout } from "../components/AdminLayout";
+import { useAppSelector } from "../hooks/useAppSelector";
+import { authActions } from "../store/authSlice";
+import { useAppDispatch } from "../hooks/useAppDispatch";
 
 const HomePage = lazy(() => import("../pages/Home/HomePage"));
 
@@ -39,6 +42,37 @@ const EditCategoryPage = lazy(() => import("../pages/Admin/CategoryManagement/Ed
 const ListOrderPage = lazy(() => import("../pages/Admin/OrderManagement/ListOrderPage"));
 
 export const AppRoutes = () => {
+  const { userInfo } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+        const token = localStorage.getItem("token");
+  
+        if (!token) return;
+  
+        const fetchUser = async () => {
+          try {
+            const res = await fetch("http://localhost:3000/auth/me", {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+  
+            if (!res.ok) throw new Error();
+  
+            const data = await res.json();
+  
+            dispatch(authActions.setUserInfo(data.data.user));
+          } catch (err) {
+            console.log(err);
+            localStorage.removeItem("token");
+            dispatch(authActions.setUserInfo(undefined));
+          }
+        };
+  
+        fetchUser();
+      }, [dispatch]);
+
   return (
     <Routes>
       <Route element={<MenuLayout />}>
@@ -60,17 +94,17 @@ export const AppRoutes = () => {
 
       <Route element={<AdminLayout />}>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/admin" element={<AdminPage />} />
+        { userInfo && <Route path="/admin" element={<AdminPage />} /> }
 
-        <Route path="/admin/list-menu" element={<ListMenuPage />} />
-        <Route path="/admin/create-menu" element={<CreateMenuPage />} />
-        <Route path="/admin/edit-menu/:id" element={<EditMenuPage />} />
+        { userInfo && <Route path="/admin/list-menu" element={<ListMenuPage />} /> }
+        { userInfo && <Route path="/admin/create-menu" element={<CreateMenuPage />} /> }
+        { userInfo && <Route path="/admin/edit-menu/:id" element={<EditMenuPage />} /> }
 
-        <Route path="/admin/list-category" element={<ListCategoryPage />} />
-        <Route path="/admin/create-category" element={<CreateCategoryPage />} />
-        <Route path="/admin/edit-category/:id" element={<EditCategoryPage />} />
+        { userInfo && <Route path="/admin/list-category" element={<ListCategoryPage />} /> }
+        { userInfo && <Route path="/admin/create-category" element={<CreateCategoryPage />} /> }
+        { userInfo && <Route path="/admin/edit-category/:id" element={<EditCategoryPage />} /> }
 
-        <Route path="/admin/list-order" element={<ListOrderPage />} />
+        { userInfo && <Route path="/admin/list-order" element={<ListOrderPage />} /> }
         
       </Route>
     </Routes>

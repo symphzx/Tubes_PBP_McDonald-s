@@ -1,7 +1,7 @@
 import express, { Application } from "express";
-import menuRoutes from "./routes/menuRoutes";
-import authRoutes from "./routes/authRoutes";
-import kategoriRoutes from "./routes/kategoriRoutes";
+import menuRoutes from "./routes/menu.routes";
+import authRoutes from "./routes/auth.routes";
+import kategoriRoutes from "./routes/kategori.routes";
 import cors from "cors";
 import path from "path";
 import orderRoutes from "./routes/order.routes";
