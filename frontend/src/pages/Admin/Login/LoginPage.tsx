@@ -5,16 +5,8 @@ import "@fontsource/roboto/700.css";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import { Button, TextField, Typography, InputAdornment } from "@mui/material";
-import {
-  Snackbar,
-  Alert,
-  AlertTitle,
-  Slide,
-  type SlideProps,
-} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import IconButton from "@mui/material/IconButton";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import EmailIcon from "@mui/icons-material/Email";
 import LockIcon from "@mui/icons-material/Lock";
 import { useState } from "react";
@@ -26,7 +18,6 @@ import { useNavigate } from "react-router";
 export default function LoginPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [openSuccess, setOpenSuccess] = useState(false);
   const [modeLogin, setModeLogin] = useState(true);
   const [recoveryEmail, setRecoveryEmail] = useState<string>("");
 
@@ -90,16 +81,9 @@ export default function LoginPage() {
 
     localStorage.setItem("token", token);
 
-    setOpenSuccess(true);
-    setTimeout(async () => {
-      await setUserInfo();
-      navigate("/admin");
-    }, 1500);
+    await setUserInfo();
+    navigate("/admin", { state: { success: true } });
   };
-
-  function SlideTransition(props: SlideProps) {
-    return <Slide {...props} direction="down" />;
-  }
 
   const setUserInfo = async () => {
     const token = localStorage.getItem("token");
@@ -109,7 +93,6 @@ export default function LoginPage() {
       method: "GET",
     });
     const data = await response.json();
-    console.log(data.data.user);
     dispatch(authActions.setUserInfo(data.data.user));
   };
 
@@ -300,35 +283,6 @@ export default function LoginPage() {
           )}
         </Box>
       </Paper>
-
-      <Snackbar
-        open={openSuccess}
-        autoHideDuration={3000}
-        onClose={() => setOpenSuccess(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        TransitionComponent={SlideTransition}
-      >
-        <Alert
-          severity="success"
-          variant="filled"
-          icon={<CheckCircleOutlineIcon fontSize="large" />}
-          sx={{
-            backgroundColor: colors.black,
-            color: colors.yellow,
-            width: "100%",
-            boxShadow: "0 10px 40px rgba(0,0,0,0.5)",
-            borderRadius: 2,
-            fontSize: "1.1rem",
-            border: `2px solid ${colors.yellow}`,
-            "& .MuiAlert-icon": { color: colors.yellow },
-          }}
-        >
-          <AlertTitle sx={{ fontWeight: "900", fontSize: "1.2rem" }}>
-            LOGIN SUCCESS! 🚀
-          </AlertTitle>
-          Welcome back, <b>{email}</b>
-        </Alert>
-      </Snackbar>
     </Box>
   );
 }

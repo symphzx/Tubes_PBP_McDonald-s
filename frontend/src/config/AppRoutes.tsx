@@ -28,6 +28,8 @@ const PackageSelection = lazy(
   () => import("../pages/Order/PackageSelection/PackageSelectionBurger"),
 );
 
+const ProtectedRoute = lazy(() => import("./ProtectedRoute"));
+
 const AdminPage = lazy(() => import("../pages/Admin/AdminPage"));
 const LoginPage = lazy(() => import("../pages/Admin/Login/LoginPage"));
 
@@ -93,18 +95,19 @@ export const AppRoutes = () => {
       </Route>
 
       <Route element={<AdminLayout />}>
-        <Route path="/login" element={<LoginPage />} />
-        { userInfo && <Route path="/admin" element={<AdminPage />} /> }
+        { !userInfo && <Route path="/login" element={<LoginPage />} /> }
 
-        { userInfo && <Route path="/admin/list-menu" element={<ListMenuPage />} /> }
-        { userInfo && <Route path="/admin/create-menu" element={<CreateMenuPage />} /> }
-        { userInfo && <Route path="/admin/edit-menu/:id" element={<EditMenuPage />} /> }
+        { <Route path="/admin" element={ <ProtectedRoute> <AdminPage /> </ProtectedRoute>} /> }
 
-        { userInfo && <Route path="/admin/list-category" element={<ListCategoryPage />} /> }
-        { userInfo && <Route path="/admin/create-category" element={<CreateCategoryPage />} /> }
-        { userInfo && <Route path="/admin/edit-category/:id" element={<EditCategoryPage />} /> }
+        { <Route path="/admin/list-menu" element={ <ProtectedRoute> <ListMenuPage /> </ProtectedRoute>} /> }
+        { <Route path="/admin/create-menu" element={ <ProtectedRoute> <CreateMenuPage /> </ProtectedRoute>} /> }
+        { <Route path="/admin/edit-menu/:id" element={ <ProtectedRoute> <EditMenuPage /> </ProtectedRoute>} /> }
 
-        { userInfo && <Route path="/admin/list-order" element={<ListOrderPage />} /> }
+        { <Route path="/admin/list-category" element={ <ProtectedRoute> <ListCategoryPage /> </ProtectedRoute>} /> }
+        { <Route path="/admin/create-category" element={ <ProtectedRoute> <CreateCategoryPage /> </ProtectedRoute>} /> }
+        { <Route path="/admin/edit-category/:id" element={ <ProtectedRoute> <EditCategoryPage /> </ProtectedRoute>} /> }
+
+        { <Route path="/admin/list-order" element={ <ProtectedRoute> <ListOrderPage /> </ProtectedRoute>} /> }
         
       </Route>
     </Routes>

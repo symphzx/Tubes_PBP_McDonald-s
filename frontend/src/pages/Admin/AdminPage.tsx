@@ -1,19 +1,34 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { 
     Box, 
     Container, 
     Typography, 
     Paper, 
-    Avatar 
+    Avatar, 
+    Snackbar,
+    Alert,
+    AlertTitle,
+    type SlideProps,
+    Slide
 } from "@mui/material";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
-import ArticleIcon from "@mui/icons-material/Article";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import StarBorderIcon from "@mui/icons-material/StarBorder";
+import CategoryIcon from '@mui/icons-material/Category';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import NewReleasesIcon from '@mui/icons-material/NewReleases';
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { useMenus } from "../../hooks/useMenus";
-// import { useAppSelector } from "../hooks/useAppSelector";
+import { useAppSelector } from "../../hooks/useAppSelector";
+import { useLocation } from "react-router";
+import { useOrders } from "../../hooks/useOrder";
+import { useKategori } from "../../hooks/useKategori";
 
-// Komponen Card reusable untuk statistik
+    const colors = {
+        yellow: "#FFC72C",
+        red: "#DA291C",
+        black: "#000000",
+        white: "#FFFFFF",
+      };
+
     const StatCard = ({
         title,
         value,
@@ -66,17 +81,31 @@ import { useMenus } from "../../hooks/useMenus";
     };
 
 export default function AdminDashboard() {
-    // Mengambil data user dari Redux (menyesuaikan dengan store Anda)
-    // const userInfo = useAppSelector((state) => state.auth.userInfo);
+    const [openSuccess, setOpenSuccess] = useState(false);
+    const { userInfo } = useAppSelector((state) => state.auth);
+    const location = useLocation();
     
     const themeColor = "#DA291C"; // McDonald's Red
     const secondaryColor = "#FFC72C"; // McDonald's Yellow
 
     const { menus, reload: reloadMenu } = useMenus();
+    const { orders, reload: reloadOrder } = useOrders();
+    const { kategori, reload: reloadKategori } = useKategori();
 
     useEffect(() => {
-        reloadMenu()
-    }, [reloadMenu]);
+        reloadMenu();
+        reloadOrder();
+        reloadKategori();
+    }, [reloadMenu, reloadOrder, reloadKategori]);
+
+    useEffect(() => {
+        if (location.state?.success) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setOpenSuccess(true);
+        }
+
+        window.history.replaceState({}, document.title);
+    }, [location.state]);
 
     // Fungsi sederhana untuk sapaan berdasarkan waktu
     const getGreeting = () => {
@@ -85,6 +114,10 @@ export default function AdminDashboard() {
         if (hour < 18) return "Good Afternoon";
         return "Good Evening";
     };
+
+    function SlideTransition(props: SlideProps) {
+        return <Slide {...props} direction="down" />;
+    }
 
 
     return (
@@ -181,17 +214,17 @@ export default function AdminDashboard() {
                     <StatCard 
                         title="Total Menu" 
                         value={menus.length} 
-                        icon={<ArticleIcon fontSize="large" />} 
-                        color={themeColor} 
+                        icon={<FastfoodIcon fontSize="large" />} 
+                        color={"#2c87ff"} 
                     />
                 </Box>
 
                 <Box sx={{ px: 1.5, mb: 3, width: { xs: "100%", sm: "50%", md: "25%" } }}>
                     <StatCard 
-                        title="Active Promos" 
-                        value="8" 
-                        icon={<StarBorderIcon fontSize="large" />} 
-                        color={secondaryColor} 
+                        title="Total Orders" 
+                        value={orders.length} 
+                        icon={<AssignmentIcon fontSize="large" />} 
+                        color={themeColor}
                     />
                 </Box>
 
@@ -199,16 +232,16 @@ export default function AdminDashboard() {
                     <StatCard 
                         title="New Menus" 
                         value={menus.filter(menu => menu.tag === "Baru!").length}
-                        icon={<FastfoodIcon fontSize="large" />} 
-                        color="#000000" 
+                        icon={<NewReleasesIcon fontSize="large" />} 
+                        color={secondaryColor} 
                     />
                 </Box>
 
                 <Box sx={{ px: 1.5, mb: 3, width: { xs: "100%", sm: "50%", md: "25%" } }}>
                     <StatCard 
-                        title="Total Visitors" 
-                        value="45.2K" 
-                        icon={<TrendingUpIcon fontSize="large" />} 
+                        title="Total Categories" 
+                        value={kategori.length} 
+                        icon={<CategoryIcon fontSize="large" />} 
                         color="#4CAF50"
                     />
                 </Box>
@@ -238,6 +271,35 @@ export default function AdminDashboard() {
                     </Typography>
                 </Paper>
             </Box>
+
+            <Snackbar
+              open={openSuccess}
+              autoHideDuration={3000}
+              onClose={() => setOpenSuccess(false)}
+              anchorOrigin={{ vertical: "top", horizontal: "center" }}
+              TransitionComponent={SlideTransition}
+            >
+                <Alert
+                  severity="success"
+                  variant="filled"
+                  icon={<CheckCircleOutlineIcon fontSize="large" />}
+                  sx={{
+                    backgroundColor: colors.black,
+                    color: colors.yellow,
+                    width: "100%",
+                    boxShadow: "0 10px 40px rgba(0,0,0,0.5)",
+                    borderRadius: 2,
+                    fontSize: "1.1rem",
+                    border: `2px solid ${colors.yellow}`,
+                    "& .MuiAlert-icon": { color: colors.yellow },
+                  }}
+                >
+                    <AlertTitle sx={{ fontWeight: "900", fontSize: "1.2rem" }}>
+                      LOGIN SUCCESS!
+                    </AlertTitle>
+                  Welcome back, <b>{userInfo?.nama}</b>
+                </Alert>
+              </Snackbar>
         </Container>
     );
 }
