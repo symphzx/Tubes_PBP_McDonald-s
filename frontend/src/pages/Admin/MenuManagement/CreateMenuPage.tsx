@@ -10,6 +10,7 @@ import {
   Avatar,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SaveIcon from "@mui/icons-material/Save";
 import { useKategori } from "../../../hooks/useKategori";
 import { useNavigate } from "react-router";
@@ -49,6 +50,9 @@ export default function CreateMenuPage() {
 
       const response = await fetch("http://localhost:3000/menu", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
         body: formData,
       });
 
@@ -63,7 +67,7 @@ export default function CreateMenuPage() {
       navigate("/admin/list-menu");
     } catch (error) {
       console.error(error);
-      alert("Terjadi kesalahan");
+      alert("Error creating menu");
     }
   };
 
@@ -245,21 +249,78 @@ export default function CreateMenuPage() {
           </Box>
 
           {/* BUTTON */}
-          <Box sx={{ width: "100%" }}>
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              gap: 2,
+              mt: 2,
+            }}
+          >
+            <Button
+              fullWidth
+              variant="outlined"
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigate("/admin/list-menu")}
+              sx={{
+                flex: 1,
+                py: 1.5,
+                borderRadius: "12px",
+                fontWeight: 600,
+                textTransform: "none",
+                borderColor: "#ccc",
+                color: "#555",
+
+                "&:hover": {
+                  borderColor: themeColor,
+                  color: themeColor,
+                  backgroundColor: "rgba(218, 41, 28, 0.04)",
+                },
+              }}
+            >
+              Kembali
+            </Button>
+
             <Button
               fullWidth
               variant="contained"
               startIcon={<SaveIcon />}
               onClick={handleSubmit}
+              disabled={
+                !nama ||
+                harga === "" ||
+                !kategoriId ||
+                !tipe ||
+                !ketersediaan
+              }
               sx={{
-                bgcolor: themeColor,
+                flex: 1,
                 py: 1.5,
                 borderRadius: "12px",
                 fontWeight: 700,
                 textTransform: "none",
                 fontSize: "1rem",
+
+                background:
+                  !nama || harga === "" || !kategoriId || !tipe || !ketersediaan
+                    ? "#ccc"
+                    : `linear-gradient(135deg, ${themeColor}, #b71c1c)`,
+
+                boxShadow:
+                  !nama || harga === "" || !kategoriId || !tipe || !ketersediaan
+                    ? "none"
+                    : "0 4px 14px rgba(218, 41, 28, 0.35)",
+
+                cursor:
+                  !nama || harga === "" || !kategoriId || !tipe || !ketersediaan
+                    ? "not-allowed"
+                    : "pointer",
+
                 "&:hover": {
-                  bgcolor: "#b22217",
+                  background:
+                    !nama || harga === "" || !kategoriId || !tipe || !ketersediaan
+                      ? "#ccc"
+                      : "linear-gradient(135deg, #c62828, #8e0000)",
                 },
               }}
             >

@@ -10,7 +10,7 @@ import {
 import { Varian_Menu } from "./VarianMenu";
 import { Opsi_Menu } from "./OpsiMenu";
 import { Paket_Menu } from "./PaketMenu";
-import { Order_Menu } from "./OrderMenu";
+import { OrderMenu } from "./OrderMenu";
 import { Kategori } from "./Kategori";
 
 @Table({
@@ -91,9 +91,9 @@ export class Menu extends Model {
     })
     paketRelation!: Paket_Menu[];
     
-    @HasMany(() => Order_Menu, {
+    @HasMany(() => OrderMenu, {
         foreignKey: "menu_id",
         as: "orderMenuRelation"
     })
-    orderMenuRelation!: Order_Menu[];
+    orderMenuRelation!: OrderMenu[];
 }

@@ -27,9 +27,16 @@ const PackageSelection = lazy(
 
 const AdminPage = lazy(() => import("../pages/Admin/AdminPage"));
 const LoginPage = lazy(() => import("../pages/Admin/Login/LoginPage"));
-const CreateMenuPage = lazy(() => import("../pages/Admin/CRUD/CreateMenuPage"));
-const ListMenuPage = lazy(() => import("../pages/Admin/CRUD/ListMenuPage"));
-const EditMenuPage = lazy(() => import("../pages/Admin/CRUD/EditMenuPage"))
+
+const ListMenuPage = lazy(() => import("../pages/Admin/MenuManagement/ListMenuPage"));
+const CreateMenuPage = lazy(() => import("../pages/Admin/MenuManagement/CreateMenuPage"));
+const EditMenuPage = lazy(() => import("../pages/Admin/MenuManagement/EditMenuPage"))
+
+const ListCategoryPage = lazy(() => import("../pages/Admin/CategoryManagement/ListCategoryPage"));
+const CreateCategoryPage = lazy(() => import("../pages/Admin/CategoryManagement/CreateCategoryPage"));
+const EditCategoryPage = lazy(() => import("../pages/Admin/CategoryManagement/EditCategoryPage"));
+
+const ListOrderPage = lazy(() => import("../pages/Admin/OrderManagement/ListOrderPage"));
 
 export const AppRoutes = () => {
   return (
@@ -54,9 +61,17 @@ export const AppRoutes = () => {
       <Route element={<AdminLayout />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/admin" element={<AdminPage />} />
-        <Route path="/admin/create-menu" element={<CreateMenuPage />} />
+
         <Route path="/admin/list-menu" element={<ListMenuPage />} />
+        <Route path="/admin/create-menu" element={<CreateMenuPage />} />
         <Route path="/admin/edit-menu/:id" element={<EditMenuPage />} />
+
+        <Route path="/admin/list-category" element={<ListCategoryPage />} />
+        <Route path="/admin/create-category" element={<CreateCategoryPage />} />
+        <Route path="/admin/edit-category/:id" element={<EditCategoryPage />} />
+
+        <Route path="/admin/list-order" element={<ListOrderPage />} />
+        
       </Route>
     </Routes>
   );

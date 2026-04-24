@@ -5,11 +5,11 @@ import { Varian_Menu } from "./VarianMenu";
 import { Opsi_Menu } from "./OpsiMenu";
 
 @Table({
-  tableName: "Order_Menu",
+  tableName: "OrderMenu",
   timestamps: true,
   paranoid: true
 })
-export class Order_Menu extends Model {
+export class OrderMenu extends Model {
   @PrimaryKey
   @Column({
     type: DataType.UUID,
@@ -63,6 +63,6 @@ export class Order_Menu extends Model {
   @BelongsTo(() => Varian_Menu, "mv_id")
   varian_menu!: Varian_Menu;
 
-  @BelongsTo(() => Opsi_Menu, "mv_id")
+  @BelongsTo(() => Opsi_Menu, "mo_id")
   opsi_menu!: Opsi_Menu;
 }

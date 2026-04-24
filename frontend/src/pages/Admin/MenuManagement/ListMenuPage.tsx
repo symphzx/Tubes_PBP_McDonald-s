@@ -79,6 +79,9 @@ export default function ListMenuPage() {
     try {
       await fetch(`http://localhost:3000/menu/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
 
       reloadMenu();
@@ -457,6 +460,7 @@ export default function ListMenuPage() {
                   }}
                 />
               )}
+              {!menu.tag && <Typography>-</Typography>}
             </Box>
 
             {/* ACTION */}

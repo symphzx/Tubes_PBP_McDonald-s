@@ -73,7 +73,7 @@ export default function LoginPage() {
       alert("Password must be at least 6 characters");
       return;
     }
-    const response = await fetch("http://localhost:5173/api/auth/login", {
+    const response = await fetch("http://localhost:3000/auth/login", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       body: JSON.stringify({ email, password }),
@@ -81,14 +81,19 @@ export default function LoginPage() {
 
     if (response.status !== 200) {
       const data = await response.json();
-      alert(`Login failed: ${data}`);
+      alert("Login Failed: " + data.message);
       throw new Error("Connection Error");
     }
+
+    const result = await response.json();
+    const token = result.data.token;
+
+    localStorage.setItem("token", token);
 
     setOpenSuccess(true);
     setTimeout(async () => {
       await setUserInfo();
-      navigate("/");
+      navigate("/admin");
     }, 1500);
   };
 
@@ -97,12 +102,15 @@ export default function LoginPage() {
   }
 
   const setUserInfo = async () => {
-    const response = await fetch("http://localhost:5173/api/auth/me", {
-      headers: { "Content-Type": "application/json" },
+    const token = localStorage.getItem("token");
+
+    const response = await fetch("http://localhost:3000/auth/me", {
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       method: "GET",
     });
     const data = await response.json();
-    dispatch(authActions.setUserInfo(data));
+    console.log(data.data.user);
+    dispatch(authActions.setUserInfo(data.data.user));
   };
 
   return (
