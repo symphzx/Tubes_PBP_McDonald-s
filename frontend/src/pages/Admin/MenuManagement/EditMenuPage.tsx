@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SaveIcon from "@mui/icons-material/Save";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useParams, useNavigate } from "react-router";
 import { useKategori } from "../../../hooks/useKategori";
 import { useMenus } from "../../../hooks/useMenus";
@@ -76,6 +77,9 @@ export default function EditMenuPage() {
 
     const res = await fetch(`http://localhost:3000/menu/${id}`, {
       method: "PUT",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
       body: formData,
     });
 
@@ -286,26 +290,83 @@ export default function EditMenuPage() {
         </Box>
 
         {/* BUTTON */}
-        <Box sx={{ width: "100%" }}>
-          <Button
-            fullWidth
-            variant="contained"
-            startIcon={<SaveIcon />}
-            onClick={handleSubmit}
+        <Box
             sx={{
-              bgcolor: themeColor,
-              py: 1.5,
-              borderRadius: "14px",
-              fontWeight: 700,
-              textTransform: "none",
-              fontSize: "1rem",
-              "&:hover": {
-                bgcolor: "#b22217",
-              },
+              width: "100%",
+              display: "flex",
+              gap: 2,
+              mt: 2,
             }}
           >
-            Update Menu
-          </Button>
+            <Button
+              fullWidth
+              variant="outlined"
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigate("/admin/list-menu")}
+              sx={{
+                flex: 1,
+                py: 1.5,
+                borderRadius: "12px",
+                fontWeight: 600,
+                textTransform: "none",
+                borderColor: "#ccc",
+                color: "#555",
+
+                "&:hover": {
+                  borderColor: themeColor,
+                  color: themeColor,
+                  backgroundColor: "rgba(218, 41, 28, 0.04)",
+                },
+              }}
+            >
+              Kembali
+            </Button>
+
+            <Button
+                fullWidth
+                variant="contained"
+                startIcon={<SaveIcon />}
+                onClick={handleSubmit}
+                disabled={
+                  !nama ||
+                  harga === "" ||
+                  !kategoriId ||
+                  !tipe ||
+                  !ketersediaan
+                }
+                sx={{
+                  flex: 1,
+                  py: 1.5,
+                  borderRadius: "12px",
+                  fontWeight: 700,
+                  textTransform: "none",
+                  fontSize: "1rem",
+
+                  background:
+                    !nama || harga === "" || !kategoriId || !tipe || !ketersediaan
+                      ? "#ccc"
+                      : `linear-gradient(135deg, ${themeColor}, #b71c1c)`,
+
+                  boxShadow:
+                    !nama || harga === "" || !kategoriId || !tipe || !ketersediaan
+                      ? "none"
+                      : "0 4px 14px rgba(218, 41, 28, 0.35)",
+
+                  cursor:
+                    !nama || harga === "" || !kategoriId || !tipe || !ketersediaan
+                      ? "not-allowed"
+                      : "pointer",
+
+                  "&:hover": {
+                    background:
+                      !nama || harga === "" || !kategoriId || !tipe || !ketersediaan
+                        ? "#ccc"
+                        : "linear-gradient(135deg, #c62828, #8e0000)",
+                  },
+                }}
+              >
+                Update Menu
+              </Button>
         </Box>
       </Box>
     </Container>

@@ -8,7 +8,7 @@ import {
     BelongsTo
 } from "sequelize-typescript";
 import { Menu } from "./Menu";
-import { Order_Menu } from "./OrderMenu";
+import { OrderMenu } from "./OrderMenu";
 
 @Table({
     tableName: "Varian_Menu",
@@ -45,9 +45,9 @@ export class Varian_Menu extends Model {
     @BelongsTo(() => Menu, "menu_id")
     menu!: Menu
     
-    @HasMany(() => Order_Menu, {
+    @HasMany(() => OrderMenu, {
             foreignKey: "mv_id",
             as: "orderMenuRelation"
         })
-    orderMenuRelation!: Order_Menu[];
+    orderMenuRelation!: OrderMenu[];
 }

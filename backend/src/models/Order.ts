@@ -1,11 +1,12 @@
 import { Model } from "sequelize-typescript";
 import { Table, PrimaryKey, Column, DataType, HasMany } from "sequelize-typescript";
-import { Order_Menu } from "./OrderMenu";
+import { OrderMenu } from "./OrderMenu";
 
 
 @Table({
-    tableName: "orders",
+    tableName: "Orders",
     timestamps: true,
+    paranoid: true
 })
 
 export class Order extends Model {
@@ -18,10 +19,10 @@ export class Order extends Model {
     declare id: string;
 
     @Column({
-        type: DataType.STRING,
+        type: DataType.DATE,
         allowNull: false,
     })
-    declare waktu_pesanan: string;
+    declare waktu_pemesanan: Date;
 
     @Column({
         type: DataType.INTEGER,
@@ -37,9 +38,9 @@ export class Order extends Model {
 
     @Column({
         type: DataType.INTEGER,
-        allowNull: false,
+        allowNull: true,
     })
-    declare order_no: number;
+    declare no_meja: number;
 
     @Column({
         type: DataType.ENUM("PENDING", "PAID", "CANCELLED"),
@@ -47,15 +48,10 @@ export class Order extends Model {
     })
     declare status: string;
 
-    @Column({
-        type: DataType.INTEGER,
-        allowNull: false,
-    })
-    declare no_meja: number;
 
-    @HasMany(() => Order_Menu, {
+    @HasMany(() => OrderMenu, {
         foreignKey: "order_id",
         as: "orderMenuRelation"
     })
-    orderMenuRelation!: Order_Menu[];
+    orderMenuRelation!: OrderMenu[];
 }

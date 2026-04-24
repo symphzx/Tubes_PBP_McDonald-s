@@ -1,34 +1,41 @@
 "use strict";
 
+const pe = process.env;
 const { v4: uuidv4 } = require("uuid");
+const bcrypt = require("bcrypt");
+const hashedPassword = bcrypt.hashSync(pe.BCRYPT_PEPPER + "jordan123", parseInt(pe.BCRYPT_SALT_ROUNDS));
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     // 1. DEFINE KATEGORI (SIMPAN UUID)
     const kategoriData = [
-      { id: uuidv4(), nama: "Burger & McNuggets" },
-      { id: uuidv4(), nama: "Ayam McD Krispy" },
-      { id: uuidv4(), nama: "Ayam McD Spicy" },
-      { id: uuidv4(), nama: "Paket Keluarga" },
-      { id: uuidv4(), nama: "Happy Meal" },
-      { id: uuidv4(), nama: "Paket HeBat" },
-      { id: uuidv4(), nama: "Menu Receh" },
-      { id: uuidv4(), nama: "McSpaghetti" },
-      { id: uuidv4(), nama: "Camilan" },
-      { id: uuidv4(), nama: "Minuman" },
-      { id: uuidv4(), nama: "Pencuci Mulut" },
-      { id: uuidv4(), nama: "Nasi" },
+      { id: uuidv4(), nama: "Burger & McNuggets", sortOrder: 1, },
+      { id: uuidv4(), nama: "Ayam McD Krispy", sortOrder: 2  },
+      { id: uuidv4(), nama: "Ayam McD Spicy", sortOrder: 3  },
+      { id: uuidv4(), nama: "Paket Keluarga", sortOrder: 4  },
+      { id: uuidv4(), nama: "Happy Meal", sortOrder: 5  },
+      { id: uuidv4(), nama: "Paket HeBat", sortOrder: 6  },
+      { id: uuidv4(), nama: "Menu Receh", sortOrder: 7  },
+      { id: uuidv4(), nama: "McSpaghetti", sortOrder: 8  },
+      { id: uuidv4(), nama: "Camilan", sortOrder: 9  },
+      { id: uuidv4(), nama: "Minuman", sortOrder: 10  },
+      { id: uuidv4(), nama: "Pencuci Mulut", sortOrder: 11  },
+      { id: uuidv4(), nama: "Nasi", sortOrder: 12  },
     ];
 
     // 2. INSERT KATEGORI
     await queryInterface.bulkInsert(
       "Kategori",
-      kategoriData.map((kategori) => ({
-        ...kategori,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      })),
+      kategoriData.map((kategori) => {
+
+        return {
+          ...kategori,
+          startDate: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),  
+        };
+      }),
     );
 
     // 3. BUAT MAP (🔥 INI KUNCI)
@@ -226,6 +233,18 @@ module.exports = {
         tag: null,
         createdAt: new Date(),
         updatedAt: new Date(),
+      },
+    ]);
+    await queryInterface.bulkInsert("User", [
+      
+      { 
+        id: uuidv4(), nama: "Jordan", email: "jordan@gmail.com", password: hashedPassword, role: "Admin", createdAt: new Date(), updatedAt: new Date()
+      },
+      { 
+        id: uuidv4(), nama: "Nathalie", email: "nathalie@gmail.com", password: hashedPassword, role: "Cashier", createdAt: new Date(), updatedAt: new Date()
+      },
+      { 
+        id: uuidv4(), nama: "Josh", email: "josh@gmail.com", password: hashedPassword, role: "Admin", createdAt: new Date(), updatedAt: new Date()
       },
     ]);
   },

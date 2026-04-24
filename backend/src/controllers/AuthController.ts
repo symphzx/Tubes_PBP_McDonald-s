@@ -4,6 +4,22 @@ import jwt from "jsonwebtoken";
 import { User } from "../models/User";
 
 export class AuthController {
+  static async me(req: Request, res: Response) {
+    const userLogin = (req as any).user;
+
+    const user = await User.findByPk(userLogin.id,{
+      attributes: {
+        exclude: ['password', 'createdAt', 'updatedAt', 'deletedAt']
+      }
+    });
+    res.json({
+      message: "Success",
+      data: {
+        user
+      },
+    });
+  }
+
   static async register(req: Request, res: Response) {
     const { email, password, role } = req.body;
 
@@ -40,6 +56,7 @@ export class AuthController {
   }
 
   static async login(req: Request, res: Response) {
+    const pepper = process.env.BCRYPT_PEPPER as string;
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -56,7 +73,7 @@ export class AuthController {
       });
     }
 
-    const isValid = await bcrypt.compare(password, user.getDataValue("password"));
+    const isValid = await bcrypt.compare(pepper + password, user.getDataValue("password"));
 
     if (!isValid) {
       return res.status(401).json({
@@ -65,8 +82,14 @@ export class AuthController {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { 
+        id: user.id,
+        nama: user.nama,
+        email: user.email,
+        role: user.role
+      },
       process.env.JWT_SECRET as string,
+      { expiresIn: "1d" }
     );
 
     res.json({

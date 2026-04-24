@@ -10,6 +10,10 @@ module.exports = {
                 allowNull: false,
                 primaryKey: true,
             },
+            nama: {
+                type: Sequelize.STRING,
+                allowNull: false,
+            },
             email: {
                 type: Sequelize.STRING,
                 allowNull: false,
