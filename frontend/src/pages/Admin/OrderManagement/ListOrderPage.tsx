@@ -200,7 +200,7 @@ export default function ListOrderPage() {
               >
                 <Box>
                   <Typography sx={{ fontWeight: 800, fontSize: "1rem", }}>
-                    {order.id}
+                    {order.no_order}
                   </Typography>
 
                   <Box

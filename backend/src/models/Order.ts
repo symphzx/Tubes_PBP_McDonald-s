@@ -19,6 +19,12 @@ export class Order extends Model {
     declare id: string;
 
     @Column({
+        type: DataType.STRING,
+        allowNull: false,
+    })
+    declare no_order: string;
+
+    @Column({
         type: DataType.DATE,
         allowNull: false,
     })
