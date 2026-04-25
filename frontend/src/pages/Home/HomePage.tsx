@@ -26,7 +26,7 @@ export default function HomePage() {
   return (
     <Box sx={{ p: 2, minHeight: "100vh" }}>
       {/* Header */}
-      <Typography variant="h5" fontWeight={700} mb={2}>
+      <Typography variant="h5"sx={{ fontWeight: 700, mb: 2 }}>
         Pesan Sekarang
       </Typography>
 
@@ -48,7 +48,7 @@ export default function HomePage() {
               }}
             >
               <CardContent>
-                <Typography fontWeight={600}>{item.title}</Typography>
+                <Typography sx={{fontWeight: 600}}>{item.title}</Typography>
                 <Box
                   component="img"
                   src={item.image}
@@ -72,11 +72,11 @@ export default function HomePage() {
           justifyContent: "center",
         }}
       >
-        <Typography fontWeight={600}>Promo Banner</Typography>
+        <Typography sx={{fontWeight: 600}}>Promo Banner</Typography>
       </Box>
 
       {/* Recommendations */}
-      <Typography variant="h6" mt={3} mb={2} fontWeight={700}>
+      <Typography variant="h6" sx={{mt: 3, mb: 2, fontWeight: 700}}>
         Rekomendasi
       </Typography>
 

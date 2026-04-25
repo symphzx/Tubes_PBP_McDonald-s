@@ -8,10 +8,17 @@ import {
   Button,
 } from "@mui/material";
 
+// reduxnyaa
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { addItemToCart } from "../../../store/cartSlice";
+import { useNavigate } from "react-router";
+import { v4 as uuidv4 } from 'uuid';
+
+
 const menuData = [
   {
     title: "Choco Matcha Sundae",
-    price: "Rp14.000",
+    price: 14.000,
     image: "http://localhost:3000/uploads/assets/Choco Matcha Sundae.png",
     tag: "Baru!",
   },
@@ -24,24 +31,44 @@ const menuData = [
   },
   {
     title: "Biscoff McFlurry",
-    price: "Rp17.500",
+    price: 17.500,
     image: "http://localhost:3000/uploads/assets/Biscoff%20McFlurry.png",
     tag: "Baru!",
   },
   {
     title: "Pie Ketan Hitam Kelapa",
-    price: "Rp17.000",
+    price: 17.000,
     image: "http://localhost:3000/uploads/assets/Pie Ketan Hitam Kelapa.png",
     tag: "Baru!",
   },
   {
     title: "Ice Cream Cone Matcha",
-    price: "Rp10.000",
+    price: 10.000,
     image: "http://localhost:3000/uploads/assets/Ice Cream Cone Matcha.png",
   },
 ];
 
 export default function RecomendationPage() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const handleAddRecommendation = (item: any) => {
+    const orderData = {
+      id: uuidv4(),
+      menu_id: item.id,
+      menu_nama: item.title,
+      menu_harga: item.price,
+      menu_gambar: item.image,
+      qty: 1,
+      varian: null,
+      opsi: null,
+      subtotal: item.price
+    };
+
+    dispatch(addItemToCart(orderData));
+    navigate("/menu"); 
+  };
+
   return (
     <Box
       sx={{
@@ -285,6 +312,7 @@ export default function RecomendationPage() {
 
       <Button
         variant="outlined"
+        onClick={() => navigate("/cart")}
         sx={{
           mt: 2,
           width: "70%",

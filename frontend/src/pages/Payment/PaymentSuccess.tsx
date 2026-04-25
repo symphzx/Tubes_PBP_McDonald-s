@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import { useAppSelector } from "../../hooks/useAppSelector";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { paymentActions } from "../../store/paymentSlice";
+import { clearCart } from "../../store/cartSlice"
 
 export default function PaymentSuccess() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export default function PaymentSuccess() {
 
   const handleDone = () => {
     dispatch(paymentActions.resetPayment());
+    dispatch(clearCart())
     navigate("/");
   };
   return (
@@ -80,7 +82,7 @@ export default function PaymentSuccess() {
 
         <Button
           variant="contained"
-          onClick={() => navigate("/")}
+          onClick={handleDone}
           sx={{
             bgcolor: "#FFBC0D",
             color: "#000",

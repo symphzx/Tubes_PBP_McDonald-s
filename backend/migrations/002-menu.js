@@ -44,6 +44,17 @@ module.exports = {
                 type: Sequelize.ENUM("Baru!"),
                 allowNull: true,
             },
+            // nat nambahin iniii buat yg rekomendasi paketan / satuan
+            recommendation_id: {
+                type: Sequelize.UUID,
+                allowNull: true,
+                references: {
+                    model: "Menu",
+                    key: "id",
+                },
+                onUpdate: "CASCADE",
+                onDelete: "SET NULL",
+            },
             createdAt: {
                 type: Sequelize.DATE,
                 allowNull: false,

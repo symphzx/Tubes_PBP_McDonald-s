@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     Box,
     Typography,
@@ -7,35 +8,60 @@ import {
 
 } from "@mui/material";
 import { Add, Remove } from "@mui/icons-material";
-import { useState } from "react";
 
 import mcdLogo from "../img/mcdonalds_logo.png";
-import friesImg from "../img/test_fries.avif";
 import { useNavigate } from "react-router";
 
+// buatvredux
+import { useAppSelector } from "../../../hooks/useAppSelector";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { updateItemQuantity, removeItem } from "../../../store/cartSlice";
 
 export default function OrderCart() {
 
     const navigate = useNavigate();
+    const dispatch = useAppDispatch()
 
-    const [cart, setCart] = useState([
-        {
-            id: "662e9121-32c6-43c3-9a67-7e2bd43a9644",
-            name: "Fries",
-            price: 10000,
-            menuOption: 1,
-            qty: 1,
-            image: friesImg,
-        },
-        {
-            id: "80f089b8-4001-49c5-b19f-42d7a9ce9870",
-            name: "Schezwan Veg Burger",
-            desc: "",
-            price: 64000,
-            qty: 1,
-            image: friesImg,
-        },
-    ]);
+    const { items: cartItems } = useAppSelector((state) => state.cart)
+
+    // buat update quantity di cart
+    const handleUpdateQty = (item: any, newQty: number) => {
+        if (newQty < 1) return; 
+        
+        dispatch(updateItemQuantity({
+            menu_id: item.menu_id,
+            mv_id: item.varian?.mv_id,
+            mo_id: item.opsi?.mo_id,
+            qty: newQty
+        }))
+    }
+
+    const handleRemoveItem = (item: any) => {
+        dispatch(removeItem({
+            menu_id: item.menu_id,
+            mv_id: item.varian?.mv_id,
+            mo_id: item.opsi?.mo_id
+        }));
+    };
+
+    // const [cart, setCart] = useState([
+    //     {
+    //         id: "662e9121-32c6-43c3-9a67-7e2bd43a9644",
+    //         name: "Fries",
+    //         price: 10000,
+    //         menuOption: 1,
+    //         qty: 1,
+    //         image: friesImg,
+    //     },
+    //     {
+    //         id: "80f089b8-4001-49c5-b19f-42d7a9ce9870",
+    //         name: "Schezwan Veg Burger",
+    //         desc: "",
+    //         price: 64000,
+    //         qty: 1,
+    //         image: friesImg,
+    //     },
+    // ]);
 
     const menuOption = [{
         id: 1,
@@ -54,38 +80,51 @@ export default function OrderCart() {
         imageUrl: ""
     }]
 
-    const handleAdd = (id: string) => {
-        setCart((prev) =>
-            prev.map((item) =>
-                item.id === id ? { ...item, qty: item.qty + 1 } : item
-            )
-        );
-    };
+    // const handleAdd = (id: number) => {
+    //     setCart((prev) =>
+    //         prev.map((item) =>
+    //             item.id === id ? { ...item, qty: item.qty + 1 } : item
+    //         )
+    //     );
+    // };
 
-    const handleMinus = (id: string) => {
-        setCart((prev) =>
-            prev.map((item) =>
-                item.id === id // if item.id sama dengan id yg diklik,maka item.qty dikurang 1
-                    ? { ...item, qty: Math.max(1, item.qty - 1) }
-                    : item
-            )
-        );
-    };
+    // const handleMinus = (id: number) => {
+    //     setCart((prev) =>
+    //         prev.map((item) =>
+    //             item.id === id // if item.id sama dengan id yg diklik,maka item.qty dikurang 1
+    //                 ? { ...item, qty: Math.max(1, item.qty - 1) }
+    //                 : item
+    //         )
+    //     );
+    // };
 
-    const handleRemove = (id: string) => {
-        setCart((prev) => prev.filter((item) => item.id !== id));
-    };
+    // const handleRemove = (id: number) => {
+    //     setCart((prev) => prev.filter((item) => item.id !== id));
+    // };
 
     // hitung subtotal dgn tambahin semua harga * quantity
     const additional = menuOption.reduce((acc, item) => acc + item.price * item.menu_qty, 0);
 
-    const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0) + additional;
+    // const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0) + additional;
 
     // hitung  GST (Goods and services tax)  dikali 0.1 dan diround
-    const gst = Math.floor((subtotal) * 0.1);
+    // const gst = Math.floor((subtotal) * 0.1);
+    // const total = subtotal + gst;
+
+    const subtotal = cartItems.reduce((acc, item) => acc + (item.menu_harga * item.qty), 0) + additional;
+    const gst = Math.floor(subtotal * 0.1);
     const total = subtotal + gst;
 
+    if (cartItems.length === 0) {
+        return (
+            <Box sx={{ textAlign: "center", mt: 10 }}>
+                <Typography variant="h6">Keranjang Kosong</Typography>
+                <Button onClick={() => navigate("/menu")}>Kembali ke Menu</Button>
+            </Box>
+        );
+    }
 
+   
     return (<>
 
 
@@ -112,7 +151,7 @@ export default function OrderCart() {
                 mt: 2,
             }}
         >
-            {cart.map((item) => (
+            {cartItems.map((item) => (
                 <Box
                     key={item.id}
                     sx={{
@@ -131,7 +170,7 @@ export default function OrderCart() {
                         <Button
                             variant="outlined"
                             size="small"
-                            onClick={() => handleRemove(item.id as string)}
+                            onClick={() => handleRemoveItem(item)}
                             sx={{
                                 borderColor: "text.secondary"
                             }}
@@ -148,7 +187,7 @@ export default function OrderCart() {
                         {/* IMAGE */}
                         <Box
                             component="img"
-                            src={item.image}
+                            src={item.menu_gambar}
                             sx={{
                                 width: 50,
                                 height: 50,
@@ -161,12 +200,12 @@ export default function OrderCart() {
 
 
                             <Typography sx={{ fontWeight: "bold" }}>
-                                {item.name}
+                                {item.menu_nama}
 
                             </Typography>
 
                             {/* /MENU OPTION */}
-                            {menuOption.map((option) => {
+                            {/* {menuOption.map((option) => {
                                 if (option.menu_id === item.id) {
                                     return (
                                         <Typography key={option.id} sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", fontSize: "12px" }}>
@@ -174,10 +213,30 @@ export default function OrderCart() {
                                         </Typography>
                                     )
                                 }
-                            })}
+                            })} */}
 
-                            <Button variant="outlined" size="small" color="secondary" sx={{ mt: 1, color: "text.secondary" }} onClick={() => navigate(`/customize/${item.id}`)}>
-                                Edit
+                            {/* Varian (Misal: Ukuran Medium/Large) */}
+                            {item.varian && (
+                                <Typography sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", fontSize: "12px" }}>
+                                    Varian: {item.varian.nama_varian}
+                                </Typography>
+                            )}
+
+                            {/* Opsi Tambahan (Misal: Add Sauce/Cheese) */}
+                            {item.opsi && (
+                                <Typography sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", fontSize: "12px" }}>
+                                    Add: {item.opsi.nama_option}
+                                </Typography>
+                            )}
+
+                            {/* ini buat modify menu yg udah masuk cartnya */}
+                            <Button 
+                                    size="small" 
+                                    color="secondary" 
+                                    sx={{ mt: 0.5, fontSize: "11px", p: 0 }}
+                                    onClick={() => navigate(`/set-quantity/${item.menu_id}`, { state: { editItem: item } })}
+                                >
+                                    Edit Options
                             </Button>
 
                         </Box>
@@ -190,14 +249,14 @@ export default function OrderCart() {
                                 gap: 1,
                             }}
                         >
-                            <IconButton onClick={() => handleMinus(item.id as string)}>
-                                <Remove />
+                            <IconButton onClick={() => handleUpdateQty(item, item.qty - 1)}>
+                                    <Remove fontSize="small" />
                             </IconButton>
 
                             <Typography>{item.qty}</Typography>
 
-                            <IconButton onClick={() => handleAdd(item.id as string)}>
-                                <Add />
+                            <IconButton onClick={() => handleUpdateQty(item, item.qty + 1)}>
+                                <Add fontSize="small" />
                             </IconButton>
                         </Box>
 
@@ -209,7 +268,7 @@ export default function OrderCart() {
                                 fontSize: "15px"
                             }}
                         >
-                            Rp{(item.price * item.qty).toLocaleString()}
+                            Rp{item.subtotal.toLocaleString()}
                         </Typography>
                     </Box>
                 </Box>

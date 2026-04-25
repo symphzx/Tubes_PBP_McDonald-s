@@ -20,7 +20,7 @@ import RiceBowlIcon from "@mui/icons-material/RiceBowl";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 
 import { Outlet } from "react-router";
-import { useEffect, type JSX } from "react";
+import { useEffect, useMemo, type JSX } from "react";
 import { useKategori } from "../hooks/useKategori";
 
 const homeItems = { Label: "Home", icon: <HomeIcon />};
@@ -50,9 +50,13 @@ export function MenuLayout() {
         reload();
     }, [reload]);
 
+    const sortedKategori = useMemo(() => {
+        return [...kategori].sort((a, b) => a.sortOrder - b.sortOrder);
+    }, [kategori]);
+
     const isHomeActive = location.pathname === "/";
 
-    const activeIndex = kategori.findIndex(
+    const activeIndex = sortedKategori.findIndex(
         (item) => item.nama === category
     );
 
@@ -176,7 +180,7 @@ export function MenuLayout() {
                             </ListItemButton>
                         </Card>
 
-                        {kategori.map((item, index) => (
+                        {sortedKategori.map((item, index) => (
                             <ListItemButton
                                 onClick={() => {
                                     handleMenuClick(item.nama)

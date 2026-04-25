@@ -5,8 +5,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import Grid from "@mui/material/Grid";
 import { styled, Paper, Typography } from "@mui/material";
-import {cartSlice } from "../../../store/cartSlice";
-import { useDispatch } from "react-redux";
+
+import { useAppDispatch } from "../../../hooks/useAppDispatch"
+import { setOrderType } from "../../../store/cartSlice"
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -25,15 +26,17 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function OrderType() {
   const [selected, setSelected] = useState<string>("");
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch()
 
   const handleClick = (type: "DINE_IN" | "TAKEAWAY") => {
-    setSelected(type)
-    dispatch(
-      cartSlice.actions.setOrderType(type)
-    )
+    setSelected(type);
+
+    dispatch(setOrderType(type))
+
+    localStorage.setItem("orderType", type);
+
     setTimeout(() => {
-      navigate("/");
+      navigate("/menu");
     }, 300);
   };
 
@@ -92,3 +95,5 @@ export default function OrderType() {
   </>
   );
 }
+
+// udah nyambung reduxnya yaa

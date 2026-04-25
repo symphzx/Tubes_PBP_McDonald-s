@@ -113,7 +113,12 @@ export default function PackageSelectionPage() {
               <Paper
                 variant="outlined"
                 onClick={() =>
-                  navigate(`/customize/${selectedItem.recommendation.id}`)
+                  navigate(`/customizeOrder/${selectedItem.recommendation.id}`, {
+                    state: { 
+                      selectedItem: selectedItem.recommendation,
+                      isPaket: true 
+                    },
+                  })
                 }
                 sx={{
                   p: 3,
@@ -154,7 +159,13 @@ export default function PackageSelectionPage() {
             <Grid size={{ xs: 12, sm: 5 }}>
               <Paper
                 variant="outlined"
-                onClick={() => navigate(`/customize/${selectedItem.id}`)}
+                onClick={() => navigate(`/customizeOrder/${selectedItem.id}`, {
+                    state: { 
+                      selectedItem: selectedItem,
+                      isPaket: false 
+                    },
+                  })
+                }
                 sx={{
                   p: 3,
                   cursor: "pointer",
