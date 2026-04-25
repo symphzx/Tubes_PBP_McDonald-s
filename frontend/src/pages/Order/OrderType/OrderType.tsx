@@ -5,6 +5,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import Grid from "@mui/material/Grid";
 import { styled, Paper, Typography } from "@mui/material";
+import {cartSlice } from "../../../store/cartSlice";
+import { useDispatch } from "react-redux";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -23,12 +25,15 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function OrderType() {
   const [selected, setSelected] = useState<string>("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleClick = (type: "DINE_IN" | "TAKEAWAY") => {
-    setSelected(type);
+    setSelected(type)
+    dispatch(
+      cartSlice.actions.setOrderType(type)
+    )
     setTimeout(() => {
-      localStorage.setItem("orderType", type);
-      navigate("/menu");
+      navigate("/");
     }, 300);
   };
 

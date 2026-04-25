@@ -82,7 +82,7 @@ export default function CustomizeOrder() {
     }
     const handleSaveChanges = () => {
         alert("Changes saved");
-        navigate("/menu");
+        navigate("/");
     }
 
     function checkFoodType(theFood: string) {

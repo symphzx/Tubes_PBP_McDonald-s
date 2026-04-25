@@ -261,7 +261,7 @@ export default function OrderCart() {
                     mt: 3,
                 }}
             >
-                <Button fullWidth variant="outlined" onClick={() => navigate("/menu")} sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", borderColor: "text.secondary" }}>
+                <Button fullWidth variant="outlined" onClick={() => navigate("/")} sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", borderColor: "text.secondary" }}>
                     Order More
                 </Button>
 
