@@ -9,27 +9,25 @@ import AdminPage from "../pages/Admin/AdminPage";
 import HomePage from "../pages/Home/HomePage";
 import CreateMenuPage from "../pages/Admin/CRUD/CreateMenuPage";
 
+const OrderTypePage = lazy(() => import("../pages/Order/OrderType/OrderType"));
+
 const MenuPage = lazy(() => import("../pages/Menu/MenuPage"));
 
-const PaymentPage = lazy(() => import("../pages/Payment/PaymentPage"));
-const PaymentSuccess = lazy(() => import("../pages/Payment/PaymentSuccess"));
+const PackageSelectionBurger = lazy(() => import("../pages/Order/PackageSelection/PackageSelectionBurger"))
+const PackageSelectionAyam = lazy(() => import("../pages/Order/PackageSelection/PackageSelectionAyam"))
 
-const OrderTypePage = lazy(() => import("../pages/Order/OrderType/OrderType"));
 const CustomizeOrderPage = lazy(
   () => import("../pages/Order/CustomizeOrder/CustomizeOrder"),
 );
-const OrderCartPage = lazy(() => import("../pages/Order/OrderCart/OrderCart"));
+
 const RecomendationPage = lazy(
   () => import("../pages/Order/Recomendation/RecomendationPage"),
 );
 
-// const PackageSelection = lazy(
-//   () => import("../pages/Order/PackageSelection/PackageSelectionBurger"),
-// );
+const OrderCartPage = lazy(() => import("../pages/Order/OrderCart/OrderCart"));
 
-const PackageSelectionBurger = lazy(() => import("../pages/Order/PackageSelection/PackageSelectionBurger"))
-
-const PackageSelectionAyam = lazy(() => import("../pages/Order/PackageSelection/PackageSelectionAyam"))
+const PaymentPage = lazy(() => import("../pages/Payment/PaymentPage"));
+const PaymentSuccess = lazy(() => import("../pages/Payment/PaymentSuccess"));
 
 
 export const AppRoutes = () => {

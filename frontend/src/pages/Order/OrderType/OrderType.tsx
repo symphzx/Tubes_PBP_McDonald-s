@@ -6,6 +6,9 @@ import { useNavigate } from "react-router";
 import Grid from "@mui/material/Grid";
 import { styled, Paper, Typography } from "@mui/material";
 
+import { useAppDispatch } from "../../../hooks/useAppDispatch"
+import { setOrderType } from "../../../store/cartSlice"
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
   ...theme.typography.body2,
@@ -23,11 +26,16 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function OrderType() {
   const [selected, setSelected] = useState<string>("");
   const navigate = useNavigate();
+  const dispatch = useAppDispatch()
 
   const handleClick = (type: "DINE_IN" | "TAKEAWAY") => {
     setSelected(type);
+
+    dispatch(setOrderType(type))
+
+    localStorage.setItem("orderType", type);
+
     setTimeout(() => {
-      localStorage.setItem("orderType", type);
       navigate("/menu");
     }, 300);
   };
@@ -87,3 +95,5 @@ export default function OrderType() {
   </>
   );
 }
+
+// udah nyambung reduxnya yaa

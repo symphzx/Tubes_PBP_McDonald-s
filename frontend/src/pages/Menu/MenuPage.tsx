@@ -6,10 +6,16 @@ import {
     CardContent,
     CardMedia,
 } from "@mui/material";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useNavigate } from "react-router";
 import { useParams } from "react-router";
 import { useMenus } from "../../hooks/useMenus";
 import { useKategori } from "../../hooks/useKategori";
+
+
+// buat reduxnya
+import { useAppSelector } from "../../hooks/useAppSelector"
+
 
 export default function MenuPage() {
     const { menus, reload } = useMenus();
@@ -18,6 +24,14 @@ export default function MenuPage() {
     const { category } = useParams();
     const navigate = useNavigate();
 
+    const cartItems = useAppSelector((state) => state.cart.items);
+    const totalHarga = useAppSelector((state) => state.cart.totalHarga);
+
+    // ini buat ngitung jml menu sama jml bayar di cartnya
+    const totalQty = useMemo(() => {
+        return cartItems.reduce((acc, item) => acc + item.qty, 0);
+    }, [cartItems]);
+
     const selectedCategory = useMemo(() => {
         return kategori.find((item) => item.nama === category);
     }, [kategori, category]);
@@ -25,13 +39,21 @@ export default function MenuPage() {
     const handleCardClick = (item: any) => {
       // kalo menu satuan, arahin ke package selection
       if (item.tipe === "Ala Carte" && item.recommendation) {
-          navigate("/order/package-selection", { 
-              state: { selectedItem: item } 
-          });
-      } else {
-          // klo udah paket, lgsg custom
-          navigate(`/customize/${item.id || 0}`);
-      }
+        const kategoriNama = item.kategori?.nama?.toLowerCase() || ""; 
+        
+        let targetPath = "";
+        if (kategoriNama.includes("ayam")) {
+            targetPath = "/order/package-selection-ayam";
+        } else if (kategoriNama.includes("burger")) {
+            targetPath = "/order/package-selection-burger";
+        } else {
+            targetPath = "/order/package-selection-ayam"; 
+        }
+
+        navigate(targetPath, { state: { selectedItem: item } }) 
+    } else {
+        navigate(`/setQuantity/${item.id}`); 
+    }
     };
 
     const formatHarga = (harga: number) => {
@@ -159,6 +181,55 @@ export default function MenuPage() {
                     </Card>
                 ))}
             </Box>
+
+            {/* nat nambah inii soalnya udah ada redux cart */}
+            {/* FLOATING CART BAR */}
+            {cartItems.length > 0 && (
+                <Box
+                    sx={{
+                        position: "fixed",
+                        bottom: 20,
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        width: "90%",
+                        maxWidth: "500px",
+                        bgcolor: "#FFC72C", // Kuning McD
+                        borderRadius: "50px",
+                        boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        px: 3,
+                        py: 1.5,
+                        zIndex: 1000,
+                        cursor: "pointer"
+                    }}
+                    onClick={() => navigate("/cart")}
+                >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                        <Box sx={{ position: "relative" }}>
+                            <ShoppingCartIcon sx={{ color: "#000" }} />
+                            <Box sx={{
+                                position: "absolute", top: -8, right: -8,
+                                bgcolor: "#DB0007", color: "white",
+                                fontSize: "10px", borderRadius: "50%",
+                                width: 18, height: 18,
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                fontWeight: "bold"
+                            }}>
+                                {totalQty}
+                            </Box>
+                        </Box>
+                        <Typography sx={{ fontWeight: "bold", color: "#000" }}>
+                            View Cart
+                        </Typography>
+                    </Box>
+
+                    <Typography sx={{ fontWeight: "bold", color: "#000" }}>
+                        Rp {formatHarga(totalHarga)}
+                    </Typography>
+                </Box>
+            )}
         </Box>
     );
 }

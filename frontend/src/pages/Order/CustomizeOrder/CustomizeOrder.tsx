@@ -17,17 +17,27 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import custOrderLogo from "../img/mcd-plate.png";
 import noItemFound from "../img/item-not-found-error.png";
 import testMenuImg from "../img/test_fries.avif";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams, useLocation } from "react-router";
+import { v4 as uuidv4 } from 'uuid';
+
+// buat reduxnyaa
+import { useAppDispatch } from "../../../hooks/useAppDispatch"
+import { addItemToCart } from "../../../store/cartSlice"
+import { useAppSelector } from "../../../hooks/useAppSelector"
 
 export default function CustomizeOrder() {
     const { id } = useParams();
     const [additional, setAdditional] = useState(0);
-
     const [comesWith, setComesWith] = useState(0);
-    const navigate = useNavigate();
     const [tipeAyam, setTipeAyam] = useState<string[]>([]);
     const tipeAyamOptions = ["Sayap", "Paha bawah", "Paha atas", "Dada Mentok", "Dada Tulang"];
 
+    const dispatch = useAppDispatch()
+    const navigate = useNavigate()
+    const location = useLocation();
+    
+    const cart = useAppSelector((state) => state.payment.cart) 
+    const { selectedItem, isPaket, quantity } = location.state || {}
 
 
     const dataMenuDummy = [
@@ -81,12 +91,31 @@ export default function CustomizeOrder() {
         setComesWith(0);
     }
 
+    const handleSave = () => {
+        const orderData = {
+            id: uuidv4(),
+            menu_id: selectedItem.id,
+            menu_nama: selectedItem.name,
+            menu_harga: selectedItem.price,
+            menu_gambar: selectedItem.imageUrl,
+            qty: quantity,
+            varian: null, // ato apa ya
+            opsi: tipeAyam.length > 0 ? {
+                mo_id: "Ayam-" + tipeAyam[0],
+                nama_option: tipeAyam[0],
+                tambahan_harga: 0
+            } : null,
+            subtotal: 0
+        };
+
+        dispatch(addItemToCart(orderData));
+        navigate("/menu");
+    };
+
     function checkFoodType(theFood: string) {
         return dataMenuDummy.find((item) => item.foodCategory === theFood);
     }
-
-    const selectedItem = dataMenuDummy.find((item) => item.id === Number(id));
-
+    
     if (!selectedItem) {
         return (<>
             <Box sx={{ display: "flex", justifyContent: "center", opacity: 1, flexDirection: "column" }}>
@@ -103,7 +132,6 @@ export default function CustomizeOrder() {
 
         return (
             <>
-
                 {/* LOGO */}
                 <Box sx={{ display: "flex", justifyContent: "center", opacity: 1 }}>
                     <img src={custOrderLogo} width="70" />
@@ -283,7 +311,27 @@ export default function CustomizeOrder() {
                         </Box> : null
                     }
                         { /* TIPE TIPE AYAM */}
-                        
+                        {(selectedItem.foodCategory === "Chicken" || isPaket) && (
+                            <Box sx={{ border: "1px solid #ddd", p: 2, mb: 2 }}>
+                                <Typography sx={{ mb: 2, fontWeight: "bold" }}>Pilih Bagian Ayam</Typography>
+                                <Grid container spacing={1}>
+                                    {tipeAyamOptions.map((item) => (
+                                        <Grid key={item}>
+                                            <FormControlLabel
+                                                control={
+                                                    <Checkbox 
+                                                        checked={tipeAyam.includes(item)} 
+                                                        onChange={() => handleChange(item)} 
+                                                    />
+                                                }
+                                                label={item}
+                                            />
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                            </Box>
+                        )}
+
                         {/* ACTION */}
                         <Box sx={{ display: "flex", gap: 2, mt: 3, color: "text.secondary" }}>
                             <Button fullWidth variant="outlined" sx={{ fontFamily: "Speedee-Regular", color: "text.secondary" }} onClick={() => navigate(-1)}>
@@ -293,6 +341,7 @@ export default function CustomizeOrder() {
                             <Button
                                 fullWidth
                                 variant="contained"
+                                onClick={handleSave}
                                 sx={{ backgroundColor: "#FFD700", color: "black", fontFamily: "Speedee-Regular" }}
                             >
                                 Save Changes

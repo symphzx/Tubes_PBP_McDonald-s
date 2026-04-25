@@ -1,14 +1,30 @@
 import { Box, Button, IconButton, Typography } from "@mui/material";
 import testMenuImg from "../img/test_fries.avif";
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams, useLocation } from "react-router";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+
+// buat redux
+import { useAppDispatch } from "../../../hooks/useAppDispatch"
+import { addItemToCart, updateItemQuantity } from "../../../store/cartSlice"
 
 export default function SetQuantityPage() {
     const { id } = useParams();
     const [quantity, setQuantity] = useState(1);
     const navigate = useNavigate();
+    const dispatch = useAppDispatch()
+    const location = useLocation()
+
+    // cek ada kiriman dari OrderCart buat editItem ga
+    const editItem = location.state?.editItem
+
+    // quantity ngikutin yg ada di cart
+    useEffect(() => {
+        if (editItem) {
+            setQuantity(editItem.qty)
+        }
+    }, [editItem])
 
     const dataMenuDummy = [
         { id: 1, name: "Fries", price: 25000, imageUrl: testMenuImg },
@@ -26,10 +42,39 @@ export default function SetQuantityPage() {
         );
     }
 
+    // const handleAddToCart = () => {
+    //     alert("Item added to cart: " + selectedItem.name);
+    //     return navigate("/menu");
+    // }
+
     const handleAddToCart = () => {
-        alert("Item added to cart: " + selectedItem.name);
-        return navigate("/menu");
+        if (editItem) {
+            // edit
+            dispatch(updateItemQuantity({
+                menu_id: editItem.menu_id,
+                mv_id: editItem.varian?.mv_id,
+                mo_id: editItem.opsi?.mo_id,
+                qty: quantity
+            }));
+        } else {
+            // add
+            const menuAddToCart = {
+                id: Date.now().toString(),
+                menu_id: selectedItem.id.toString(),
+                menu_nama: selectedItem.name,
+                menu_harga: selectedItem.price,
+                menu_gambar: selectedItem.imageUrl,
+                varian: null, 
+                opsi: null,   
+                qty: quantity,
+                subtotal: 0
+            }
+            dispatch(addItemToCart(menuAddToCart));
+        }
+        
+        navigate("/menu");
     }
+
     return (
         <Box sx={{
             display: "flex",
@@ -72,7 +117,12 @@ export default function SetQuantityPage() {
                         color: "text.primary",
                         borderRadius: "4px",
                     }}
-                    onClick={() => navigate(`/customizeOrder/${selectedItem.id}`)}
+                    onClick={() => navigate(`/customizeOrder/${selectedItem.id}`, {
+                        state: { 
+                            selectedItem: selectedItem, 
+                            quantity: quantity 
+                        }
+                    })}
                 >
                     Customize
                 </Button>
@@ -116,7 +166,7 @@ export default function SetQuantityPage() {
                     sx={{ backgroundColor: "#FFD700", color: "black", fontFamily: "Speedee-Regular" }}
                     onClick={handleAddToCart}
                 >
-                    Add to Cart
+                    {editItem ? "Update Cart" : "Add to Cart"}
                 </Button>
             </Box>
         </Box>
