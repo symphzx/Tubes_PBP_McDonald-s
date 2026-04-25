@@ -14,7 +14,7 @@ export default function PackageSelectionPage() {
     return (
       <Box sx={{ textAlign: "center", mt: 5 }}>
         <Typography>Menu Tidak Tersedia</Typography>
-        <Button onClick={() => navigate("/menu")}>Kembali ke Menu</Button>
+        <Button onClick={() => navigate("/")}>Kembali ke Menu</Button>
       </Box>
     );
   }
@@ -113,7 +113,7 @@ export default function PackageSelectionPage() {
               <Paper
                 variant="outlined"
                 onClick={() =>
-                  navigate(`/customize/${selectedItem.recommendation.id}`)
+                  navigate(`/customize-order/${selectedItem.recommendation.id}`)
                 }
                 sx={{
                   p: 3,
@@ -154,7 +154,7 @@ export default function PackageSelectionPage() {
             <Grid size={{ xs: 12, sm: 5 }}>
               <Paper
                 variant="outlined"
-                onClick={() => navigate(`/customize/${selectedItem.id}`)}
+                onClick={() => navigate(`/customize-order/${selectedItem.id}`)}
                 sx={{
                   p: 3,
                   cursor: "pointer",

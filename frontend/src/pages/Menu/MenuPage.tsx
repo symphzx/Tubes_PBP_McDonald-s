@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo } from "react";
 import {
     Box,
@@ -30,7 +31,7 @@ export default function MenuPage() {
           });
       } else {
           // klo udah paket, lgsg custom
-          navigate(`/customize/${item.id || 0}`);
+          navigate(`/customize-order/${item.id || 0}`);
       }
     };
 

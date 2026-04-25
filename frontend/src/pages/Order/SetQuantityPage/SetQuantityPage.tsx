@@ -41,7 +41,7 @@ export default function SetQuantityPage() {
 
     const handleAddToCart = () => {
         alert("Item added to cart: " + selectedItem.name);
-        return navigate("/menu");
+        return navigate("/");
     }
     return (
         <Box sx={{
@@ -85,7 +85,7 @@ export default function SetQuantityPage() {
                         color: "text.primary",
                         borderRadius: "4px",
                     }}
-                    onClick={() => navigate(`/customize/${selectedItem.id}`)}
+                    onClick={() => navigate(`/customize-order/${selectedItem.id}`)}
                 >
                     Customize
                 </Button>
