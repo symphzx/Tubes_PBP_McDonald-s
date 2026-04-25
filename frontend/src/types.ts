@@ -6,6 +6,11 @@ export type PaymentMethod = "DEBIT" | "QRIS" | "CASHIER";
 export type KategoriMenu ={
   id: string;
   nama: string;
+  sortOrder: number;
+  startDate: string;
+  endDate: string;
+  startTime: string;
+  endTime: string;
 }
 
 export type Menu = {
@@ -43,15 +48,17 @@ export type PaketItem = {
   menu_id: string;
 };
 
-export type OrderStatus = "CART" | "PAID" | "PROCESS" | "DONE" | "CANCELLED";
+export type OrderStatus = "PENDING" | "PAID" | "CANCELED";
 
 export type Order = {
   id: string;
+  no_order: string;
+  waktu_pemesanan: string;
   total_harga: number;
-  order_type: "DINE_IN" | "TAKE_AWAY";
-  order_no: string;
+  order_type: "DINE_IN" | "TAKEAWAY";
+  no_meja: number;
   status: OrderStatus;
-  createdAt: string;
+  orderMenuRelation: OrderMenu[];
 };
 
 export type OrderMenu = {
@@ -63,6 +70,8 @@ export type OrderMenu = {
   mo_id: string | null; 
   quantity: number;
   harga_awal: number; 
+  varian_menu: MenuVarian;
+  opsi_menu: MenuOption;
 };
 
 export type Payment = {
@@ -75,6 +84,7 @@ export type Payment = {
 
 export type UserInfo = {
   id: string;
+  nama: string;
   email: string;
   password: string;
   role: "Admin" | "Cashier";

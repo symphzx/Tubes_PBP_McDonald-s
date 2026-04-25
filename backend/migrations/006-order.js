@@ -11,6 +11,10 @@ module.exports = {
                 allowNull: false,
                 primaryKey: true,
             },
+            no_order: {
+                type: Sequelize.STRING,
+                allowNull: false,
+            },
             waktu_pemesanan: {
                 type: Sequelize.DATE,
                 allowNull: false,
@@ -24,17 +28,13 @@ module.exports = {
                 type: Sequelize.ENUM("DINE_IN", "TAKEAWAY"),
                 allowNull: false,
             },
-            table_no:{
-                type: Sequelize.INTEGER,
-                allowNull: true
-            },
-            status: {
-                type: Sequelize.ENUM("CART", "PENDING", "PROCESS", "COMPLETED"),
-                allowNull: false,
-            },
             no_meja: {
                 type: Sequelize.INTEGER,
                 allowNull: true,
+            },
+            status: {
+                type: Sequelize.ENUM("PENDING", "PAID", "CANCELLED"),
+                allowNull: false,
             },
             createdAt: {
                 type: Sequelize.DATE,
@@ -45,10 +45,6 @@ module.exports = {
                 type: Sequelize.DATE,
                 allowNull: false,
                 defaultValue: Sequelize.NOW,
-            },
-            deletedAt: {
-                type: Sequelize.DATE,
-                allowNull: true,
             },
             deletedAt: {
                 type: Sequelize.DATE,

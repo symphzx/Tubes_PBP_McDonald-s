@@ -14,6 +14,28 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      sortOrder: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        unique: true
+      },
+      startDate: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW,
+      },
+      endDate: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      startTime: {
+        type: Sequelize.TIME,
+        allowNull: true,
+      },
+      endTime: {
+        type: Sequelize.TIME,
+        allowNull: true,
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

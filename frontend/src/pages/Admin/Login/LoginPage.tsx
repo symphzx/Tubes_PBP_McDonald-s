@@ -7,13 +7,7 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import { Button, Typography, InputAdornment, TextField } from "@mui/material";
 
-import {
-  Snackbar,
-  Alert,
-  AlertTitle,
-  Slide,
-  type SlideProps,
-} from "@mui/material";
+
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import IconButton from "@mui/material/IconButton";
 import EmailIcon from "@mui/icons-material/Email";
@@ -23,14 +17,12 @@ import { isEmail } from "../../../utils/isEmail";
 import { authActions } from "../../../store/authSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useNavigate } from "react-router";
-import CheckCircleOutlineIcon from '@mui/icons-material/InfoOutlined';
 
 
 
 export default function LoginPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [openSuccess, setOpenSuccess] = useState(false);
   const [modeLogin, setModeLogin] = useState(true);
   const [recoveryEmail, setRecoveryEmail] = useState<string>("");
 
@@ -77,7 +69,7 @@ export default function LoginPage() {
       alert("Password must be at least 6 characters");
       return;
     }
-    const response = await fetch("http://localhost:5173/api/auth/login", {
+    const response = await fetch("http://localhost:3000/auth/login", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       body: JSON.stringify({ email, password }),
@@ -85,28 +77,28 @@ export default function LoginPage() {
 
     if (response.status !== 200) {
       const data = await response.json();
-      alert(`Login failed: ${data}`);
+      alert("Login Failed: " + data.message);
       throw new Error("Connection Error");
     }
 
-    setOpenSuccess(true);
-    setTimeout(async () => {
-      await setUserInfo();
-      navigate("/");
-    }, 1500);
+    const result = await response.json();
+    const token = result.data.token;
+
+    localStorage.setItem("token", token);
+
+    await setUserInfo();
+    navigate("/admin", { state: { success: true } });
   };
 
-  function SlideTransition(props: SlideProps) {
-    return <Slide {...props} direction="down" />;
-  }
-
   const setUserInfo = async () => {
-    const response = await fetch("http://localhost:5173/api/auth/me", {
-      headers: { "Content-Type": "application/json" },
+    const token = localStorage.getItem("token");
+
+    const response = await fetch("http://localhost:3000/auth/me", {
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       method: "GET",
     });
     const data = await response.json();
-    dispatch(authActions.setUserInfo(data));
+    dispatch(authActions.setUserInfo(data.data.user));
   };
 
   return (
@@ -295,35 +287,6 @@ export default function LoginPage() {
           )}
         </Box>
       </Paper>
-
-      <Snackbar
-        open={openSuccess}
-        autoHideDuration={3000}
-        onClose={() => setOpenSuccess(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        TransitionComponent={SlideTransition}
-      >
-        <Alert
-          severity="success"
-          variant="filled"
-          icon={<CheckCircleOutlineIcon fontSize="large" />}
-          sx={{
-            backgroundColor: colors.black,
-            color: colors.yellow,
-            width: "100%",
-            boxShadow: "0 10px 40px rgba(0,0,0,0.5)",
-            borderRadius: 2,
-            fontSize: "1.1rem",
-            border: `2px solid ${colors.yellow}`,
-            "& .MuiAlert-icon": { color: colors.yellow },
-          }}
-        >
-          <AlertTitle sx={{ fontWeight: "900", fontSize: "1.2rem" }}>
-            LOGIN SUCCESS! 🚀
-          </AlertTitle>
-          Welcome back, <b>{email}</b>
-        </Alert>
-      </Snackbar>
     </Box>
   );
 }

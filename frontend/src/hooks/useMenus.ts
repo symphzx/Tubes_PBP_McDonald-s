@@ -21,6 +21,7 @@ export function useMenus() {
 
             const data = await response.json();
             dispatch(menuActions.setMenu(data.records));
+            dispatch(menuActions.setState('fullfilled'));
         } catch {
             dispatch(menuActions.setState('error'));
         }
