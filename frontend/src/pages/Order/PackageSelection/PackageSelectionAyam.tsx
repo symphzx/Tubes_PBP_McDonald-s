@@ -19,6 +19,13 @@ export default function PackageSelectionPage() {
     );
   }
 
+  if (!selectedItem.recommendation) {
+    navigate(`/customize-order/${selectedItem.id}`, {
+        state: { selectedItem, isPaket: false }
+    });
+    return null;
+  }
+
   return (
     <Box
       sx={{
@@ -113,7 +120,7 @@ export default function PackageSelectionPage() {
               <Paper
                 variant="outlined"
                 onClick={() =>
-                  navigate(`/customizeOrder/${selectedItem.recommendation.id}`, {
+                  navigate(`/customize-order/${selectedItem.recommendation.id}`, {
                     state: { 
                       selectedItem: selectedItem.recommendation,
                       isPaket: true 
@@ -139,7 +146,7 @@ export default function PackageSelectionPage() {
               >
                 <Box
                   component="img"
-                  src={selectedItem.recommendation.image}
+                  src={selectedItem.recommendation.gambar}
                   sx={{
                     width: "100%",
                     height: 160,
@@ -151,7 +158,7 @@ export default function PackageSelectionPage() {
                   Iya, jadikan paket
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Mulai dari {selectedItem.recommendation.price}
+                  Mulai dari Rp {selectedItem.recommendation.harga_awal?.toLocaleString("id-ID")}
                 </Typography>
               </Paper>
             </Grid>
@@ -159,7 +166,7 @@ export default function PackageSelectionPage() {
             <Grid size={{ xs: 12, sm: 5 }}>
               <Paper
                 variant="outlined"
-                onClick={() => navigate(`/customizeOrder/${selectedItem.id}`, {
+                onClick={() => navigate(`/customize-order/${selectedItem.id}`, {
                     state: { 
                       selectedItem: selectedItem,
                       isPaket: false 
@@ -185,7 +192,7 @@ export default function PackageSelectionPage() {
               >
                 <Box
                   component="img"
-                  src={selectedItem.image}
+                  src={selectedItem.gambar}
                   sx={{
                     width: "100%",
                     height: 160,
@@ -197,7 +204,7 @@ export default function PackageSelectionPage() {
                   Tidak, satuan saja
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {selectedItem.price}
+                  Rp {selectedItem.harga_awal?.toLocaleString("id-ID")}  
                 </Typography>
               </Paper>
             </Grid>

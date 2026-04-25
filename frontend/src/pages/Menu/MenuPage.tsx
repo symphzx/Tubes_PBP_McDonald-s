@@ -39,7 +39,7 @@ export default function MenuPage() {
     const handleCardClick = (item: any) => {
       // kalo menu satuan, arahin ke package selection
       if (item.tipe === "Ala Carte" && item.recommendation) {
-        const kategoriNama = item.kategori?.nama?.toLowerCase() || ""; 
+        const kategoriNama = item.kategoriRelation?.nama?.toLowerCase() || ""; 
         
         let targetPath = "";
         if (kategoriNama.includes("ayam")) {
@@ -52,7 +52,7 @@ export default function MenuPage() {
 
         navigate(targetPath, { state: { selectedItem: item } }) 
     } else {
-        navigate(`/setQuantity/${item.id}`); 
+        navigate(`/set-quantity/${item.id}`); 
     }
     };
 
@@ -75,6 +75,8 @@ export default function MenuPage() {
 
         return data;
     }, [menus, selectedCategory]);
+
+    const formatHarga = (harga: number) => harga.toLocaleString("id-ID");
 
     return (
         <Box>

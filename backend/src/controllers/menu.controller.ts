@@ -4,6 +4,7 @@ import { Varian_Menu } from "../models/VarianMenu";
 import { Opsi_Menu } from "../models/OpsiMenu";
 import { Paket_Menu } from "../models/PaketMenu";
 import { where } from "sequelize";
+import { Kategori } from "../models/Kategori";
 
 export class MenuController {
   static async getAll(req: Request, res: Response) {
@@ -14,6 +15,8 @@ export class MenuController {
           { model: Opsi_Menu },
           { model: Paket_Menu, as: "menuRelation" },
           { model: Paket_Menu, as: "paketRelation" },
+          { model: Kategori, as: "kategoriRelation" },
+          { model: Menu, as: "recommendation" },
         ],
       });
 

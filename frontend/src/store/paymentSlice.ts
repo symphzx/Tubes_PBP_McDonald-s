@@ -59,7 +59,10 @@ export const paymentSlice = createSlice({
       state.metode_pembayaran = undefined
       state.cart = []
       state.total = 0
-    }
+    },
+    setTotal: (state, action: PayloadAction<number>) => {
+        state.total = action.payload
+    },
   }
 })
 
