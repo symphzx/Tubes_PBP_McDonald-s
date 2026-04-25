@@ -11,21 +11,29 @@ import {
 } from "@mui/material";
 import { Link, Outlet, useNavigate } from "react-router";
 import LogoutIcon from "@mui/icons-material/Logout";
-import AddIcon from "@mui/icons-material/Add";
+import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
+import CategoryIcon from '@mui/icons-material/Category';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 import { useAppDispatch } from "../hooks/useAppDispatch";
 import { authActions } from "../store/authSlice";
-import { useAppSelector } from "../hooks/useAppSelector";
+import { useEffect } from "react";
+import { useAuth } from "../hooks/useAuth";
 
 export function AdminLayout() {
-    const userInfo = useAppSelector((state) => state.auth.userInfo);
+    const { userInfo, reload: reloadAuth } = useAuth();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
     const themeColor = "#DA291C";
     const secondaryColor = "#FFC72C";
 
+    useEffect(() => {
+      reloadAuth();
+    }, [reloadAuth]);
+
     const handleLogout = () => {
         dispatch(authActions.setUserInfo(undefined));
+        localStorage.removeItem("token");
         navigate("/login");
     };
 
@@ -43,7 +51,7 @@ export function AdminLayout() {
                 elevation={0}
                 sx={{
                     backgroundColor: "rgba(255, 255, 255, 0.8)",
-                    backdropFilter: "blur(10px)", // Efek kaca modern
+                    backdropFilter: "blur(10px)",
                     borderBottom: "1px solid #E0E0E0",
                     height: "70px",
                     justifyContent: "center",
@@ -74,48 +82,105 @@ export function AdminLayout() {
 
                         {/* --- MENU NAVIGASI (Hanya jika Login) --- */}
                         <Box sx={{ flexGrow: 1, display: "flex", gap: 1 }}>
-                            {!userInfo && (
+                            {userInfo && (
                                 <>
                                     <Button
+                                        component={Link}
+                                        to="/admin/list-category"
+                                        startIcon={<CategoryIcon />}
                                         sx={{
-                                            color: "#555",
-                                            fontWeight: 500,
-                                            textTransform: "none",
-                                            fontSize: "0.95rem",
-                                            px: 2,
                                             position: "relative",
+                                            borderRadius: "12px",
+                                            textTransform: "none",
+                                            fontWeight: 600,
+                                            fontSize: "0.95rem",
+                                            px: 2.5,
+                                            py: 1,
+                                            color: "#fff",
+
+                                            background: `linear-gradient(135deg, ${themeColor}, #b71c1c)`,
+                                            boxShadow: "0 4px 14px rgba(218, 41, 28, 0.35)",
+                                            transition: "all 0.25s ease",
+
+                                            "&:hover": {
+                                                transform: "translateY(-1px)",
+                                                boxShadow: "0 6px 18px rgba(218, 41, 28, 0.45)",
+                                                background: `linear-gradient(135deg, #c62828, #8e0000)`,
+                                            },
+
+                                            "&:active": {
+                                                transform: "scale(0.97)",
+                                            },
                                         }}
                                     >
-                                        Dashboard
-                                    </Button>
-                                    <Button
-                                        sx={{
-                                            color: "#555",
-                                            fontWeight: 500,
-                                            textTransform: "none",
-                                            fontSize: "0.95rem",
-                                            px: 2,
-                                            position: "relative",
-                                        }}
-                                    >
-                                        Post Management
+                                        Category Management
                                     </Button>
                                     <Button
                                         variant="contained"
-                                        startIcon={<AddIcon />}
+                                        startIcon={<RestaurantMenuIcon />}
                                         component={Link}
-                                        to="/admin/create-menu"
+                                        to="/admin/list-menu"
                                         sx={{
-                                            bgcolor: themeColor,
-                                            borderRadius: "8px",
-                                            textTransform: "none",
-                                            fontWeight: 600,
-                                            "&:hover": { bgcolor: "#b22217" },
-                                            display: { xs: "none", sm: "flex" },
+                                          position: "relative",
+                                          borderRadius: "12px",
+                                          textTransform: "none",
+                                          fontWeight: 600,
+                                          fontSize: "0.95rem",
+                                          px: 2.5,
+                                          py: 1,
+                                          color: "#1a1a1a",
+
+                                          background: "linear-gradient(135deg, #FFD54F, #FFC72C)",
+
+                                          boxShadow: "0 4px 14px rgba(255, 199, 44, 0.35)",
+                                          transition: "all 0.25s ease",
+
+                                          "&:hover": {
+                                            transform: "translateY(-1px)",
+                                            boxShadow: "0 6px 18px rgba(255, 199, 44, 0.45)",
+                                            background: "linear-gradient(135deg, #FFCA28, #FFB300)",
+                                          },
+
+                                          "&:active": {
+                                            transform: "scale(0.97)",
+                                          },
                                         }}
-                                    >
-                                        Create Post
-                                    </Button>
+                                      >
+                                        Menu Management
+                                      </Button>
+                                    <Button
+                                        variant="contained"
+                                        startIcon={<AssignmentIcon />}
+                                        component={Link}
+                                        to="/admin/list-order"
+                                        sx={{
+                                          position: "relative",
+                                          borderRadius: "12px",
+                                          textTransform: "none",
+                                          fontWeight: 600,
+                                          fontSize: "0.95rem",
+                                          px: 2.5,
+                                          py: 1,
+                                          color: "#ffffff",
+
+                                          background: "linear-gradient(135deg, #556b2f, #3e4f1c)",
+
+                                          boxShadow: "0 4px 14px rgba(62, 79, 28, 0.35)",
+                                          transition: "all 0.25s ease",
+
+                                          "&:hover": {
+                                            transform: "translateY(-1px)",
+                                            boxShadow: "0 6px 18px rgba(79, 98, 40, 0.35)",
+                                            background: "linear-gradient(135deg, #6b8e23, #4f6228)",
+                                          },
+
+                                          "&:active": {
+                                            transform: "scale(0.97)",
+                                          },
+                                        }}
+                                      >
+                                        Order Management
+                                      </Button>
                                 </>
                             )}
                         </Box>
@@ -128,7 +193,7 @@ export function AdminLayout() {
                                 gap: 2,
                             }}
                         >
-                            {!userInfo ? (
+                            {userInfo ? (
                                 <>
                                     <Box
                                         sx={{
@@ -155,14 +220,13 @@ export function AdminLayout() {
                                                     fontWeight: 700,
                                                 }}
                                             >
-                                                Admin
+                                                {userInfo.nama}
                                             </Typography>
                                             <Typography
                                                 variant="caption"
                                                 sx={{ color: "gray" }}
                                             >
-                                                Role : Admin / Cashier
-                                                Ditampilkan di sini
+                                                Role : {userInfo.role}
                                             </Typography>
                                         </Box>
                                         <Avatar
@@ -175,7 +239,10 @@ export function AdminLayout() {
                                                 fontSize: "0.9rem",
                                             }}
                                         >
-                                            A
+                                            {userInfo.nama
+                                                .split(" ")
+                                                .map((name) => name[0])
+                                                .join("")}
                                         </Avatar>
                                     </Box>
 

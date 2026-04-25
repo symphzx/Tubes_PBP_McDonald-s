@@ -25,6 +25,12 @@ export class User extends Model {
         type: DataType.STRING,
         allowNull: false,
     })
+    nama!: string;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: false,
+    })
     email!: string;
 
     @Column({

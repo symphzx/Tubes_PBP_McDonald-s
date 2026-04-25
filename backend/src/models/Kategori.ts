@@ -27,8 +27,39 @@ export class Kategori extends Model {
         type: DataType.STRING,
         allowNull: false,
     })
-    nama!: string;
+    declare nama: string;
+
+    @Column({
+        type: DataType.INTEGER,
+        allowNull: false,
+    })
+    declare sortOrder: number;
+
+    @Column({
+        type: DataType.DATE,
+        allowNull: false,
+        defaultValue: DataType.NOW,
+    })
+    declare startDate: Date;
+
+    @Column({
+        type: DataType.DATE,
+        allowNull: true,
+    })
+    declare endDate: Date;
+
+    @Column({
+        type: DataType.TIME,
+        allowNull: true,
+    })
+    declare startTime: string;
+
+    @Column({
+        type: DataType.TIME,
+        allowNull: true,
+    })
+    declare endTime: string;
 
     @HasMany(() => Menu, "kategori_id")
-    menuRelation!: Menu[] // nath nambahin [] karena 1 kategori punya banyak menuuu
+    menuRelation!: Menu[];
 }

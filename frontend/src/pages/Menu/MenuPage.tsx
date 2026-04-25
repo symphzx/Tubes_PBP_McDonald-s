@@ -56,10 +56,6 @@ export default function MenuPage() {
     }
     };
 
-    const formatHarga = (harga: number) => {
-      return new Intl.NumberFormat("en-US").format(harga);
-    };
-
     useEffect(() => {
         reload();
     }, [reload]);
@@ -69,7 +65,7 @@ export default function MenuPage() {
 
         // filter berdasarkan sidebar
         if (selectedCategory) {
-            data = data.filter((item) => item.kategori_id === selectedCategory.id);
+            data = data.filter((item) => item.kategori_id === selectedCategory.id && item.ketersediaan === "Tersedia");
         }
 
         // sort "Baru!" ke atas
@@ -175,7 +171,7 @@ export default function MenuPage() {
                             </Typography>
 
                             <Typography sx={{ fontSize: 12, color: "#555" }}>
-                                Rp{formatHarga(item.harga_awal)}
+                                Rp {item.harga_awal.toLocaleString()}
                             </Typography>
                         </CardContent>
                     </Card>
