@@ -2,28 +2,22 @@ import {
     Box,
     Typography,
     Button,
-    IconButton,
     Container,
-    FormGroup,
     FormControlLabel,
     Checkbox,
     Grid,
     Paper
 } from "@mui/material";
 import { useState } from "react";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
 
 import custOrderLogo from "../img/mcd-plate.png";
 import noItemFound from "../img/item-not-found-error.png";
-import testMenuImg from "../img/test_fries.avif";
-import { useNavigate, useParams, useLocation } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { v4 as uuidv4 } from 'uuid';
 
 // buat reduxnyaa
 import { useAppDispatch } from "../../../hooks/useAppDispatch"
 import { addItemToCart } from "../../../store/cartSlice"
-import { useAppSelector } from "../../../hooks/useAppSelector"
 
 export default function CustomizeOrder() {
     // const { id } = useParams();
@@ -36,7 +30,6 @@ export default function CustomizeOrder() {
     const navigate = useNavigate()
     const location = useLocation();
     
-    const cart = useAppSelector((state) => state.payment.cart) 
     const { selectedItem, isPaket, quantity } = location.state || {}
 
 

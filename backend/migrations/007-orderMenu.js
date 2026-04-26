@@ -32,7 +32,7 @@ module.exports = {
             },
             mv_id: {
                 type: Sequelize.UUID,
-                allowNull: false,
+                allowNull: true,
                 references: {
                     model: "Varian_Menu",
                     key: "id",

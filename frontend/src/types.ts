@@ -78,7 +78,7 @@ export type Payment = {
   id: string;
   order_id: string;
   metode_pembayaran: PaymentMethod;
-  status: "CART" | "PENDING" | "PROCESS" | "COMPLETED";
+  status: "PENDING" | "PAID" | "CANCELLED";
   paid_at: string;
 };
 

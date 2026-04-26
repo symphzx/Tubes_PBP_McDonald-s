@@ -38,7 +38,7 @@ export default function MenuPage() {
 
     const handleCardClick = (item: any) => {
       // kalo menu satuan, arahin ke package selection
-      if (item.tipe === "Ala Carte" && item.recommendation) {
+      if (item.recommendation) {
         const kategoriNama = item.kategoriRelation?.nama?.toLowerCase() || ""; 
         
         let targetPath = "";
@@ -46,8 +46,6 @@ export default function MenuPage() {
             targetPath = "/order/package-selection-ayam";
         } else if (kategoriNama.includes("burger")) {
             targetPath = "/order/package-selection-burger";
-        } else {
-            targetPath = "/order/package-selection-ayam"; 
         }
 
         navigate(targetPath, { state: { selectedItem: item } }) 
