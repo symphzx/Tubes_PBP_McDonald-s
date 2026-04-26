@@ -86,6 +86,8 @@ export default function SetQuantityPage() {
         }
         
         navigate("/menu");
+        alert("Item added to cart: " + selectedItem.name);
+        return navigate("/");
     }
 
     return (
@@ -130,7 +132,7 @@ export default function SetQuantityPage() {
                         color: "text.primary",
                         borderRadius: "4px",
                     }}
-                    onClick={() => navigate(`/customize/${selectedItem.id}`,{
+                    onClick={() => navigate(`/customize-order/${selectedItem.id}`,{
                         state: {
                             selectedItem: selectedItem,
                             quantity: quantity

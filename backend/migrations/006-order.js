@@ -11,6 +11,10 @@ module.exports = {
                 allowNull: false,
                 primaryKey: true,
             },
+            no_order: {
+                type: Sequelize.STRING,
+                allowNull: false,
+            },
             waktu_pemesanan: {
                 type: Sequelize.DATE,
                 allowNull: false,

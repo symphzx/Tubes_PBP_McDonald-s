@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
-import { Button, TextField, Typography, InputAdornment } from "@mui/material";
+import { Button, Typography, InputAdornment, TextField } from "@mui/material";
+
+
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import IconButton from "@mui/material/IconButton";
 import EmailIcon from "@mui/icons-material/Email";
@@ -14,6 +17,8 @@ import { isEmail } from "../../../utils/isEmail";
 import { authActions } from "../../../store/authSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useNavigate } from "react-router";
+
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState<string>("");
@@ -147,8 +152,7 @@ export default function LoginPage() {
         )}
         <Typography
           variant="h4"
-          fontWeight="800"
-          sx={{ color: colors.black, mb: 1, letterSpacing: -1 }}
+          sx={{ color: colors.black, mb: 1, letterSpacing: -1, fontWeight: 800 }}
         >
           {modeLogin === true ? "WELCOME BACK" : "FORGOT PASSWORD"}
         </Typography>
@@ -168,7 +172,7 @@ export default function LoginPage() {
                 variant="filled"
                 margin="normal"
                 onChange={(e) => setEmail(e.target.value)}
-                InputProps={{
+                inputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
                       <EmailIcon sx={{ color: colors.red }} />
@@ -192,7 +196,7 @@ export default function LoginPage() {
                 variant="filled"
                 margin="normal"
                 onChange={(e) => setPassword(e.target.value)}
-                InputProps={{
+                inputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
                       <LockIcon sx={{ color: colors.red }} />
@@ -246,7 +250,7 @@ export default function LoginPage() {
                 variant="filled"
                 margin="normal"
                 onChange={(e) => setRecoveryEmail(e.target.value)}
-                InputProps={{
+                inputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
                       <EmailIcon sx={{ color: colors.red }} />

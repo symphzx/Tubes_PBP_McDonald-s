@@ -52,6 +52,7 @@ export type OrderStatus = "PENDING" | "PAID" | "CANCELED";
 
 export type Order = {
   id: string;
+  no_order: string;
   waktu_pemesanan: string;
   total_harga: number;
   order_type: "DINE_IN" | "TAKEAWAY";

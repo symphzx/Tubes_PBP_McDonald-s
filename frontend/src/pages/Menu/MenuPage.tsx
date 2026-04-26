@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo } from "react";
 import {
     Box,
@@ -37,23 +38,25 @@ export default function MenuPage() {
     }, [kategori, category]);
 
     const handleCardClick = (item: any) => {
-      // kalo menu satuan, arahin ke package selection
-      if (item.tipe === "Ala Carte" && item.recommendation) {
-        const kategoriNama = item.kategori?.nama?.toLowerCase() || ""; 
-        
-        let targetPath = "";
-        if (kategoriNama.includes("ayam")) {
-            targetPath = "/order/package-selection-ayam";
-        } else if (kategoriNama.includes("burger")) {
-            targetPath = "/order/package-selection-burger";
-        } else {
-            targetPath = "/order/package-selection-ayam"; 
-        }
+        // kalo menu satuan, arahin ke package selection
+        if (item.tipe === "Ala Carte" && item.recommendation) {
+            const kategoriNama = item.kategori?.nama?.toLowerCase() || "";
 
-        navigate(targetPath, { state: { selectedItem: item } }) 
-    } else {
-        navigate(`/setQuantity/${item.id}`); 
-    }
+            let targetPath = "";
+            if (kategoriNama.includes("ayam")) {
+                targetPath = "/order/package-selection-ayam";
+            } else if (kategoriNama.includes("burger")) {
+                targetPath = "/order/package-selection-burger";
+            } else {
+                targetPath = "/order/package-selection-ayam";
+            }
+
+            navigate(targetPath, {
+                state: { selectedItem: item }
+            });
+        } else {
+            navigate(`/customize-order/${item.id || 0}`);
+        }
     };
 
     useEffect(() => {

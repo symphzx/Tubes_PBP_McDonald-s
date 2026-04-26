@@ -10,10 +10,11 @@ export const store = configureStore({
   reducer: {
     menu: menuReducer,
     category: categoryReducer,
-    auth: authReducer,
-    order: orderReducer,
+    auth: authReducer,// ngedaftarin reducer, nanti dipanggil pake state.payment
+    cart: cartReducer,
     payment: paymentReducer,
-    cart: cartReducer
+    order: orderReducer
+
   },
 })
 
