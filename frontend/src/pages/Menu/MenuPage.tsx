@@ -38,25 +38,21 @@ export default function MenuPage() {
     }, [kategori, category]);
 
     const handleCardClick = (item: any) => {
-        // kalo menu satuan, arahin ke package selection
-        if (item.tipe === "Ala Carte" && item.recommendation) {
-            const kategoriNama = item.kategori?.nama?.toLowerCase() || "";
-
-            let targetPath = "";
-            if (kategoriNama.includes("ayam")) {
-                targetPath = "/order/package-selection-ayam";
-            } else if (kategoriNama.includes("burger")) {
-                targetPath = "/order/package-selection-burger";
-            } else {
-                targetPath = "/order/package-selection-ayam";
-            }
-
-            navigate(targetPath, {
-                state: { selectedItem: item }
-            });
-        } else {
-            navigate(`/customize-order/${item.id || 0}`);
+      // kalo menu satuan, arahin ke package selection
+      if (item.recommendation) {
+        const kategoriNama = item.kategoriRelation?.nama?.toLowerCase() || ""; 
+        
+        let targetPath = "";
+        if (kategoriNama.includes("ayam")) {
+            targetPath = "/order/package-selection-ayam";
+        } else if (kategoriNama.includes("burger")) {
+            targetPath = "/order/package-selection-burger";
         }
+
+        navigate(targetPath, { state: { selectedItem: item } }) 
+    } else {
+        navigate(`/set-quantity/${item.id}`); 
+    }
     };
 
     useEffect(() => {
@@ -78,6 +74,8 @@ export default function MenuPage() {
 
         return data;
     }, [menus, selectedCategory]);
+
+    const formatHarga = (harga: number) => harga.toLocaleString("id-ID");
 
     return (
         <Box>

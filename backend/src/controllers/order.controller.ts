@@ -92,7 +92,7 @@ export class OrderController {
           
           // bikin order
           const newOrder = await Order.create({
-              waktu_pesanan: new Date().toISOString(),
+              waktu_pemesanan: new Date().toISOString(),
               total_harga,
               order_type,
               no_meja: order_type === "TAKEAWAY" ? 0 : assignedTable,

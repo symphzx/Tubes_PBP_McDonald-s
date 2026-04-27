@@ -112,6 +112,7 @@ export default function RecomendationPage() {
           {menuData.slice(0, 3).map((item, index) => (
             <Card
               key={index}
+              onClick={() => handleAddRecommendation(item)}
               sx={{
                 borderRadius: "10px",
                 border: "1px solid #e0e0e0",
@@ -216,6 +217,7 @@ export default function RecomendationPage() {
           {menuData.slice(3).map((item, index) => (
             <Card
               key={index}
+              onClick={() => handleAddRecommendation(item)}
               sx={{
                 width: "calc((100% / 3) - 16px)",
                 borderRadius: "10px",

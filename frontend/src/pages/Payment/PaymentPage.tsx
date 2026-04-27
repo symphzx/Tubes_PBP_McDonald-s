@@ -246,29 +246,16 @@ export default function PaymentPage() {
               <CloseIcon />
             </IconButton>
           </Box>
-          <Box sx={{ p: 3, maxHeight: "60vh", overflowY: "auto" }}>
-            {cart.map((item, idx) => (
-              <Stack
-                key={idx}
-                direction="row"
-                sx={{
-                  justifyContent: "space-between",
-                  mb: 2,
-                }}
-              >
-                <Box>
-                  <Typography sx={{ fontWeight: 700 }}>
-                    {item.menu?.nama || "Menu"}
-                  </Typography>
-                  <Typography variant="body2">
-                    {item.quantity} x Rp {item.harga_awal.toLocaleString()}
-                  </Typography>
-                </Box>
-                <Typography sx={{ fontWeight: 700 }}>
-                  Rp {(item.quantity * item.harga_awal).toLocaleString()}
-                </Typography>
-              </Stack>
-            ))}
+          <Box sx={{ p: 3, textAlign: "center" }}>
+              <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  Total Pembayaran
+              </Typography>
+              <Typography variant="h4" sx={{ color: "#FFBC0D", fontWeight: 900, mt: 1 }}>
+                  Rp {total.toLocaleString("id-ID")}
+              </Typography>
+              <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>
+                  Detail order tersimpan di sistem
+              </Typography>
           </Box>
         </Paper>
       </Modal>

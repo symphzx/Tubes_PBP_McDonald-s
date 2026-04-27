@@ -96,4 +96,14 @@ export class Menu extends Model {
         as: "orderMenuRelation"
     })
     orderMenuRelation!: OrderMenu[];
+
+    // nat nambah inii krn di migration ada tp disini blm ada
+    @Column({
+        type: DataType.UUID,
+        allowNull: true,
+    })
+    recommendation_id!: string | null;
+
+    @BelongsTo(() => Menu, "recommendation_id")
+    recommendation!: Menu;
 }

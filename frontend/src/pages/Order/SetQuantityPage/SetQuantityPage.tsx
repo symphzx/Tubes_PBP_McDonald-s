@@ -1,5 +1,4 @@
-import { Box, Button, IconButton, Typography } from "@mui/material";
-import testMenuImg from "../img/test_fries.avif";
+import { Box, Button, CircularProgress, IconButton, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router";
 import AddIcon from "@mui/icons-material/Add";
@@ -8,6 +7,8 @@ import RemoveIcon from "@mui/icons-material/Remove";
 // buat redux
 import { useAppDispatch } from "../../../hooks/useAppDispatch"
 import { addItemToCart, updateItemQuantity } from "../../../store/cartSlice"
+import type { Menu } from "../../../types";
+
 
 export default function SetQuantityPage() {
     const { id } = useParams();
@@ -15,10 +16,30 @@ export default function SetQuantityPage() {
     const navigate = useNavigate();
     const dispatch = useAppDispatch()
     const location = useLocation()
+    const [loading, setLoading] = useState(true);
+
+    // fetch menu (id) dari backend
+    const [menu, setMenu] = useState<Menu | null>(null);
+    useEffect(() => {
+        const fetchMenu = async () => {
+            try {
+                setLoading(true);
+                const res = await fetch(`http://localhost:3000/menu`);
+                if (!res.ok) throw new Error("Gagal fetch menu");
+                const data = await res.json();
+                const found = data.records.find((m: Menu) => m.id === id);
+                setMenu(found || null);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchMenu();
+    }, [id]);
 
     // cek ada kiriman dari OrderCart buat editItem ga
     const editItem = location.state?.editItem
-
     // quantity ngikutin yg ada di cart
     useEffect(() => {
         if (editItem) {
@@ -26,34 +47,21 @@ export default function SetQuantityPage() {
         }
     }, [editItem])
 
-    const dataMenuDummy = [
-        {
-            id: "662e9121-32c6-43c3-9a67-7e2bd43a9644",
-            name: "Fries",
-            price: 25000,
-            foodCategory: "fries",
-            imageUrl: testMenuImg,
-        },
-        {
-            id: "80f089b8-4001-49c5-b19f-42d7a9ce9870",
-            name: "Chicken",
-            price: 50500,
-            foodCategory: "Chicken",
-            imageUrl: testMenuImg,
-        },
+    // const dataMenuDummy = [
+    //     { id: 1, name: "Fries", price: 25000, imageUrl: testMenuImg },
+    //     { id: 2, name: "Chicken", price: 5050050, imageUrl: testMenuImg },
+    // ];
 
-    ];
+    // const selectedItem = dataMenuDummy.find((item) => item.id === Number(id));
 
-    const selectedItem = dataMenuDummy.find((item) => item.id === id);
-
-    if (!selectedItem) {
-        return (
-            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80vh" }}>
-                <Typography sx={{ fontFamily: "Speedee-Bold", fontSize: "20px", textAlign: "center" }}>
-                    Item Not noItemFound</Typography>
-            </Box>
-        );
-    }
+    // if (!selectedItem) {
+    //     return (
+    //         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80vh" }}>
+    //             <Typography sx={{ fontFamily: "Speedee-Bold", fontSize: "20px", textAlign: "center" }}>
+    //             Item Not noItemFound</Typography>
+    //         </Box>
+    //     );
+    // }
 
     // const handleAddToCart = () => {
     //     alert("Item added to cart: " + selectedItem.name);
@@ -61,6 +69,8 @@ export default function SetQuantityPage() {
     // }
 
     const handleAddToCart = () => {
+        if (!menu) return;
+
         if (editItem) {
             // edit
             dispatch(updateItemQuantity({
@@ -71,24 +81,34 @@ export default function SetQuantityPage() {
             }));
         } else {
             // add
-            const menuAddToCart = {
+            dispatch(addItemToCart({
                 id: Date.now().toString(),
-                menu_id: selectedItem.id.toString(),
-                menu_nama: selectedItem.name,
-                menu_harga: selectedItem.price,
-                menu_gambar: selectedItem.imageUrl,
-                varian: null, 
-                opsi: null,   
+                menu_id: menu.id,
+                menu_nama: menu.nama,
+                menu_harga: menu.harga_awal,
+                menu_gambar: menu.gambar || "",
+                varian: null,
+                opsi: null,
                 qty: quantity,
-                subtotal: 0
-            }
-            dispatch(addItemToCart(menuAddToCart));
+                subtotal: menu.harga_awal * quantity
+            }));
         }
-        
-        navigate("/menu");
-        alert("Item added to cart: " + selectedItem.name);
         return navigate("/");
     }
+
+    if (loading) return (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
+            <CircularProgress />
+        </Box>
+    );
+
+    if (!menu) return (
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80vh" }}>
+            <Typography sx={{ fontSize: "20px", textAlign: "center" }}>
+                Menu tidak ditemukan
+            </Typography>
+        </Box>
+    );
 
     return (
         <Box sx={{
@@ -106,9 +126,9 @@ export default function SetQuantityPage() {
             {/*  Iamgee */}
             <Box sx={{ width: "100%", display: "flex", justifyContent: "center", mt: 2 }}>
                 <img
-                    src={selectedItem.imageUrl}
-                    alt={selectedItem.name}
-                    style={{ width: "60%", objectFit: "cover", borderRadius: "8px" }}
+                    src={menu.gambar || "https://via.placeholder.com/150"}
+                    alt={menu.nama}
+                    style={{ width: "60%", objectFit: "cover", borderRadius: "8px"  }}
                 />
             </Box>
 
@@ -116,10 +136,10 @@ export default function SetQuantityPage() {
             <Box sx={{ width: "100%" }}>
 
                 <Typography sx={{ fontFamily: "Speedee-Bold", fontSize: "20px", textAlign: "center" }}>
-                    {selectedItem.name}
+                    {menu.nama}
                 </Typography>
                 <Typography sx={{ fontFamily: "Speedee-Regular", fontSize: "14px", textAlign: "center", color: "text.secondary", mb: 3 }}>
-                    Rp {selectedItem.price.toLocaleString("id-ID")}
+                    Rp {menu.harga_awal.toLocaleString("id-ID")}
                 </Typography>
 
                 <Button
@@ -132,10 +152,9 @@ export default function SetQuantityPage() {
                         color: "text.primary",
                         borderRadius: "4px",
                     }}
-                    onClick={() => navigate(`/customize-order/${selectedItem.id}`,{
-                        state: {
-                            selectedItem: selectedItem,
-                            quantity: quantity
+                    onClick={() => navigate(`/customize-order/${menu.id}`, {
+                        state: { 
+                            selectedItem: menu, quantity, 
                         }
                     })}
                 >

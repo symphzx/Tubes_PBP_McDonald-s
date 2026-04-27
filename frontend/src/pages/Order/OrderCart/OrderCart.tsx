@@ -8,21 +8,27 @@ import {
 
 } from "@mui/material";
 import { Add, Remove } from "@mui/icons-material";
-
 import mcdLogo from "../img/mcdonalds_logo.png";
+
 import { useNavigate } from "react-router";
+import { useState } from "react";
 
 // buatvredux
 import { useAppSelector } from "../../../hooks/useAppSelector";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
-import { updateItemQuantity, removeItem } from "../../../store/cartSlice";
+import { updateItemQuantity, removeItem, clearCart } from "../../../store/cartSlice";
+import { paymentActions } from "../../../store/paymentSlice";
+
+// integrasi
+import { checkoutOrder } from "../../../services/order.services";
 
 export default function OrderCart() {
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch()
+    const [loading, setLoading] = useState(false);
 
-    const { items: cartItems } = useAppSelector((state) => state.cart)
+    const { items: cartItems, totalHarga, orderType } = useAppSelector((state) => state.cart)
 
     // buat update quantity di cart
     const handleUpdateQty = (item: any, newQty: number) => {
@@ -43,6 +49,14 @@ export default function OrderCart() {
             mo_id: item.opsi?.mo_id
         }));
     };
+    
+    // buat cekout
+    const handleCheckout = async () => {
+        if (!orderType) {
+            alert("Order type not found");
+            navigate("/order");
+            return;
+        }
 
     // const [cart, setCart] = useState([
     //     {
@@ -63,22 +77,97 @@ export default function OrderCart() {
     //     },
     // ]);
 
-    const menuOption = [{
-        id: 1,
-        menu_id: "662e9121-32c6-43c3-9a67-7e2bd43a9644",
-        name: "Cheesy Sauce",
-        menu_qty: 2,
-        price: 1000,
-        imageUrl: ""
-    },
-    {
-        id: 2,
-        menu_id: "80f089b8-4001-49c5-b19f-42d7a9ce9870",
-        name: "Blackpeper ",
-        menu_qty: 5,
-        price: 1000,
-        imageUrl: ""
-    }]
+    // const menuOption = [{
+    //     id: 1,
+    //     menu_id: "662e9121-32c6-43c3-9a67-7e2bd43a9644",
+    //     name: "Cheesy Sauce",
+    //     menu_qty: 2,
+    //     price: 1000,
+    //     imageUrl: ""
+    // },
+    // {
+    //     id: 2,
+    //     menu_id: "80f089b8-4001-49c5-b19f-42d7a9ce9870",
+    //     name: "Blackpeper ",
+    //     menu_qty: 5,
+    //     price: 1000,
+    //     imageUrl: ""
+    // }]
+        try {
+            setLoading(true);
+
+            // mapping cart redux sama backens
+            const items = cartItems.map(item => ({
+                menu_id: item.menu_id,
+                mv_id: item.varian?.mv_id || null,
+                mo_id: item.opsi?.mo_id || null,
+                quantity: item.qty,
+                harga_awal: item.menu_harga
+            }));
+
+            const data = await checkoutOrder({
+                order_type: orderType,
+                no_meja: 0, // diassign dari backend
+                total_harga: totalHarga,
+                items
+            });
+
+            // nyimpen hasil order ke paymentSlice
+            dispatch(paymentActions.setOrderId(data.data.id));
+            dispatch(paymentActions.setCart([])); // kosongin cart
+            dispatch(paymentActions.setno_meja(
+                data.data.no_meja ? data.data.no_meja.toString() : ""
+            ));
+            dispatch(paymentActions.setOrderType(
+                orderType === "DINE_IN" ? "DINE_IN" : "TAKE_AWAY"
+            ));
+            dispatch(paymentActions.setTotal(total)); // total = subtotal + gst
+
+            dispatch(clearCart());
+            navigate("/payment");
+        } catch (err) {
+            console.error("Checkout error:", err);
+            alert("Checkout gagal, coba lagi");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    // const [cart, setCart] = useState([
+    //     {
+    //         id: 1,
+    //         name: "Fries",
+    //         price: 10000,
+    //         menuOption: 1,
+    //         qty: 1,
+    //         image: friesImg,
+    //     },
+    //     {
+    //         id: 2,
+    //         name: "Schezwan Veg Burger",
+    //         desc: "",
+    //         price: 64000,
+    //         qty: 1,
+    //         image: friesImg,
+    //     },
+    // ]);
+
+    // const menuOption = [{
+    //     id: 1,
+    //     menu_id: 1,
+    //     name: "Cheesy Sauce",
+    //     menu_qty: 2,
+    //     price: 1000,
+    //     imageUrl: ""
+    // },
+    // {
+    //     id: 2,
+    //     menu_id: 1,
+    //     name: "Blackpeper ",
+    //     menu_qty: 5,
+    //     price: 1000,
+    //     imageUrl: ""
+    // }]
 
     // const handleAdd = (id: number) => {
     //     setCart((prev) =>
@@ -103,7 +192,7 @@ export default function OrderCart() {
     // };
 
     // hitung subtotal dgn tambahin semua harga * quantity
-    const additional = menuOption.reduce((acc, item) => acc + item.price * item.menu_qty, 0);
+    // const additional = menuOption.reduce((acc,item) => acc + item.price * item.menu_qty, 0);
 
     // const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0) + additional;
 
@@ -111,7 +200,7 @@ export default function OrderCart() {
     // const gst = Math.floor((subtotal) * 0.1);
     // const total = subtotal + gst;
 
-    const subtotal = cartItems.reduce((acc, item) => acc + (item.menu_harga * item.qty), 0) + additional;
+    const subtotal = cartItems.reduce((acc, item) => acc + item.subtotal, 0)
     const gst = Math.floor(subtotal * 0.1);
     const total = subtotal + gst;
 
@@ -324,8 +413,14 @@ export default function OrderCart() {
                     Order More
                 </Button>
 
-                <Button fullWidth variant="contained" onClick={() => navigate("/payment")} sx={{ bgcolor: "#FFAC00", color: "black", fontFamily: "Speedee-Regular" }}>
-                    Complete Order
+                <Button
+                    fullWidth
+                    variant="contained"
+                    onClick={handleCheckout}
+                    disabled={loading}
+                    sx={{ bgcolor: "#FFAC00", color: "black", fontFamily: "Speedee-Regular" }}
+                >
+                    {loading ? "Memproses..." : "Complete Order"}
                 </Button>
             </Box>
         </Box >

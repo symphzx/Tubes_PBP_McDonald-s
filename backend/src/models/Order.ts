@@ -49,7 +49,7 @@ export class Order extends Model {
     declare no_meja: number;
 
     @Column({
-        type: DataType.ENUM("CART", "PENDING", "PROCESS", "COMPLETED"), // nath ngubah inii biar sama kaya di migration
+        type: DataType.ENUM("PENDING", "PAID", "CANCELLED"), // nath ngubah inii biar sama kaya di migration
         allowNull: false,
     })
     declare status: string;
