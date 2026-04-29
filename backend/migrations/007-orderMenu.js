@@ -33,20 +33,20 @@ module.exports = {
             mv_id: {
                 type: Sequelize.UUID,
                 allowNull: true,
-                references: {
-                    model: "Varian_Menu",
-                    key: "id",
-                },
+                // references: {
+                //     model: "Varian_Menu",
+                //     key: "id",
+                // },
                 onUpdate: "CASCADE",
                 onDelete: "CASCADE",
             },
             mo_id: {
                 type: Sequelize.UUID,
                 allowNull: true,
-                references: {
-                    model: "Opsi_Menu",
-                    key: "id",
-                },
+                // references: {
+                //     model: "Opsi_Menu",
+                //     key: "id",
+                // },
                 onUpdate: "CASCADE",
                 onDelete: "CASCADE",
             },

@@ -94,7 +94,7 @@ export default function SetQuantityPage() {
                 subtotal: menu.harga_awal * quantity
             }));
         }
-        navigate("/menu");
+        navigate("/");
     }
 
     if (loading) return (

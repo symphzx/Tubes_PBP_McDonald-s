@@ -55,10 +55,10 @@ export class OrderController {
 
           // konsepnya dapet order_no brdsrkn order_no terakhir
           // klo blm ada last order, otomatis 1
-          // let nextOrder_no = 1
-          // if (lastOrder && lastOrder.order_no) {
-          //     nextOrder_no = lastOrder.order_no + 1 
-          // }
+        //   let nextOrder_no = 1
+        //   if (lastOrder && lastOrder.order_no) {
+        //       nextOrder_no = lastOrder.order_no + 1 
+        //   }
 
           // konsepnya ngambil semua no_meja yg lagi dipake && status ga completed
           // trus cari no_meja dari 1-50 yg gaada di list occupied
@@ -97,7 +97,7 @@ export class OrderController {
               order_type,
               no_meja: order_type === "TAKEAWAY" ? 0 : assignedTable,
               status: "PENDING",
-              // order_no: nextOrder_no
+            //   order_no: nextOrder_no
           },
           {
               transaction
@@ -120,7 +120,7 @@ export class OrderController {
 
           return res.status(201).json({
               message: "Order created",
-              // order_no: newOrder.order_no,
+              order_no: newOrder.order_no,
               data: newOrder
           })
       } catch (err: any) {

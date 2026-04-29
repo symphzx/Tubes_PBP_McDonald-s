@@ -66,7 +66,7 @@ export default function RecomendationPage() {
     };
 
     dispatch(addItemToCart(orderData));
-    navigate("/menu"); 
+    navigate("/"); 
   };
 
   return (

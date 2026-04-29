@@ -168,13 +168,10 @@ export function MenuLayout() {
 
                                 <ListItemText
                                     primary={homeItems.Label}
-                                    primaryTypographyProps={{
-                                        fontSize: 13,
-                                        fontWeight: 600,
-                                    }}
                                     sx={{
                                         fontWeight: isHomeActive ? 600 : 400,
                                         color: isHomeActive ? "#000" : "#555",
+                                        fontSize: 13,
                                     }}
                                 />
                             </ListItemButton>
@@ -221,10 +218,10 @@ export function MenuLayout() {
 
                                 <ListItemText
                                     primary={item.nama}
-                                    primaryTypographyProps={{
+                                    sx={{
                                         fontSize: 13,
                                         fontWeight: activeIndex === index ? 600 : 400,
-                                        color: activeIndex === index ? "#000" : "#555",
+                                        color: activeIndex === index ? "#000" : "#555", 
                                     }}
                                 />
                             </ListItemButton>

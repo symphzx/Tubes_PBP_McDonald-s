@@ -14,7 +14,7 @@ export default function PackageSelectionPage() {
     return (
       <Box sx={{ textAlign: "center", mt: 5 }}>
         <Typography>Menu Tidak Tersedia</Typography>
-        <Button onClick={() => navigate("/menu")}>Kembali ke Menu</Button>
+        <Button onClick={() => navigate("/")}>Kembali ke Menu</Button>
       </Box>
     );
   }

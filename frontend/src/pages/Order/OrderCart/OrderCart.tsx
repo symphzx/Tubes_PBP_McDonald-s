@@ -173,7 +173,7 @@ export default function OrderCart() {
         return (
             <Box sx={{ textAlign: "center", mt: 10 }}>
                 <Typography variant="h6">Keranjang Kosong</Typography>
-                <Button onClick={() => navigate("/menu")}>Kembali ke Menu</Button>
+                <Button onClick={() => navigate("/")}>Kembali ke Menu</Button>
             </Box>
         );
     }
@@ -374,7 +374,7 @@ export default function OrderCart() {
                     mt: 3,
                 }}
             >
-                <Button fullWidth variant="outlined" onClick={() => navigate("/menu")} sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", borderColor: "text.secondary" }}>
+                <Button fullWidth variant="outlined" onClick={() => navigate("/")} sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", borderColor: "text.secondary" }}>
                     Order More
                 </Button>
 

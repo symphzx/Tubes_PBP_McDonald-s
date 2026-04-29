@@ -33,10 +33,10 @@ export default function OrderType() {
 
     dispatch(setOrderType(type))
 
-    localStorage.setItem("orderType", type);
+    sessionStorage.setItem("orderType", type);
 
     setTimeout(() => {
-      navigate("/menu");
+      navigate("/");
     }, 300);
   };
 
