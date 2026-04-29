@@ -36,7 +36,7 @@ export default function OrderType() {
     localStorage.setItem("orderType", type);
 
     setTimeout(() => {
-      navigate("/menu");
+      navigate("/");
     }, 300);
   };
 

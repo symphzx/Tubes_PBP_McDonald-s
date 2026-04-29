@@ -5,6 +5,7 @@ import auth from "../middlewares/auth.middleware";
 const router: Router = Router();
 
 router.get("/", OrderController.getAll);
+router.post("/checkout", OrderController.createOrder)
 // router.post("/", auth,OrderController.create);
 // router.put("/:id", auth, OrderController.update);
 // router.delete("/:id", auth, OrderController.delete);

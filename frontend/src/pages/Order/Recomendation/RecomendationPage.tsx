@@ -1,4 +1,4 @@
-import React from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Box,
   Typography,
@@ -66,7 +66,7 @@ export default function RecomendationPage() {
     };
 
     dispatch(addItemToCart(orderData));
-    navigate("/menu"); 
+    navigate("/"); 
   };
 
   return (

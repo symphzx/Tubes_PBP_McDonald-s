@@ -1,4 +1,4 @@
-import { Box, Typography, Paper, Button, Stack } from "@mui/material";
+import { Box, Typography, Paper, Button} from "@mui/material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { useNavigate } from "react-router";
 import { useAppSelector } from "../../hooks/useAppSelector";

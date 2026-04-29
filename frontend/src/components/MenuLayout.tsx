@@ -2,10 +2,10 @@ import {
     Box,
     Card,
     List,
-    ListItemText,
     ListItemIcon,
     ListItemButton,
 } from "@mui/material";
+import ListItemText from '@mui/material/ListItemText';
 import { useNavigate } from "react-router";
 import { useLocation, useParams } from "react-router";
 
@@ -23,7 +23,7 @@ import { Outlet } from "react-router";
 import { useEffect, useMemo, type JSX } from "react";
 import { useKategori } from "../hooks/useKategori";
 
-const homeItems = { Label: "Home", icon: <HomeIcon />};
+const homeItems = { Label: "Home", icon: <HomeIcon /> };
 const iconMap: Record<string, JSX.Element> = {
     "Promosi": <LocalOfferIcon />,
     "Burger & McNuggets": <LunchDiningIcon />,
@@ -168,12 +168,13 @@ export function MenuLayout() {
 
                                 <ListItemText
                                     primary={homeItems.Label}
-                                    primaryTypographyProps={{
-                                        fontSize: 13,
-                                        fontWeight: 600,
-                                    }}
+                                            // primaryTypographyProps={{
+                                            //     fontWeight: 600,
+                                            // }}
                                     sx={{
                                         fontWeight: isHomeActive ? 600 : 400,
+                                        fontSize: 13,
+
                                         color: isHomeActive ? "#000" : "#555",
                                     }}
                                 />
@@ -221,7 +222,7 @@ export function MenuLayout() {
 
                                 <ListItemText
                                     primary={item.nama}
-                                    primaryTypographyProps={{
+                                    sx={{
                                         fontSize: 13,
                                         fontWeight: activeIndex === index ? 600 : 400,
                                         color: activeIndex === index ? "#000" : "#555",

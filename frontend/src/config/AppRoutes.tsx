@@ -95,7 +95,7 @@ export const AppRoutes = () => {
         <Route path="/customize-order/:id" element={<CustomizeOrderPage />} />
         <Route path="/cart" element={<OrderCartPage />} />
         <Route path="/set-quantity/:id" element={<SetQuantityPage />} />
-        <Route path="/recomendation" element={<RecomendationPage />} />
+        <Route path="/recommendation" element={<RecomendationPage />} />
       </Route>
 
       <Route element={<AdminLayout />}>
