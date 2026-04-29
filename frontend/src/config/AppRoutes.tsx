@@ -35,6 +35,7 @@ const ProtectedRoute = lazy(() => import("./ProtectedRoute"));
 
 const AdminPage = lazy(() => import("../pages/Admin/AdminPage"));
 const LoginPage = lazy(() => import("../pages/Admin/Login/LoginPage"));
+const ResetPasswordPage = lazy(() => import("../pages/Admin/ResetPassword/ResetPasswordPage"));
 
 const ListMenuPage = lazy(() => import("../pages/Admin/MenuManagement/ListMenuPage"));
 const CreateMenuPage = lazy(() => import("../pages/Admin/MenuManagement/CreateMenuPage"));
@@ -45,6 +46,10 @@ const CreateCategoryPage = lazy(() => import("../pages/Admin/CategoryManagement/
 const EditCategoryPage = lazy(() => import("../pages/Admin/CategoryManagement/EditCategoryPage"));
 
 const ListOrderPage = lazy(() => import("../pages/Admin/OrderManagement/ListOrderPage"));
+
+const ListUserPage = lazy(() => import("../pages/Admin/UserManagement/ListUserPage"));
+const CreateUserPage = lazy(() => import("../pages/Admin/UserManagement/CreateUserPage"));
+const EditUserPage = lazy(() => import("../pages/Admin/UserManagement/EditUserPage"));
 
 export const AppRoutes = () => {
   const { userInfo } = useAppSelector((state) => state.auth);
@@ -100,6 +105,7 @@ export const AppRoutes = () => {
 
       <Route element={<AdminLayout />}>
         { !userInfo && <Route path="/login" element={<LoginPage />} /> }
+        { <Route path="/reset-password" element={ <ResetPasswordPage /> } /> }
 
         { <Route path="/admin" element={ <ProtectedRoute> <AdminPage /> </ProtectedRoute>} /> }
 
@@ -110,6 +116,10 @@ export const AppRoutes = () => {
         { <Route path="/admin/list-category" element={ <ProtectedRoute> <ListCategoryPage /> </ProtectedRoute>} /> }
         { <Route path="/admin/create-category" element={ <ProtectedRoute> <CreateCategoryPage /> </ProtectedRoute>} /> }
         { <Route path="/admin/edit-category/:id" element={ <ProtectedRoute> <EditCategoryPage /> </ProtectedRoute>} /> }
+
+        { <Route path="/admin/list-user" element={ <ProtectedRoute> <ListUserPage /> </ProtectedRoute>} /> }
+        { <Route path="/admin/create-user" element={ <ProtectedRoute> <CreateUserPage /> </ProtectedRoute>} /> }
+        { <Route path="/admin/edit-user/:id" element={ <ProtectedRoute> <EditUserPage /> </ProtectedRoute>} /> }
 
         { <Route path="/admin/list-order" element={ <ProtectedRoute> <ListOrderPage /> </ProtectedRoute>} /> }
         

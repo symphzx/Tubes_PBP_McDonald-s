@@ -51,7 +51,7 @@ export default function LoginPage() {
       return;
     }
 
-    await fetch("http://localhost:5173/api/auth/forgot-password", {
+    await fetch("http://localhost:3000/auth/forgot-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: recoveryEmail }),
@@ -71,6 +71,7 @@ export default function LoginPage() {
     }
     const response = await fetch("http://localhost:3000/auth/login", {
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
@@ -91,10 +92,9 @@ export default function LoginPage() {
   };
 
   const setUserInfo = async () => {
-    const token = localStorage.getItem("token");
-
     const response = await fetch("http://localhost:3000/auth/me", {
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      headers: { "Content-Type": "application/json"},
+      credentials: "include",
       method: "GET",
     });
     const data = await response.json();

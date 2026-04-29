@@ -26,6 +26,14 @@ module.exports = {
                 type: Sequelize.ENUM("Admin", "Cashier"),
                 allowNull: false,
             },
+            forget_token: {
+                type: Sequelize.STRING,
+                allowNull: true,
+            },
+            forget_token_expired: {
+                type: Sequelize.DATE,
+                allowNull: true,
+            },
             createdAt: {
                 type: Sequelize.DATE,
                 allowNull: false,

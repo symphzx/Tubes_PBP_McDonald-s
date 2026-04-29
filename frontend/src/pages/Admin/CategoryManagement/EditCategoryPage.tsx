@@ -69,8 +69,8 @@ export default function EditCategoryPage() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
+        credentials: "include",
         body: JSON.stringify({
           nama,
           sortOrder: Number(sortOrder),
