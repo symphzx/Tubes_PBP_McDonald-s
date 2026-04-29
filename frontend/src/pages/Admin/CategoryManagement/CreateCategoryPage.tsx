@@ -125,7 +125,7 @@ export default function CreateCategoryPage() {
               Informasi Kategori
             </Typography>
 
-            <Box display="flex" flexDirection="column" gap={3}>
+            <Box sx={{ display:"flex", flexDirection:"column", gap:3 }} >
               <TextField
                 fullWidth
                 label="Nama Kategori"
@@ -177,7 +177,9 @@ export default function CreateCategoryPage() {
                   fullWidth
                   type="date"
                   label="Start Date"
-                  InputLabelProps={{ shrink: true }}
+                  slotProps={{
+                    inputLabel: { shrink: true },
+                  }}
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                 />
@@ -188,7 +190,9 @@ export default function CreateCategoryPage() {
                   fullWidth
                   type="date"
                   label="End Date"
-                  InputLabelProps={{ shrink: true }}
+                  slotProps={{
+                    inputLabel: { shrink: true },
+                  }}
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                 />
@@ -199,7 +203,9 @@ export default function CreateCategoryPage() {
                   fullWidth
                   type="time"
                   label="Start Time"
-                  InputLabelProps={{ shrink: true }}
+                  slotProps={{
+                    inputLabel: { shrink: true },
+                  }}
                   value={startTime}
                   onChange={(e) => setStartTime(e.target.value)}
                 />
@@ -210,7 +216,9 @@ export default function CreateCategoryPage() {
                   fullWidth
                   type="time"
                   label="End Time"
-                  InputLabelProps={{ shrink: true }}
+                  slotProps={{
+                    inputLabel: { shrink: true },
+                  }}
                   value={endTime}
                   onChange={(e) => setEndTime(e.target.value)}
                 />
@@ -311,9 +319,7 @@ export default function CreateCategoryPage() {
                   : "0 4px 14px rgba(218, 41, 28, 0.35)",
 
               cursor:
-                !nama || !sortOrder || !startDate
-                  ? "not-allowed"
-                  : "pointer",
+                !nama || !sortOrder || !startDate ? "not-allowed" : "pointer",
 
               "&:hover": {
                 background:

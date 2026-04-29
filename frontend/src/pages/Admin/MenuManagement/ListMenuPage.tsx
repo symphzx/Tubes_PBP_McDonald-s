@@ -535,10 +535,12 @@ export default function ListMenuPage() {
         onClose={() => setDeleteTarget(null)}
         maxWidth="xs"
         fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: "22px",
-            p: 1,
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: "22px",
+              p: 1,
+            },
           },
         }}
       >

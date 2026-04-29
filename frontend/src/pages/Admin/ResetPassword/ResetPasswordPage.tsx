@@ -69,7 +69,7 @@ export default function ResetPasswordPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token, newPassword }),
-        }
+        },
       );
 
       if (response.status !== 200) {
@@ -149,8 +149,12 @@ export default function ResetPasswordPage() {
         {/* TITLE */}
         <Typography
           variant="h4"
-          fontWeight="800"
-          sx={{ color: colors.black, mb: 1, letterSpacing: -1 }}
+          sx={{
+            color: colors.black,
+            mb: 1,
+            letterSpacing: -1,
+            fontWeight: "800",
+          }}
         >
           RESET PASSWORD
         </Typography>
@@ -170,27 +174,29 @@ export default function ResetPasswordPage() {
             margin="normal"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <LockIcon sx={{ color: colors.red }} />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    edge="end"
-                    size="small"
-                  >
-                    {showNewPassword ? (
-                      <VisibilityOffIcon />
-                    ) : (
-                      <VisibilityIcon />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockIcon sx={{ color: colors.red }} />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      edge="end"
+                      size="small"
+                    >
+                      {showNewPassword ? (
+                        <VisibilityOffIcon />
+                      ) : (
+                        <VisibilityIcon />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
             }}
             sx={{
               bgcolor: colors.white,
@@ -213,9 +219,7 @@ export default function ResetPasswordPage() {
               }}
             >
               {hasMinLength ? (
-                <CheckCircleOutlineIcon
-                  sx={{ fontSize: 16, color: "green" }}
-                />
+                <CheckCircleOutlineIcon sx={{ fontSize: 16, color: "green" }} />
               ) : (
                 <CancelOutlinedIcon sx={{ fontSize: 16, color: "gray" }} />
               )}
@@ -239,39 +243,41 @@ export default function ResetPasswordPage() {
             onChange={(e) => setConfirmPassword(e.target.value)}
             error={passwordsMismatch}
             helperText={passwordsMismatch ? "Passwords do not match" : ""}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <LockIcon sx={{ color: colors.red }} />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  {/* Match Indicator */}
-                  {confirmPassword.length > 0 && (
-                    <>
-                      {passwordsMatch ? (
-                        <CheckCircleOutlineIcon
-                          sx={{ color: "green", mr: 0.5 }}
-                        />
-                      ) : null}
-                    </>
-                  )}
-                  <IconButton
-                    onClick={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
-                    }
-                    edge="end"
-                    size="small"
-                  >
-                    {showConfirmPassword ? (
-                      <VisibilityOffIcon />
-                    ) : (
-                      <VisibilityIcon />
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockIcon sx={{ color: colors.red }} />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {/* Match Indicator */}
+                    {confirmPassword.length > 0 && (
+                      <>
+                        {passwordsMatch ? (
+                          <CheckCircleOutlineIcon
+                            sx={{ color: "green", mr: 0.5 }}
+                          />
+                        ) : null}
+                      </>
                     )}
-                  </IconButton>
-                </InputAdornment>
-              ),
+                    <IconButton
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      edge="end"
+                      size="small"
+                    >
+                      {showConfirmPassword ? (
+                        <VisibilityOffIcon />
+                      ) : (
+                        <VisibilityIcon />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
             }}
             sx={{
               bgcolor: colors.white,

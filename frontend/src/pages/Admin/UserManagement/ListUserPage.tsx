@@ -59,7 +59,7 @@ export default function ListUserPage() {
           nama: u.nama,
           email: u.email,
           role: u.role,
-        })
+        }),
       );
 
       setUsers(mapped);
@@ -84,7 +84,7 @@ export default function ListUserPage() {
         {
           method: "DELETE",
           credentials: "include",
-        }
+        },
       );
 
       if (!response.ok) throw new Error("Failed to delete user");
@@ -483,10 +483,12 @@ export default function ListUserPage() {
         onClose={() => setDeleteTarget(null)}
         maxWidth="xs"
         fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: "22px",
-            p: 1,
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: "22px",
+              p: 1,
+            },
           },
         }}
       >

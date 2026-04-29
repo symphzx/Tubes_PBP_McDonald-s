@@ -39,7 +39,7 @@ export default function EditCategoryPage() {
 
     const category = kategori.find((kategori) => kategori.id === id);
     if (!category) return;
-    
+
     const rawStartTime = category.startTime;
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -61,7 +61,7 @@ export default function EditCategoryPage() {
   }, 0);
 
   const isSortOrderInvalid =
-  sortOrder !== "" && Number(sortOrder) <= lastOrderKategori;
+    sortOrder !== "" && Number(sortOrder) <= lastOrderKategori;
 
   const handleSubmit = async () => {
     try {
@@ -127,7 +127,7 @@ export default function EditCategoryPage() {
           bgcolor: "#FFFFFF",
         }}
       >
-        <Box display="flex" flexDirection="column" gap={3}>
+        <Box sx={{ display:"flex", flexDirection:"column", gap: 3 }}>
           {/* INFORMASI */}
           <Box>
             <Typography
@@ -141,7 +141,7 @@ export default function EditCategoryPage() {
               Informasi Kategori
             </Typography>
 
-            <Box display="flex" flexDirection="column" gap={3}>
+            <Box sx={{ display:"flex", flexDirection:"column", gap: 3 }}>
               {/* Nama */}
               <TextField
                 fullWidth
@@ -198,7 +198,9 @@ export default function EditCategoryPage() {
                   fullWidth
                   type="date"
                   label="Start Date"
-                  InputLabelProps={{ shrink: true }}
+                  slotProps={{
+                    inputLabel: { shrink: true },
+                  }}
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                 />
@@ -210,7 +212,9 @@ export default function EditCategoryPage() {
                   fullWidth
                   type="date"
                   label="End Date"
-                  InputLabelProps={{ shrink: true }}
+                  slotProps={{
+                    inputLabel: { shrink: true },
+                  }}
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                 />
@@ -222,10 +226,11 @@ export default function EditCategoryPage() {
                   fullWidth
                   type="time"
                   label="Start Time"
-                  InputLabelProps={{ shrink: true }}
+                  slotProps={{
+                    inputLabel: { shrink: true },
+                  }}
                   value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)
-                  }
+                  onChange={(e) => setStartTime(e.target.value)}
                 />
               </Box>
 
@@ -235,7 +240,9 @@ export default function EditCategoryPage() {
                   fullWidth
                   type="time"
                   label="End Time"
-                  InputLabelProps={{ shrink: true }}
+                  slotProps={{
+                    inputLabel: { shrink: true },
+                  }}
                   value={endTime}
                   onChange={(e) => setEndTime(e.target.value)}
                 />
@@ -246,7 +253,7 @@ export default function EditCategoryPage() {
           <Divider />
 
           {/* BUTTON */}
-          <Box display="flex" gap={2}>
+          <Box sx={{ display:"flex", gap: 2 }}>
             <Button
               fullWidth
               variant="outlined"
@@ -284,26 +291,24 @@ export default function EditCategoryPage() {
                 textTransform: "none",
                 fontSize: "1rem",
                 background:
+                  !nama || !sortOrder || !startDate
+                    ? "#ccc"
+                    : `linear-gradient(135deg, ${themeColor}, #b71c1c)`,
+
+                boxShadow:
+                  !nama || !sortOrder || !startDate
+                    ? "none"
+                    : "0 4px 14px rgba(218, 41, 28, 0.35)",
+
+                cursor:
+                  !nama || !sortOrder || !startDate ? "not-allowed" : "pointer",
+
+                "&:hover": {
+                  background:
                     !nama || !sortOrder || !startDate
                       ? "#ccc"
-                      : `linear-gradient(135deg, ${themeColor}, #b71c1c)`,
-
-                  boxShadow:
-                    !nama || !sortOrder || !startDate
-                      ? "none"
-                      : "0 4px 14px rgba(218, 41, 28, 0.35)",
-
-                  cursor:
-                    !nama || !sortOrder || !startDate
-                      ? "not-allowed"
-                      : "pointer",
-
-                  "&:hover": {
-                    background:
-                      !nama || !sortOrder || !startDate
-                        ? "#ccc"
-                        : "linear-gradient(135deg, #c62828, #8e0000)",
-                  },
+                      : "linear-gradient(135deg, #c62828, #8e0000)",
+                },
               }}
             >
               Simpan Kategori

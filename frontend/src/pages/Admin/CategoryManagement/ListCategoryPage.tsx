@@ -13,7 +13,7 @@ import {
   DialogActions,
 } from "@mui/material";
 
-import CategoryIcon from '@mui/icons-material/Category';
+import CategoryIcon from "@mui/icons-material/Category";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -302,10 +302,12 @@ export default function ListCategoryPage() {
         onClose={() => setDeleteTarget(null)}
         maxWidth="xs"
         fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: "22px",
-            p: 1,
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: "22px",
+              p: 1,
+            },
           },
         }}
       >
