@@ -5,7 +5,6 @@ import {
     Button,
     IconButton,
     Divider
-
 } from "@mui/material";
 import { Add, Remove } from "@mui/icons-material";
 import mcdLogo from "../img/mcdonalds_logo.png";
@@ -13,7 +12,7 @@ import mcdLogo from "../img/mcdonalds_logo.png";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 
-// buatvredux
+// redux
 import { useAppSelector } from "../../../hooks/useAppSelector";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { updateItemQuantity, removeItem, clearCart } from "../../../store/cartSlice";
@@ -25,32 +24,61 @@ import { checkoutOrder } from "../../../services/order.services";
 export default function OrderCart() {
 
     const navigate = useNavigate();
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
     const [loading, setLoading] = useState(false);
-    
-    const { items: cartItems, totalHarga, orderType } = useAppSelector((state) => state.cart)
 
-    // buat update quantity di cart
+    const { items: cartItems, totalHarga, orderType } = useAppSelector((state) => state.cart);
+
     const handleUpdateQty = (item: any, newQty: number) => {
         if (newQty < 1) return;
-
-        dispatch(updateItemQuantity({
-            menu_id: item.menu_id,
-            mv_id: item.varian?.mv_id,
-            mo_id: item.opsi?.mo_id,
-            qty: newQty
-        }))
-    }
-
-    const handleRemoveItem = (item: any) => {
-        dispatch(removeItem({
-            menu_id: item.menu_id,
-            mv_id: item.varian?.mv_id,
-            mo_id: item.opsi?.mo_id
-        }));
+        dispatch(updateItemQuantity({ id: item.id, qty: newQty }));
     };
 
-    // buat cekout
+    const handleRemoveItem = (item: any) => {
+        dispatch(removeItem({ id: item.id }));
+    };
+
+    
+    const buildOrderMenuItems = () => {
+    const rows: Array<{
+        menu_id: string;
+        mv_id: string | null;
+        quantity: number;
+        harga_awal: number;
+        opsi_ids: Array<{ mo_id: string; harga_tambahan: number }>;
+    }> = [];
+
+    cartItems.forEach((item: any) => {
+        const customizations = item.customizations ?? [];
+
+        customizations.forEach((cust: any, idx: number) => {
+            const baseHarga = idx === 0 ? item.menu_harga : (cust.menu_harga ?? 0);
+            const varianHarga = cust.varian?.harga_tambahan ?? 0;
+            const opsiList = cust.opsi ?? [];
+
+            // Total harga opsi untuk dimasukkan ke harga_awal
+            const totalOpsiHarga = opsiList.reduce(
+                (s: number, o: any) => s + (o.tambahan_harga ?? 0),
+                0
+            );
+
+            rows.push({
+                menu_id: cust.menu_id,
+                mv_id: cust.varian?.mv_id ?? null,
+                quantity: item.qty,
+                harga_awal: baseHarga + varianHarga + totalOpsiHarga,
+                opsi_ids: opsiList.map((o: any) => ({
+                    mo_id: o.mo_id,
+                    harga_tambahan: o.tambahan_harga ?? 0,
+                })),
+            });
+        });
+    });
+
+    return rows;
+};
+
+    // Checkout
     const handleCheckout = async () => {
         if (!orderType) {
             alert("Order type not found");
@@ -58,53 +86,10 @@ export default function OrderCart() {
             return;
         }
 
-        // const [cart, setCart] = useState([
-        //     {
-        //         id: "662e9121-32c6-43c3-9a67-7e2bd43a9644",
-        //         name: "Fries",
-        //         price: 10000,
-        //         menuOption: 1,
-        //         qty: 1,
-        //         image: friesImg,
-        //     },
-        //     {
-        //         id: "80f089b8-4001-49c5-b19f-42d7a9ce9870",
-        //         name: "Schezwan Veg Burger",
-        //         desc: "",
-        //         price: 64000,
-        //         qty: 1,
-        //         image: friesImg,
-        //     },
-        // ]);
-
-        // const menuOption = [{
-        //     id: 1,
-        //     menu_id: "662e9121-32c6-43c3-9a67-7e2bd43a9644",
-        //     name: "Cheesy Sauce",
-        //     menu_qty: 2,
-        //     price: 1000,
-        //     imageUrl: ""
-        // },
-        // {
-        //     id: 2,
-        //     menu_id: "80f089b8-4001-49c5-b19f-42d7a9ce9870",
-        //     name: "Blackpeper ",
-        //     menu_qty: 5,
-        //     price: 1000,
-        //     imageUrl: ""
-        // }]
         try {
             setLoading(true);
 
-            // mapping cart redux sama backens
-            const items = cartItems.map(item => ({
-                menu_id: item.menu_id,
-                mv_id: item.varian?.mv_id || null,
-                mo_id: item.opsi?.mo_id || null,
-                quantity: item.qty,
-                harga_awal: item.menu_harga
-            }));
-            
+            const items = buildOrderMenuItems();
 
             const data = await checkoutOrder({
                 order_type: orderType,
@@ -113,16 +98,15 @@ export default function OrderCart() {
                 items
             });
 
-            // nyimpen hasil order ke paymentSlice
+            // Simpan hasil order ke paymentSlice
             dispatch(paymentActions.setOrderId(data.data.id));
-            // dispatch(paymentActions.setCart([])); // kosongin cart
             dispatch(paymentActions.setno_meja(
                 data.data.no_meja ? data.data.no_meja.toString() : ""
             ));
             dispatch(paymentActions.setOrderType(
                 orderType === "DINE_IN" ? "DINE_IN" : "TAKE_AWAY"
             ));
-            dispatch(paymentActions.setTotal(total)); // total = subtotal + gst
+            dispatch(paymentActions.setTotal(total));
 
             navigate("/payment");
             dispatch(clearCart());
@@ -132,76 +116,9 @@ export default function OrderCart() {
         } finally {
             setLoading(false);
         }
-    }
+    };
 
-    // const [cart, setCart] = useState([
-    //     {
-    //         id: 1,
-    //         name: "Fries",
-    //         price: 10000,
-    //         menuOption: 1,
-    //         qty: 1,
-    //         image: friesImg,
-    //     },
-    //     {
-    //         id: 2,
-    //         name: "Schezwan Veg Burger",
-    //         desc: "",
-    //         price: 64000,
-    //         qty: 1,
-    //         image: friesImg,
-    //     },
-    // ]);
-
-    // const menuOption = [{
-    //     id: 1,
-    //     menu_id: 1,
-    //     name: "Cheesy Sauce",
-    //     menu_qty: 2,
-    //     price: 1000,
-    //     imageUrl: ""
-    // },
-    // {
-    //     id: 2,
-    //     menu_id: 1,
-    //     name: "Blackpeper ",
-    //     menu_qty: 5,
-    //     price: 1000,
-    //     imageUrl: ""
-    // }]
-
-    // const handleAdd = (id: number) => {
-    //     setCart((prev) =>
-    //         prev.map((item) =>
-    //             item.id === id ? { ...item, qty: item.qty + 1 } : item
-    //         )
-    //     );
-    // };
-
-    // const handleMinus = (id: number) => {
-    //     setCart((prev) =>
-    //         prev.map((item) =>
-    //             item.id === id // if item.id sama dengan id yg diklik,maka item.qty dikurang 1
-    //                 ? { ...item, qty: Math.max(1, item.qty - 1) }
-    //                 : item
-    //         )
-    //     );
-    // };
-
-    // const handleRemove = (id: number) => {
-    //     setCart((prev) => prev.filter((item) => item.id !== id));
-    // };
-
-    // hitung subtotal dgn tambahin semua harga * quantity
-    // const additional = menuOption.reduce((acc,item) => acc + item.price * item.menu_qty, 0);
-
-    // const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0) + additional;
-
-    // hitung  GST (Goods and services tax)  dikali 0.1 dan diround
-    // const gst = Math.floor((subtotal) * 0.1);
-    // const total = subtotal + gst;
-
-    const subtotal = cartItems.reduce((acc, item) => acc + item.subtotal, 0)
+    const subtotal = cartItems.reduce((acc, item) => acc + item.subtotal, 0);
     const gst = Math.floor(subtotal * 0.1);
     const total = subtotal + gst;
 
@@ -214,10 +131,7 @@ export default function OrderCart() {
         );
     }
 
-
     return (<>
-
-
         {/* HEADER */}
         <Box
             sx={{
@@ -235,19 +149,9 @@ export default function OrderCart() {
         </Box>
 
         {/* CART */}
-        <Box
-            sx={{
-                px: 2,
-                mt: 2,
-            }}
-        >
-            {cartItems.map((item) => (
-                <Box
-                    key={item.id}
-                    sx={{
-                        mb: 3,
-                    }}
-                >
+        <Box sx={{ px: 2, mt: 2 }}>
+            {cartItems.map((item: any) => (
+                <Box key={item.id} sx={{ mb: 3 }}>
                     <Box
                         sx={{
                             display: "flex",
@@ -261,9 +165,7 @@ export default function OrderCart() {
                             variant="outlined"
                             size="small"
                             onClick={() => handleRemoveItem(item)}
-                            sx={{
-                                borderColor: "text.secondary"
-                            }}
+                            sx={{ borderColor: "text.secondary" }}
                         >
                             <Typography sx={{
                                 color: "text.secondary",
@@ -287,39 +189,72 @@ export default function OrderCart() {
 
                         {/* INFO */}
                         <Box sx={{ flex: 1 }}>
-
-
                             <Typography sx={{ fontWeight: "bold" }}>
                                 {item.menu_nama}
-
+                                {item.isPaket && (
+                                    <Typography
+                                        component="span"
+                                        sx={{
+                                            ml: 1,
+                                            fontSize: "10px",
+                                            bgcolor: "#FFD700",
+                                            color: "black",
+                                            px: 0.8,
+                                            py: 0.2,
+                                            borderRadius: 1,
+                                        }}
+                                    >
+                                        PAKET
+                                    </Typography>
+                                )}
                             </Typography>
 
-                            {/* /MENU OPTION */}
-                            {/* {menuOption.map((option) => {
-                                if (option.menu_id === item.id) {
-                                    return (
-                                        <Typography key={option.id} sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", fontSize: "12px" }}>
-                                            add {option.menu_qty} {option.name}
-                                        </Typography>
-                                    )
-                                }
-                            })} */}
+                            {/* 🔄 Loop customizations (1 untuk ala carte, N untuk paket) */}
+                            {(item.customizations ?? []).map((cust: any, idx: number) => {
+                                const hasVarian = !!cust.varian;
+                                const hasOpsi = (cust.opsi ?? []).length > 0;
+                                if (!hasVarian && !hasOpsi) return null;
 
-                            {/* Varian (Misal: Ukuran Medium/Large) */}
-                            {item.varian && (
-                                <Typography sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", fontSize: "12px" }}>
-                                    Varian: {item.varian.nama_varian}
-                                </Typography>
-                            )}
+                                return (
+                                    <Box key={cust.slot_key ?? idx} sx={{ mt: 0.3 }}>
+                                        {/* Tampilkan nama sub-item kalau paket */}
+                                        {item.isPaket && (
+                                            <Typography sx={{
+                                                color: "text.primary",
+                                                fontFamily: "Speedee-Regular",
+                                                fontSize: "11px",
+                                                fontWeight: 500
+                                            }}>
+                                                • {cust.menu_nama}
+                                            </Typography>
+                                        )}
 
-                            {/* Opsi Tambahan (Misal: Add Sauce/Cheese) */}
-                            {item.opsi && (
-                                <Typography sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", fontSize: "12px" }}>
-                                    Add: {item.opsi.nama_option}
-                                </Typography>
-                            )}
+                                        {hasVarian && (
+                                            <Typography sx={{
+                                                color: "text.secondary",
+                                                fontFamily: "Speedee-Regular",
+                                                fontSize: "12px",
+                                                ml: item.isPaket ? 1.5 : 0,
+                                            }}>
+                                                Varian: {cust.varian.nama_varian}
+                                            </Typography>
+                                        )}
 
-                            {/* ini buat modify menu yg udah masuk cartnya */}
+                                        {hasOpsi && (
+                                            <Typography sx={{
+                                                color: "text.secondary",
+                                                fontFamily: "Speedee-Regular",
+                                                fontSize: "12px",
+                                                ml: item.isPaket ? 1.5 : 0,
+                                            }}>
+                                                Add: {cust.opsi.map((o: any) => o.nama_option).join(", ")}
+                                            </Typography>
+                                        )}
+                                    </Box>
+                                );
+                            })}
+
+                            {/* Edit options */}
                             <Button
                                 size="small"
                                 color="secondary"
@@ -328,23 +263,14 @@ export default function OrderCart() {
                             >
                                 Edit Options
                             </Button>
-
                         </Box>
 
                         {/* QTY */}
-                        <Box
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 1,
-                            }}
-                        >
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                             <IconButton onClick={() => handleUpdateQty(item, item.qty - 1)}>
                                 <Remove fontSize="small" />
                             </IconButton>
-
                             <Typography>{item.qty}</Typography>
-
                             <IconButton onClick={() => handleUpdateQty(item, item.qty + 1)}>
                                 <Add fontSize="small" />
                             </IconButton>
@@ -358,7 +284,7 @@ export default function OrderCart() {
                                 fontSize: "15px"
                             }}
                         >
-                            Rp{item.subtotal.toLocaleString()}
+                            Rp{(item.subtotal ?? 0).toLocaleString()}
                         </Typography>
                     </Box>
                 </Box>
@@ -368,34 +294,18 @@ export default function OrderCart() {
 
             {/* TOTAL */}
             <Box sx={{ mt: 2 }}>
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                    }}
-                >
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                     <Typography sx={{ fontSize: "12px", fontFamily: "Speedee-Regular" }}>Subtotal</Typography>
                     <Typography sx={{ fontSize: "12px", fontFamily: "Speedee-Regular" }}>Rp{subtotal.toLocaleString()}</Typography>
                 </Box>
 
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                    }}
-                >
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                     <Typography sx={{ fontSize: "12px", fontFamily: "Speedee-Regular" }}>GST</Typography>
                     <Typography sx={{ fontSize: "12px", fontFamily: "Speedee-Regular" }}>Rp{gst.toLocaleString()}</Typography>
                 </Box>
 
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        mt: 1,
-                    }}
-                >
-                    <Typography sx={{ fontSize: "15px" }} >Total</Typography>
+                <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
+                    <Typography sx={{ fontSize: "15px" }}>Total</Typography>
                     <Typography sx={{ fontWeight: "bold", fontSize: "15px" }}>
                         Rp{total.toLocaleString()}
                     </Typography>
@@ -403,14 +313,13 @@ export default function OrderCart() {
             </Box>
 
             {/* ACTION */}
-            <Box
-                sx={{
-                    display: "flex",
-                    gap: 2,
-                    mt: 3,
-                }}
-            >
-                <Button fullWidth variant="outlined" onClick={() => navigate("/")} sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", borderColor: "text.secondary" }}>
+            <Box sx={{ display: "flex", gap: 2, mt: 3 }}>
+                <Button
+                    fullWidth
+                    variant="outlined"
+                    onClick={() => navigate("/")}
+                    sx={{ color: "text.secondary", fontFamily: "Speedee-Regular", borderColor: "text.secondary" }}
+                >
                     Order More
                 </Button>
 
@@ -424,8 +333,6 @@ export default function OrderCart() {
                     {loading ? "Memproses..." : "Complete Order"}
                 </Button>
             </Box>
-        </Box >
-    </>
-
-    );
+        </Box>
+    </>);
 }

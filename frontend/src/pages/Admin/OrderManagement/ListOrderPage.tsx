@@ -862,7 +862,17 @@ export default function ListOrderPage() {
 
                     <Box sx={{ width: "18%" }}>{item.varian_menu?.nama ?? "-"}</Box>
 
-                    <Box sx={{ width: "22%" }}>{item.opsi_menu?.nama ?? "-"}</Box>
+                    <Box sx={{ width: "22%" }}>
+                      {item.opsi_list && item.opsi_list.length > 0 ? (
+                        item.opsi_list.map((opsi, index) => (
+                          <Typography key={index}>
+                            {opsi.opsiMenu?.nama ?? "-"}
+                          </Typography>
+                        ))
+                      ) : (
+                        <Typography>-</Typography>
+                      )}
+                    </Box>
 
                     <Box sx={{ width: "10%", fontWeight: 700 }}>
                       x{item.quantity}

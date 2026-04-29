@@ -67,12 +67,20 @@ export type OrderMenu = {
   menu_id: string;
   menu?: Menu;
   mv_id: string | null; 
-  mo_id: string | null; 
   quantity: number;
   harga_awal: number; 
   varian_menu: MenuVarian;
-  opsi_menu: MenuOption;
+  opsi_list: OrderMenuOpsi[];
 };
+
+export type OrderMenuOpsi = {
+  id: string;
+  order_menu_id: string;
+  mo_id: string;
+  harga_tambahan: number;       // snapshot harga saat order dibuat
+
+  opsiMenu?: MenuOption;
+}
 
 export type Payment = {
   id: string;

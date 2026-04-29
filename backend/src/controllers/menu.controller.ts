@@ -17,6 +17,20 @@ export class MenuController {
           { model: Paket_Menu, as: "paketRelation" },
           { model: Kategori, as: "kategoriRelation" },
           { model: Menu, as: "recommendation" },
+          {
+            model: Paket_Menu,
+            as: "paketRelation",
+            include: [
+              {
+                model: Menu,
+                as: "menuRelation",
+                include: [
+                  { model: Varian_Menu, as: "varian_menus" },
+                  { model: Opsi_Menu, as: "opsi_menus" },
+                ],
+              },
+            ],
+          },
         ],
       });
 
@@ -31,6 +45,54 @@ export class MenuController {
       });
     }
   }
+
+  static async getById(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      const menu = await Menu.findByPk(id as string, {
+        include: [
+          { model: Varian_Menu },
+          { model: Opsi_Menu },
+          { model: Paket_Menu, as: "menuRelation" },
+          { model: Paket_Menu, as: "paketRelation" },
+          { model: Kategori, as: "kategoriRelation" },
+          { model: Menu, as: "recommendation" },
+          {
+            model: Paket_Menu,
+            as: "paketRelation",
+            include: [
+              {
+                model: Menu,
+                as: "menuRelation",
+                include: [
+                  { model: Varian_Menu, as: "varian_menus" },
+                  { model: Opsi_Menu, as: "opsi_menus" },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+
+      if (!menu) {
+        return res.status(404).json({
+          message: "Menu not found",
+        });
+      }
+
+      res.json({
+        message: "Success",
+        records: menu,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: "Failed to fetch menu",
+        error,
+      });
+    }
+  }
+
   static async create(req: Request, res: Response) {
     try {
       const { kategori_id, nama, harga_awal, tipe, ketersediaan, tag } =

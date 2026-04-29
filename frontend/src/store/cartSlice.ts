@@ -1,3 +1,4 @@
+// store/cartSlice.ts
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface varianMenu {
@@ -12,22 +13,34 @@ interface opsiMenu {
     tambahan_harga: number;
 }
 
+// 🆕 Customization per "slot":
+// - Untuk Ala Carte: 1 customization (slot_key = "main")
+// - Untuk Paket: N customization, satu per item dalam paket (slot_key = paket_menu.id)
+interface customization {
+    slot_key: string;          // "main" untuk ala carte, paket_menu.id untuk paket
+    menu_id: string;           // sub-item id (sama dengan menu_id utama kalau ala carte)
+    menu_nama: string;
+    menu_harga: number;        // harga_awal sub-item (biasanya 0 untuk item dalam paket)
+    varian: varianMenu | null;
+    opsi: opsiMenu[];          // 🔥 sekarang array (multi-select)
+}
+
 interface cartItem {
     id: string;
     menu_id: string;
     menu_nama: string;
     menu_harga: number;
     menu_gambar: string;
-    varian: varianMenu | null;
-    opsi: opsiMenu | null;
     qty: number;
+    isPaket: boolean;                  // 🆕 flag untuk membedakan
+    customizations: customization[];   // 🆕 array (1 untuk ala carte, N untuk paket)
     subtotal: number;
 }
 
 interface CartState {
     items: cartItem[];
-    orderType: "DINE_IN" | "TAKEAWAY" | null; 
-    totalHarga: number;                        
+    orderType: "DINE_IN" | "TAKEAWAY" | null;
+    totalHarga: number;
 }
 
 const initialState: CartState = {
@@ -36,9 +49,48 @@ const initialState: CartState = {
     totalHarga: 0,
 };
 
+// =====================================================
+// HELPERS
+// =====================================================
+
 const hitungTotalHarga = (items: cartItem[]) => {
     return items.reduce((acc, item) => acc + item.subtotal, 0);
 };
+
+/** Hitung total harga tambahan dari semua customization (varian + semua opsi) */
+const hitungTambahan = (customizations: customization[]) => {
+    return customizations.reduce((acc, c) => {
+        const tambahanVarian = c.varian?.harga_tambahan ?? 0;
+        const tambahanOpsi = c.opsi.reduce((s, o) => s + o.tambahan_harga, 0);
+        return acc + tambahanVarian + tambahanOpsi;
+    }, 0);
+};
+
+/** Hitung subtotal cart item: (harga_awal + total tambahan) × qty */
+const hitungSubtotal = (item: Omit<cartItem, "subtotal">) => {
+    return (item.menu_harga + hitungTambahan(item.customizations)) * item.qty;
+};
+
+/** Build "signature" unik dari customizations untuk cek duplikasi.
+ *  Dua cart item dianggap sama kalau menu_id sama + signature customizations sama. */
+const buildSignature = (customizations: customization[]) => {
+    return customizations
+        .slice()
+        .sort((a, b) => a.slot_key.localeCompare(b.slot_key))
+        .map((c) => {
+            const varianKey = c.varian?.mv_id ?? "no-varian";
+            const opsiKey = c.opsi
+                .map((o) => o.mo_id)
+                .sort()
+                .join(",") || "no-opsi";
+            return `${c.slot_key}:${varianKey}:${opsiKey}`;
+        })
+        .join("|");
+};
+
+// =====================================================
+// SLICE
+// =====================================================
 
 export const cartSlice = createSlice({
     name: "cart",
@@ -47,19 +99,20 @@ export const cartSlice = createSlice({
         addItemToCart: (state, action: PayloadAction<cartItem>) => {
             const incomingItem = action.payload;
 
-            const totalHargaVarian = incomingItem.varian?.harga_tambahan || 0;
-            const totalHargaOpsi = incomingItem.opsi?.tambahan_harga || 0;
-            const subtotal = (incomingItem.menu_harga + totalHargaVarian + totalHargaOpsi) * incomingItem.qty;
+            // Recompute subtotal di sisi reducer (single source of truth)
+            const subtotal = hitungSubtotal(incomingItem);
+            const incomingSignature = buildSignature(incomingItem.customizations);
 
-            const existItem = state.items.findIndex(item =>
-                item.menu_id === incomingItem.menu_id &&
-                item.varian?.mv_id === incomingItem.varian?.mv_id &&
-                item.opsi?.mo_id === incomingItem.opsi?.mo_id
+            const existIndex = state.items.findIndex(
+                (item) =>
+                    item.menu_id === incomingItem.menu_id &&
+                    buildSignature(item.customizations) === incomingSignature
             );
 
-            if (existItem !== -1) {
-                state.items[existItem].qty += incomingItem.qty;
-                state.items[existItem].subtotal += subtotal;
+            if (existIndex !== -1) {
+                // Sudah ada item identik → tambah qty saja
+                state.items[existIndex].qty += incomingItem.qty;
+                state.items[existIndex].subtotal = hitungSubtotal(state.items[existIndex]);
             } else {
                 state.items.push({ ...incomingItem, subtotal });
             }
@@ -67,32 +120,27 @@ export const cartSlice = createSlice({
             state.totalHarga = hitungTotalHarga(state.items);
         },
 
-        removeItem(state, action: PayloadAction<{ menu_id: string; mv_id?: string; mo_id?: string }>) {
-            const { menu_id, mv_id, mo_id } = action.payload;
-            state.items = state.items.filter(
-                (item) =>
-                    !(
-                        item.menu_id === menu_id &&
-                        item.varian?.mv_id === mv_id &&
-                        item.opsi?.mo_id === mo_id
-                    )
-            );
+        // Pakai cart item id (uuid) — jauh lebih aman dibanding kombinasi menu_id+mv_id+mo_id
+        removeItem(state, action: PayloadAction<{ id: string }>) {
+            const { id } = action.payload;
+            state.items = state.items.filter((item) => item.id !== id);
             state.totalHarga = hitungTotalHarga(state.items);
         },
 
-        updateItemQuantity(state, action: PayloadAction<{ menu_id: string; mv_id?: string; mo_id?: string; qty: number }>) {
-            const { menu_id, mv_id, mo_id, qty } = action.payload;
-            const itemToUpdate = state.items.find(
-                (item) =>
-                    item.menu_id === menu_id &&
-                    item.varian?.mv_id === mv_id &&
-                    item.opsi?.mo_id === mo_id
-            );
+        updateItemQuantity(
+            state,
+            action: PayloadAction<{ id: string; qty: number }>
+        ) {
+            const { id, qty } = action.payload;
+            const itemToUpdate = state.items.find((item) => item.id === id);
             if (itemToUpdate) {
-                const hargaVarian = itemToUpdate.varian?.harga_tambahan ?? 0; 
-                const hargaOpsi = itemToUpdate.opsi?.tambahan_harga ?? 0;     
-                itemToUpdate.qty = qty;
-                itemToUpdate.subtotal = (itemToUpdate.menu_harga + hargaVarian + hargaOpsi) * qty; 
+                if (qty <= 0) {
+                    // Auto-remove kalau qty di-set 0
+                    state.items = state.items.filter((item) => item.id !== id);
+                } else {
+                    itemToUpdate.qty = qty;
+                    itemToUpdate.subtotal = hitungSubtotal(itemToUpdate);
+                }
                 state.totalHarga = hitungTotalHarga(state.items);
             }
         },
@@ -105,9 +153,15 @@ export const cartSlice = createSlice({
             state.items = [];
             state.totalHarga = 0;
             state.orderType = null;
-        }
-    }
+        },
+    },
 });
 
-export const { addItemToCart, removeItem, updateItemQuantity, setOrderType, clearCart } = cartSlice.actions;
+export const {
+    addItemToCart,
+    removeItem,
+    updateItemQuantity,
+    setOrderType,
+    clearCart,
+} = cartSlice.actions;
 export const cartReducer = cartSlice.reducer;
