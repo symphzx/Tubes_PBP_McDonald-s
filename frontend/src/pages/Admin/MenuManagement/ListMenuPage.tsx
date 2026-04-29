@@ -10,7 +10,12 @@ import {
   Chip,
   Select,
   MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
+import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -20,9 +25,11 @@ import InputBase from "@mui/material/InputBase";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import SortIcon from "@mui/icons-material/Sort";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import { useNavigate } from "react-router";
 import { useMenus } from "../../../hooks/useMenus";
 import { useKategori } from "../../../hooks/useKategori";
+import type { Menu } from "../../../types";
 
 export default function ListMenuPage() {
   const navigate = useNavigate();
@@ -36,6 +43,9 @@ export default function ListMenuPage() {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedTag, setSelectedTag] = useState("");
   const [sortHarga, setSortHarga] = useState("");
+
+  const [deleteTarget, setDeleteTarget] = useState<Menu | null>(null);
+  const [loadingDelete, setLoadingDelete] = useState(false);
 
   useEffect(() => {
     if (menus.length === 0) {
@@ -73,20 +83,23 @@ export default function ListMenuPage() {
       });
   }, [menus, search, selectedKategori, selectedStatus, selectedTag, sortHarga]);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Yakin ingin menghapus menu ini?")) return;
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
 
     try {
-      await fetch(`http://localhost:3000/menu/${id}`, {
+      setLoadingDelete(true);
+
+      await fetch(`http://localhost:3000/menu/${deleteTarget.id}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        credentials: "include",
       });
 
+      setDeleteTarget(null);
       reloadMenu();
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoadingDelete(false);
     }
   };
 
@@ -102,9 +115,12 @@ export default function ListMenuPage() {
         }}
       >
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: 800 }}>
-            Menu Management
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+            <RestaurantMenuIcon sx={{ fontSize: 36, color: "#FFCA28" }} />
+            <Typography variant="h4" sx={{ fontWeight: 800 }}>
+              Menu Management
+            </Typography>
+          </Box>
           <Typography sx={{ color: "#666", mt: 1 }}>
             Kelola semua menu yang tersedia
           </Typography>
@@ -488,7 +504,7 @@ export default function ListMenuPage() {
               </IconButton>
 
               <IconButton
-                onClick={() => handleDelete(menu.id)}
+                onClick={() => setDeleteTarget(menu)}
                 sx={{
                   border: "1px solid #E0E0E0",
                   borderRadius: "10px",
@@ -514,6 +530,71 @@ export default function ListMenuPage() {
           </Box>
         )}
       </Paper>
+      <Dialog
+        open={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: "22px",
+            p: 1,
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1.2,
+            fontWeight: 800,
+            fontSize: "1.1rem",
+          }}
+        >
+          <WarningAmberRoundedIcon sx={{ color: "#F59E0B" }} />
+          Hapus Menu?
+        </DialogTitle>
+
+        <DialogContent sx={{ pt: 1 }}>
+          <Typography sx={{ color: "#555", lineHeight: 1.8 }}>
+            Menu <b>{deleteTarget?.nama}</b> akan dihapus permanen.
+            <br />
+            Tindakan ini tidak dapat dibatalkan.
+          </Typography>
+        </DialogContent>
+
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button
+            onClick={() => setDeleteTarget(null)}
+            variant="outlined"
+            sx={{
+              borderRadius: "12px",
+              textTransform: "none",
+              fontWeight: 700,
+            }}
+          >
+            Batal
+          </Button>
+
+          <Button
+            onClick={handleDelete}
+            disabled={loadingDelete}
+            variant="contained"
+            sx={{
+              bgcolor: "#DC2626",
+              borderRadius: "12px",
+              textTransform: "none",
+              fontWeight: 700,
+              px: 3,
+              "&:hover": {
+                bgcolor: "#B91C1C",
+              },
+            }}
+          >
+            {loadingDelete ? "Menghapus..." : "Ya, Hapus"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

@@ -95,146 +95,54 @@ export class OrderController {
   //     });
   //   }
   // }
-  // static async update(req: Request, res: Response) {
-  //   try {
-  //     const { id } = req.params;
 
-  //     const { kategori_id, nama, harga_awal, tipe, ketersediaan, tag } = req.body;
+  static async update(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
 
-  //     const existingMenu = await Menu.findByPk(id as string);
+      const { order_type, no_meja, status } = req.body;
 
-  //     if (!existingMenu) {
-  //       return res.status(404).json({
-  //         message: "Menu not found",
-  //       });
-  //     }
+      const existingOrder = await Order.findByPk(id as string);
 
+      if (!existingOrder) {
+        return res.status(404).json({
+          message: "Order not found",
+        });
+      }
 
-  //     const file = (req as any).file;
-  //     const { existingImage } = req.body;
+      if (!order_type) {
+        return res.status(400).json({
+          message: "Order type is required",
+        });
+      }
 
-  //     let imageUrl = existingMenu.gambar;
+      if (!status) {
+        return res.status(400).json({
+          message: "Order status is required",
+        });
+      }
 
-  //     if (file) {
-  //       imageUrl = `http://localhost:3000/uploads/assets/${file.filename}`;
-  //     } else if (existingImage) {
-  //       imageUrl = existingImage;
-  //     }
+      const order = await Order.update({
+        order_type,
+        no_meja,
+        status
+      },{
+        where: {
+          id,
+        },
+      },
+    );
 
-  //     if (!kategori_id) {
-  //       return res.status(400).json({
-  //         message: "Menu category is required",
-  //       });
-  //     }
-
-  //     if (!nama) {
-  //       return res.status(400).json({
-  //         message: "Menu name is required",
-  //       });
-  //     }
-
-  //     if (!harga_awal) {
-  //       return res.status(400).json({
-  //         message: "Menu price is required",
-  //       });
-  //     }
-
-  //     if (!tipe) {
-  //       return res.status(400).json({
-  //         message: "Menu type is required",
-  //       });
-  //     }
-
-  //     if (!ketersediaan) {
-  //       return res.status(400).json({
-  //         message: "Menu availability is required",
-  //       });
-  //     }
-
-  //     const menu = await Menu.update({
-  //       kategori_id,
-  //       nama,
-  //       harga_awal,
-  //       tipe,
-  //       gambar: imageUrl,
-  //       ketersediaan,
-  //       tag: tag ? tag : null,
-  //     },{
-  //       where: {
-  //         id,
-  //       },
-  //     },
-  //   );
-
-  //     res.json({
-  //       message: "Success",
-  //       data: menu,
-  //     });
-  //   } catch (error) {
-  //     console.error("ERROR EDIT MENU:", error);
-  //     res.status(500).json({
-  //       message: "Failed to edit menu",
-  //       error,
-  //     });
-  //   }
-  // }
-
-  // static async delete(req: Request, res: Response) {
-  //   try {
-  //     const { id } = req.params;
-
-  //     const menuVariant = await Varian_Menu.findAll({
-  //       where: {
-  //         menu_id: id,
-  //       },
-  //     });
-
-  //     const menuOption = await Opsi_Menu.findAll({
-  //       where: {
-  //         menu_id: id,
-  //       },
-  //     });
-
-  //     const menuPaket = await Paket_Menu.findAll({
-  //       where: {
-  //         menu_id: id,
-  //       },
-  //     });
-
-  //     if (!menuVariant && !menuOption && !menuPaket) {
-  //       return res.status(404).json({
-  //         message: "Menu not found",
-  //       });
-  //     }
-
-  //     menuVariant.forEach((element) => {
-  //       element.destroy();
-  //     })
-
-  //     menuOption.forEach((element) => {
-  //       element.destroy();
-  //     })
-
-  //     menuPaket.forEach((element) => {
-  //       element.destroy();
-  //     })
-
-  //     const menu = await Menu.destroy({
-  //       where: {
-  //         id,
-  //       },
-  //     });
-      
-  //     res.json({
-  //       message: "Success",
-  //       data: menu,
-  //     });
-  //   } catch (error) {
-  //     console.error("ERROR DELETE MENU:", error);
-  //     res.status(500).json({
-  //       message: "Failed to delete menu",
-  //       error,
-  //     });
-  //   }
-  // }
+      res.json({
+        message: "Success",
+        data: order,
+      });
+    } catch (error) {
+      console.error("ERROR EDIT ORDER:", error);
+      res.status(500).json({
+        message: "Failed to edit order",
+        error,
+      });
+    }
+  }
 }

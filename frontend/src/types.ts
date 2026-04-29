@@ -48,7 +48,7 @@ export type PaketItem = {
   menu_id: string;
 };
 
-export type OrderStatus = "PENDING" | "PAID" | "CANCELED";
+export type OrderStatus = "PENDING" | "PAID" | "CANCELLED";
 
 export type Order = {
   id: string;

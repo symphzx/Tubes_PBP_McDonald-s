@@ -14,6 +14,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import CategoryIcon from '@mui/icons-material/Category';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import PeopleIcon from '@mui/icons-material/People';
 import { useAppDispatch } from "../hooks/useAppDispatch";
 import { authActions } from "../store/authSlice";
 import { useEffect } from "react";
@@ -181,6 +182,39 @@ export function AdminLayout() {
                                       >
                                         Order Management
                                       </Button>
+                                    <Button
+                                      variant="contained"
+                                      startIcon={<PeopleIcon />}
+                                      component={Link}
+                                      to="/admin/list-user"
+                                      sx={{
+                                        position: "relative",
+                                        borderRadius: "12px",
+                                        textTransform: "none",
+                                        fontWeight: 600,
+                                        fontSize: "0.95rem",
+                                        px: 2.5,
+                                        py: 1,
+                                        color: "#ffffff",
+
+                                        background: "linear-gradient(135deg, #6D4C41, #4E342E)",
+
+                                        boxShadow: "0 4px 14px rgba(78, 52, 46, 0.35)",
+                                        transition: "all 0.25s ease",
+
+                                        "&:hover": {
+                                          transform: "translateY(-1px)",
+                                          boxShadow: "0 6px 18px rgba(78, 52, 46, 0.45)",
+                                          background: "linear-gradient(135deg, #5D4037, #3E2723)",
+                                        },
+
+                                        "&:active": {
+                                          transform: "scale(0.97)",
+                                        },
+                                      }}
+                                    >
+                                      User Management
+                                    </Button>
                                 </>
                             )}
                         </Box>
