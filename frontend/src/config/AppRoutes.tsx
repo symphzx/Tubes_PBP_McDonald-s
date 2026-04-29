@@ -32,6 +32,7 @@ const PaymentSuccess = lazy(() => import("../pages/Payment/PaymentSuccess"));
 
 
 const ProtectedRoute = lazy(() => import("./ProtectedRoute"));
+const ProtectedCustomerRoute = lazy(() => import("./ProtectedCustomerRoute"));
 
 const AdminPage = lazy(() => import("../pages/Admin/AdminPage"));
 const LoginPage = lazy(() => import("../pages/Admin/Login/LoginPage"));
@@ -86,21 +87,21 @@ export const AppRoutes = () => {
   return (
     <Routes>
       <Route element={<MenuLayout />}>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<ProtectedCustomerRoute> <HomePage /> </ProtectedCustomerRoute>} />
         <Route path="/menu/:category" element={<MenuPage />} />
       </Route>
       <Route path="/payment" element={<PaymentPage />} />
       <Route path="/payment/success" element={<PaymentSuccess />} />
 
-      <Route path="/order/package-selection-burger" element={<PackageSelectionBurger />} />
-      <Route path="/order/package-selection-ayam" element={<PackageSelectionAyam />} />
+      <Route path="/order/package-selection-burger" element={<ProtectedCustomerRoute> <PackageSelectionBurger /> </ProtectedCustomerRoute>} />
+      <Route path="/order/package-selection-ayam" element={<ProtectedCustomerRoute> <PackageSelectionAyam /> </ProtectedCustomerRoute>} />
 
       <Route element={<OrderLayout />}>
-        <Route path="/order" element={<OrderTypePage />} />
-        <Route path="/customize-order/:id" element={<CustomizeOrderPage />} />
-        <Route path="/cart" element={<OrderCartPage />} />
-        <Route path="/set-quantity/:id" element={<SetQuantityPage />} />
-        <Route path="/recommendation" element={<RecomendationPage />} />
+        <Route path="/order" element={ <OrderTypePage />} />
+        <Route path="/customize-order/:id" element={<ProtectedCustomerRoute> <CustomizeOrderPage /> </ProtectedCustomerRoute> } />
+        <Route path="/cart" element={<ProtectedCustomerRoute> <OrderCartPage /> </ProtectedCustomerRoute>} />
+        <Route path="/set-quantity/:id" element={<ProtectedCustomerRoute> <SetQuantityPage /> </ProtectedCustomerRoute>} />
+        <Route path="/recommendation" element={<ProtectedCustomerRoute> <RecomendationPage /> </ProtectedCustomerRoute>} />
       </Route>
 
       <Route element={<AdminLayout />}>
