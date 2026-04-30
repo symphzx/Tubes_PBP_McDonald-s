@@ -1,5 +1,4 @@
 import { Box, Button, CircularProgress, IconButton, Typography } from "@mui/material";
-import testMenuImg from "../img/test_fries.avif";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router";
 import AddIcon from "@mui/icons-material/Add";

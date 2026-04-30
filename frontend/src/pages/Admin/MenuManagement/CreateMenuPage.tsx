@@ -8,12 +8,32 @@ import {
   Button,
   MenuItem,
   Avatar,
+  Collapse,
+  IconButton,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SaveIcon from "@mui/icons-material/Save";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import TuneIcon from "@mui/icons-material/Tune";
+import StyleIcon from "@mui/icons-material/Style";
 import { useKategori } from "../../../hooks/useKategori";
 import { useNavigate } from "react-router";
+import { useMenus } from "../../../hooks/useMenus";
+
+// Type untuk Variasi & Opsi
+interface VarianItem {
+  nama: string;
+  harga_tambahan: number | "";
+}
+
+interface OpsiItem {
+  nama: string;
+  harga_tambahan: number | "";
+}
 
 export default function CreateMenuPage() {
   const themeColor = "#DA291C";
@@ -26,13 +46,68 @@ export default function CreateMenuPage() {
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>("");
 
-  const { kategori, reload } = useKategori();
+  const [varianList, setVarianList] = useState<VarianItem[]>([]);
+  const [opsiList, setOpsiList] = useState<OpsiItem[]>([]);
+  const [showVarian, setShowVarian] = useState(false);
+  const [showOpsi, setShowOpsi] = useState(false);
+
+  const { kategori, reload: reloadKategori } = useKategori();
+  const { reload: reloadMenus } = useMenus();
   const navigate = useNavigate();
 
   useEffect(() => {
-    reload();
-  }, [reload]);
+    reloadKategori();
+  }, [reloadKategori]);
 
+  // ========== VARIAN HANDLERS ==========
+  const handleAddVarian = () => {
+    setVarianList([...varianList, { nama: "", harga_tambahan: "" }]);
+    setShowVarian(true);
+  };
+
+  const handleRemoveVarian = (index: number) => {
+    setVarianList(varianList.filter((_, i) => i !== index));
+  };
+
+  const handleVarianChange = (
+    index: number,
+    field: keyof VarianItem,
+    value: string
+  ) => {
+    const updated = [...varianList];
+    if (field === "harga_tambahan") {
+      updated[index][field] = value === "" ? "" : Number(value);
+    } else {
+      updated[index][field] = value;
+    }
+    setVarianList(updated);
+  };
+
+  // ========== OPSI HANDLERS ==========
+  const handleAddOpsi = () => {
+    setOpsiList([...opsiList, { nama: "", harga_tambahan: "" }]);
+    setShowOpsi(true);
+  };
+
+  const handleRemoveOpsi = (index: number) => {
+    setOpsiList(opsiList.filter((_, i) => i !== index));
+  };
+
+  const handleOpsiChange = (
+    index: number,
+    field: keyof OpsiItem,
+    value: string
+  ) => {
+    const updated = [...opsiList];
+    if (field === "harga_tambahan") {
+      updated[index][field] = value === "" ? "" : Number(value);
+    } else {
+      updated[index][field] = value;
+    }
+    setOpsiList(updated);
+  };
+
+  // ========== SUBMIT ==========
   const handleSubmit = async () => {
     try {
       const formData = new FormData();
@@ -50,9 +125,7 @@ export default function CreateMenuPage() {
 
       const response = await fetch("http://localhost:3000/menu", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        credentials: "include",
         body: formData,
       });
 
@@ -63,7 +136,45 @@ export default function CreateMenuPage() {
         return;
       }
 
+      const menuId = result.data.id;
+
+      for (const varian of varianList) {
+        if (varian.nama && varian.harga_tambahan !== "") {
+          await fetch("http://localhost:3000/varian-menu", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+              menu_id: menuId,
+              nama: varian.nama,
+              harga_tambahan: varian.harga_tambahan,
+            }),
+          });
+        }
+      }
+
+
+      for (const opsi of opsiList) {
+        if (opsi.nama && opsi.harga_tambahan !== "") {
+          await fetch("http://localhost:3000/opsi-menu", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+              menu_id: menuId,
+              nama: opsi.nama,
+              harga_tambahan: opsi.harga_tambahan,
+            }),
+          });
+        }
+      }
+
       alert("Menu berhasil dibuat!");
+      reloadMenus();
       navigate("/admin/list-menu");
     } catch (error) {
       console.error(error);
@@ -93,7 +204,6 @@ export default function CreateMenuPage() {
           bgcolor: "#FFFFFF",
         }}
       >
-        {/* Container pengganti Grid */}
         <Box
           sx={{
             display: "flex",
@@ -248,7 +358,298 @@ export default function CreateMenuPage() {
             </Box>
           </Box>
 
-          {/* BUTTON */}
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              gap: 2,
+              flexWrap: "wrap",
+            }}
+          >
+
+            <Button
+              variant="outlined"
+              startIcon={<StyleIcon />}
+              onClick={handleAddVarian}
+              sx={{
+                flex: 1,
+                minWidth: 200,
+                py: 1.5,
+                borderRadius: "12px",
+                fontWeight: 600,
+                textTransform: "none",
+                borderColor: "#7B1FA2",
+                color: "#7B1FA2",
+                "&:hover": {
+                  borderColor: "#4A148C",
+                  backgroundColor: "rgba(123, 31, 162, 0.04)",
+                },
+              }}
+            >
+              Tambah Variasi
+            </Button>
+
+
+            <Button
+              variant="outlined"
+              startIcon={<TuneIcon />}
+              onClick={handleAddOpsi}
+              sx={{
+                flex: 1,
+                minWidth: 200,
+                py: 1.5,
+                borderRadius: "12px",
+                fontWeight: 600,
+                textTransform: "none",
+                borderColor: "#F57C00",
+                color: "#F57C00",
+                "&:hover": {
+                  borderColor: "#E65100",
+                  backgroundColor: "rgba(245, 124, 0, 0.04)",
+                },
+              }}
+            >
+              Tambah Opsi
+            </Button>
+          </Box>
+
+
+          {varianList.length > 0 && (
+            <Box sx={{ width: "100%" }}>
+              <Box
+                onClick={() => setShowVarian(!showVarian)}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  cursor: "pointer",
+                  p: 2,
+                  borderRadius: "12px",
+                  bgcolor: "#F3E5F5",
+                  "&:hover": { bgcolor: "#E1BEE7" },
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <StyleIcon sx={{ color: "#7B1FA2" }} />
+                  <Typography sx={{ fontWeight: 700, color: "#7B1FA2" }}>
+                    Variasi ({varianList.length})
+                  </Typography>
+                </Box>
+                {showVarian ? (
+                  <ExpandLessIcon sx={{ color: "#7B1FA2" }} />
+                ) : (
+                  <ExpandMoreIcon sx={{ color: "#7B1FA2" }} />
+                )}
+              </Box>
+
+              <Collapse in={showVarian}>
+                <Box
+                  sx={{
+                    mt: 1,
+                    p: 2,
+                    border: "1px solid #CE93D8",
+                    borderRadius: "12px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                  }}
+                >
+                  {varianList.map((varian, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        p: 2,
+                        borderRadius: "10px",
+                        bgcolor: "#FAFAFA",
+                        border: "1px solid #E0E0E0",
+                      }}
+                    >
+
+                      <Typography
+                        sx={{
+                          fontWeight: 700,
+                          color: "#7B1FA2",
+                          minWidth: 30,
+                        }}
+                      >
+                        #{index + 1}
+                      </Typography>
+
+                      <TextField
+                        label="Nama Variasi"
+                        placeholder="cth: Level 1, Ukuran Large"
+                        size="small"
+                        value={varian.nama}
+                        onChange={(e) =>
+                          handleVarianChange(index, "nama", e.target.value)
+                        }
+                        sx={{ flex: 2 }}
+                      />
+
+                      <TextField
+                        label="Harga Tambahan"
+                        placeholder="cth: 5000"
+                        type="number"
+                        size="small"
+                        value={varian.harga_tambahan}
+                        onChange={(e) =>
+                          handleVarianChange(
+                            index,
+                            "harga_tambahan",
+                            e.target.value
+                          )
+                        }
+                        sx={{ flex: 1 }}
+                      />
+
+                      <IconButton
+                        onClick={() => handleRemoveVarian(index)}
+                        sx={{ color: "#D32F2F" }}
+                      >
+                        <RemoveCircleOutlineIcon />
+                      </IconButton>
+                    </Box>
+                  ))}
+
+                  <Button
+                    startIcon={<AddCircleOutlineIcon />}
+                    onClick={handleAddVarian}
+                    sx={{
+                      alignSelf: "flex-start",
+                      textTransform: "none",
+                      fontWeight: 600,
+                      color: "#7B1FA2",
+                    }}
+                  >
+                    Tambah Variasi Lagi
+                  </Button>
+                </Box>
+              </Collapse>
+            </Box>
+          )}
+
+
+          {opsiList.length > 0 && (
+            <Box sx={{ width: "100%" }}>
+              <Box
+                onClick={() => setShowOpsi(!showOpsi)}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  cursor: "pointer",
+                  p: 2,
+                  borderRadius: "12px",
+                  bgcolor: "#FFF3E0",
+                  "&:hover": { bgcolor: "#FFE0B2" },
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <TuneIcon sx={{ color: "#F57C00" }} />
+                  <Typography sx={{ fontWeight: 700, color: "#F57C00" }}>
+                    Opsi ({opsiList.length})
+                  </Typography>
+                </Box>
+                {showOpsi ? (
+                  <ExpandLessIcon sx={{ color: "#F57C00" }} />
+                ) : (
+                  <ExpandMoreIcon sx={{ color: "#F57C00" }} />
+                )}
+              </Box>
+
+              <Collapse in={showOpsi}>
+                <Box
+                  sx={{
+                    mt: 1,
+                    p: 2,
+                    border: "1px solid #FFB74D",
+                    borderRadius: "12px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                  }}
+                >
+                  {opsiList.map((opsi, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        p: 2,
+                        borderRadius: "10px",
+                        bgcolor: "#FAFAFA",
+                        border: "1px solid #E0E0E0",
+                      }}
+                    >
+
+                      <Typography
+                        sx={{
+                          fontWeight: 700,
+                          color: "#F57C00",
+                          minWidth: 30,
+                        }}
+                      >
+                        #{index + 1}
+                      </Typography>
+
+                      <TextField
+                        label="Nama Opsi"
+                        placeholder="cth: Extra Cheese, No Ice"
+                        size="small"
+                        value={opsi.nama}
+                        onChange={(e) =>
+                          handleOpsiChange(index, "nama", e.target.value)
+                        }
+                        sx={{ flex: 2 }}
+                      />
+
+                      <TextField
+                        label="Harga Tambahan"
+                        placeholder="cth: 3000"
+                        type="number"
+                        size="small"
+                        value={opsi.harga_tambahan}
+                        onChange={(e) =>
+                          handleOpsiChange(
+                            index,
+                            "harga_tambahan",
+                            e.target.value
+                          )
+                        }
+                        sx={{ flex: 1 }}
+                      />
+
+                      <IconButton
+                        onClick={() => handleRemoveOpsi(index)}
+                        sx={{ color: "#D32F2F" }}
+                      >
+                        <RemoveCircleOutlineIcon />
+                      </IconButton>
+                    </Box>
+                  ))}
+
+                  <Button
+                    startIcon={<AddCircleOutlineIcon />}
+                    onClick={handleAddOpsi}
+                    sx={{
+                      alignSelf: "flex-start",
+                      textTransform: "none",
+                      fontWeight: 600,
+                      color: "#F57C00",
+                    }}
+                  >
+                    Tambah Opsi Lagi
+                  </Button>
+                </Box>
+              </Collapse>
+            </Box>
+          )}
+
+
           <Box
             sx={{
               width: "100%",
@@ -270,7 +671,6 @@ export default function CreateMenuPage() {
                 textTransform: "none",
                 borderColor: "#ccc",
                 color: "#555",
-
                 "&:hover": {
                   borderColor: themeColor,
                   color: themeColor,
@@ -300,25 +700,29 @@ export default function CreateMenuPage() {
                 fontWeight: 700,
                 textTransform: "none",
                 fontSize: "1rem",
-
                 background:
-                  !nama || harga === "" || !kategoriId || !tipe || !ketersediaan
+                  !nama ||
+                  harga === "" ||
+                  !kategoriId ||
+                  !tipe ||
+                  !ketersediaan
                     ? "#ccc"
                     : `linear-gradient(135deg, ${themeColor}, #b71c1c)`,
-
                 boxShadow:
-                  !nama || harga === "" || !kategoriId || !tipe || !ketersediaan
+                  !nama ||
+                  harga === "" ||
+                  !kategoriId ||
+                  !tipe ||
+                  !ketersediaan
                     ? "none"
                     : "0 4px 14px rgba(218, 41, 28, 0.35)",
-
-                cursor:
-                  !nama || harga === "" || !kategoriId || !tipe || !ketersediaan
-                    ? "not-allowed"
-                    : "pointer",
-
                 "&:hover": {
                   background:
-                    !nama || harga === "" || !kategoriId || !tipe || !ketersediaan
+                    !nama ||
+                    harga === "" ||
+                    !kategoriId ||
+                    !tipe ||
+                    !ketersediaan
                       ? "#ccc"
                       : "linear-gradient(135deg, #c62828, #8e0000)",
                 },

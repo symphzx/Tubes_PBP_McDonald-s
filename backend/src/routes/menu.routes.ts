@@ -7,6 +7,7 @@ import auth from "../middlewares/auth.middleware";
 const router: Router = Router();
 
 router.get("/", MenuController.getAll);
+router.get("/:id", MenuController.getById);
 router.post("/", auth, upload.single("gambar"), MenuController.create);
 router.put("/:id", auth, upload.single("gambar"), MenuController.update);
 router.delete("/:id", auth, MenuController.delete);

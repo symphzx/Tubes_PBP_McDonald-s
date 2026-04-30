@@ -7,17 +7,25 @@ import {
   IconButton,
   Button,
   Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 
+import CategoryIcon from '@mui/icons-material/Category';
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
+import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
+
 import InputBase from "@mui/material/InputBase";
 
 import { useNavigate } from "react-router";
 import { useKategori } from "../../../hooks/useKategori";
+import type { KategoriMenu } from "../../../types";
 
 export default function ListCategoryPage() {
   const navigate = useNavigate();
@@ -27,36 +35,42 @@ export default function ListCategoryPage() {
 
   const { kategori, reload: reloadKategori } = useKategori();
 
+  const [deleteTarget, setDeleteTarget] = useState<KategoriMenu | null>(null);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
   useEffect(() => {
     reloadKategori();
   }, [reloadKategori]);
 
   const filteredKategori = useMemo(() => {
-      return kategori
-        .filter((cat) => {
-          const matchSearch = cat.nama
-            .toLowerCase()
-            .includes(search.toLowerCase());
-  
-          return matchSearch;
-        })
-        .sort((a, b) => a.sortOrder - b.sortOrder);
-    }, [kategori, search]);
+    return kategori
+      .filter((cat) => {
+        const matchSearch = cat.nama
+          .toLowerCase()
+          .includes(search.toLowerCase());
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Yakin ingin menghapus kategori ini?")) return;
+        return matchSearch;
+      })
+      .sort((a, b) => a.sortOrder - b.sortOrder);
+  }, [kategori, search]);
 
-    try{
-      await fetch(`http://localhost:3000/kategori/${id}`, {
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+
+    try {
+      setLoadingDelete(true);
+
+      await fetch(`http://localhost:3000/kategori/${deleteTarget.id}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        credentials: "include",
       });
 
+      setDeleteTarget(null);
       reloadKategori();
-    }catch(err){
+    } catch (err) {
       console.error(err);
+    } finally {
+      setLoadingDelete(false);
     }
   };
 
@@ -72,9 +86,12 @@ export default function ListCategoryPage() {
         }}
       >
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: 800 }}>
-            Category Management
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+            <CategoryIcon sx={{ fontSize: 36, color: themeColor }} />
+            <Typography variant="h4" sx={{ fontWeight: 800 }}>
+              Category Management
+            </Typography>
+          </Box>
           <Typography sx={{ color: "#666", mt: 1 }}>
             Kelola kategori menu
           </Typography>
@@ -188,9 +205,7 @@ export default function ListCategoryPage() {
           >
             {/* NAMA */}
             <Box sx={{ width: "20%" }}>
-              <Typography sx={{ fontWeight: 700 }}>
-                {cat.nama}
-              </Typography>
+              <Typography sx={{ fontWeight: 700 }}>{cat.nama}</Typography>
             </Box>
 
             {/* SORT */}
@@ -215,9 +230,7 @@ export default function ListCategoryPage() {
             {/* END DATE */}
             <Box sx={{ width: "15%" }}>
               <Typography sx={{ color: cat.endDate ? "#333" : "#999" }}>
-                {cat.endDate
-                  ? new Date(cat.endDate).toLocaleDateString()
-                  : "-"}
+                {cat.endDate ? new Date(cat.endDate).toLocaleDateString() : "-"}
               </Typography>
             </Box>
 
@@ -258,7 +271,7 @@ export default function ListCategoryPage() {
               </IconButton>
 
               <IconButton
-                onClick={() => handleDelete(cat.id)}
+                onClick={() => setDeleteTarget(cat)}
                 sx={{
                   border: "1px solid #E0E0E0",
                   borderRadius: "10px",
@@ -284,6 +297,71 @@ export default function ListCategoryPage() {
           </Box>
         )}
       </Paper>
+      <Dialog
+        open={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: "22px",
+            p: 1,
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1.2,
+            fontWeight: 800,
+            fontSize: "1.1rem",
+          }}
+        >
+          <WarningAmberRoundedIcon sx={{ color: "#F59E0B" }} />
+          Hapus Kategori?
+        </DialogTitle>
+
+        <DialogContent sx={{ pt: 1 }}>
+          <Typography sx={{ color: "#555", lineHeight: 1.8 }}>
+            Kategori <b>{deleteTarget?.nama}</b> akan dihapus permanen.
+            <br />
+            Tindakan ini tidak dapat dibatalkan.
+          </Typography>
+        </DialogContent>
+
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button
+            onClick={() => setDeleteTarget(null)}
+            variant="outlined"
+            sx={{
+              borderRadius: "12px",
+              textTransform: "none",
+              fontWeight: 700,
+            }}
+          >
+            Batal
+          </Button>
+
+          <Button
+            onClick={handleDelete}
+            disabled={loadingDelete}
+            variant="contained"
+            sx={{
+              bgcolor: "#DC2626",
+              borderRadius: "12px",
+              textTransform: "none",
+              fontWeight: 700,
+              px: 3,
+              "&:hover": {
+                bgcolor: "#B91C1C",
+              },
+            }}
+          >
+            {loadingDelete ? "Menghapus..." : "Ya, Hapus"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

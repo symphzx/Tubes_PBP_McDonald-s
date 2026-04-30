@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import {
@@ -13,7 +14,6 @@ import {
 
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import CloseIcon from "@mui/icons-material/Close";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import PaymentIcon from "@mui/icons-material/Payment";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import StorefrontIcon from "@mui/icons-material/Storefront";

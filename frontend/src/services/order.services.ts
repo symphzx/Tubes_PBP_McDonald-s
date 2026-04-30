@@ -1,5 +1,10 @@
 const BASE_URL = "http://localhost:3000";
 
+interface CheckoutOpsiItem {
+    mo_id: string;
+    harga_tambahan: number;
+}
+
 export const checkoutOrder = async (payload: {
     order_type: "DINE_IN" | "TAKEAWAY";
     no_meja: number;
@@ -7,9 +12,9 @@ export const checkoutOrder = async (payload: {
     items: {
         menu_id: string;
         mv_id: string | null;
-        mo_id: string | null;
         quantity: number;
         harga_awal: number;
+        opsi_ids: CheckoutOpsiItem[];
     }[];
 }) => {
     const res = await fetch(`${BASE_URL}/order/checkout`, {

@@ -2,10 +2,10 @@ import {
     Box,
     Card,
     List,
-    ListItemText,
     ListItemIcon,
     ListItemButton,
 } from "@mui/material";
+import ListItemText from '@mui/material/ListItemText';
 import { useNavigate } from "react-router";
 import { useLocation, useParams } from "react-router";
 
@@ -23,7 +23,7 @@ import { Outlet } from "react-router";
 import { useEffect, useMemo, type JSX } from "react";
 import { useKategori } from "../hooks/useKategori";
 
-const homeItems = { Label: "Home", icon: <HomeIcon />};
+const homeItems = { Label: "Home", icon: <HomeIcon /> };
 const iconMap: Record<string, JSX.Element> = {
     "Promosi": <LocalOfferIcon />,
     "Burger & McNuggets": <LunchDiningIcon />,
@@ -170,8 +170,9 @@ export function MenuLayout() {
                                     primary={homeItems.Label}
                                     sx={{
                                         fontWeight: isHomeActive ? 600 : 400,
-                                        color: isHomeActive ? "#000" : "#555",
                                         fontSize: 13,
+
+                                        color: isHomeActive ? "#000" : "#555",
                                     }}
                                 />
                             </ListItemButton>

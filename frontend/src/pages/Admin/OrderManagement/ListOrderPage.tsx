@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Avatar,
   Box,
-  Chip,
+  Button,
   Container,
   Divider,
   InputBase,
@@ -13,19 +13,33 @@ import {
 } from "@mui/material";
 
 import SearchIcon from "@mui/icons-material/Search";
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import TableRestaurantIcon from "@mui/icons-material/TableRestaurant";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import CancelIcon from '@mui/icons-material/Cancel';
+
 import { useOrders } from "../../../hooks/useOrder";
 
 export default function ListOrderPage() {
+  const today = new Date();
+
+  const defaultFilter = {
+    day: String(today.getDate()).padStart(2, "0"),
+    month: String(today.getMonth() + 1).padStart(2, "0"),
+    year: String(today.getFullYear()),
+  };
+
   const themeColor = "#DA291C";
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+
+  const [draftFilter, setDraftFilter] = useState(defaultFilter);
+  const [activeFilter, setActiveFilter] = useState(defaultFilter);
 
   const { orders, reload: reloadOrder } = useOrders();
 
@@ -33,22 +47,95 @@ export default function ListOrderPage() {
     reloadOrder();
   }, [reloadOrder]);
 
+  const extractDateFromOrderNo = (noOrder: string) => {
+    const rawDate = noOrder.split("-")[0];
+
+    return {
+      day: rawDate.slice(0, 2),
+      month: rawDate.slice(2, 4),
+      year: rawDate.slice(4, 8),
+    };
+  };
+
 
   const filteredOrders = useMemo(() => {
-    return orders.filter((order) => {
-      const matchSearch =
-        order.id.toLowerCase().includes(search.toLowerCase()) ||
-        order.orderMenuRelation.some((item) =>
-          item.menu?.nama.toLowerCase().includes(search.toLowerCase())
+    return orders
+      .filter((order) => {
+        const matchSearch =
+          order.id.toLowerCase().includes(search.toLowerCase()) ||
+          order.no_order.toLowerCase().includes(search.toLowerCase()) ||
+          order.orderMenuRelation.some((item) =>
+            item.menu?.nama.toLowerCase().includes(search.toLowerCase())
+          );
+
+        const matchStatus = statusFilter
+          ? order.status === statusFilter
+          : true;
+
+        const orderDate = extractDateFromOrderNo(order.no_order);
+
+        const matchDay = activeFilter.day
+          ? orderDate.day === activeFilter.day
+          : true;
+
+        const matchMonth = activeFilter.month
+          ? orderDate.month === activeFilter.month
+          : true;
+
+        const matchYear = activeFilter.year
+          ? orderDate.year === activeFilter.year
+          : true;
+
+        return (
+          matchSearch &&
+          matchStatus &&
+          matchDay &&
+          matchMonth &&
+          matchYear
         );
+      })
 
-      const matchStatus = statusFilter
-        ? order.status === statusFilter
-        : true;
+      .sort((a, b) => {
+        const [dateA, seqA] = a.no_order.split("-");
+        const [dateB, seqB] = b.no_order.split("-");
 
-      return matchSearch && matchStatus;
-    });
-  }, [orders, search, statusFilter]);
+        const sortableDateA =
+          dateA.slice(4, 8) +
+          dateA.slice(2, 4) +
+          dateA.slice(0, 2);
+
+        const sortableDateB =
+          dateB.slice(4, 8) +
+          dateB.slice(2, 4) +
+          dateB.slice(0, 2);
+
+        const numDateA = Number(sortableDateA);
+        const numDateB = Number(sortableDateB);
+
+        // tanggal terbaru dulu
+        if (numDateA !== numDateB) {
+          return numDateB - numDateA;
+        }
+
+        // nomor ascending
+        return Number(seqA) - Number(seqB);
+      });
+  }, [orders, search, statusFilter, activeFilter.day, activeFilter.month, activeFilter.year]);
+
+  const resetDateFilter = () => {
+    const empty = {
+      day: "",
+      month: "",
+      year: "",
+    };
+
+    setDraftFilter(empty);
+    setActiveFilter(empty);
+  };
+
+  const applyDateFilter = () => {
+    setActiveFilter(draftFilter);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -79,6 +166,38 @@ export default function ListOrderPage() {
     }
   };
 
+  const handleChangeStatus = async (orderId: string, orderType: string, noMeja: number | null, newStatus: string) => {
+    try {
+      if (orderType === "TAKEAWAY") {
+        noMeja = null;
+      }
+      const response = await fetch(`http://localhost:3000/order/${orderId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ 
+          order_type: orderType, 
+          no_meja: noMeja,
+          status: newStatus }),
+      })
+
+      
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(result.message);
+        return;
+      }
+
+      await reloadOrder();
+    } catch (error) {
+      console.error(error);
+      alert("Gagal update status");
+    }
+  };
+
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       {/* HEADER */}
@@ -93,9 +212,12 @@ export default function ListOrderPage() {
         }}
       >
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: 800 }}>
-            Order Management
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+            <AssignmentIcon sx={{ fontSize: 36, color: "#556b2f" }} />
+            <Typography variant="h4" sx={{ fontWeight: 800 }}>
+              Order Management
+            </Typography>
+          </Box>
 
           <Typography sx={{ color: "#777", mt: 1 }}>
             Pantau seluruh transaksi pesanan pelanggan
@@ -157,24 +279,197 @@ export default function ListOrderPage() {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             IconComponent={KeyboardArrowDownIcon}
+            renderValue={(selected) => {
+              if (!selected) {
+                return (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      height: "100%",
+                      opacity: 0.6,
+                    }}
+                  >
+                    Semua Status
+                  </Box>
+                );
+              }
+
+              const statusUI = getStatusColor(selected as string);
+
+              return (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    height: "100%",
+                  }}
+                >
+                  {statusUI.icon}
+
+                  <Typography
+                    component="span"
+                    sx={{
+                      fontWeight: 700,
+                      fontSize: "0.95rem",
+                    }}
+                  >
+                    {selected}
+                  </Typography>
+                </Box>
+              );
+            }}
             sx={{
               height: 48,
-              "& fieldset": { border: "none" },
+
+              "& fieldset": {
+                border: "none",
+              },
+
+              "& .MuiSelect-select": {
+                display: "flex",
+                alignItems: "center",
+                paddingTop: "0 !important",
+                paddingBottom: "0 !important",
+                minHeight: "48px !important",
+              },
+
+              "& .MuiSvgIcon-root": {
+                color: "#666",
+              },
             }}
           >
-            <MenuItem value="" sx={{opacity: 0.6}}>Semua Status</MenuItem>
-            <MenuItem value="PENDING">Pending</MenuItem>
-            <MenuItem value="PAID">Paid</MenuItem>
-            <MenuItem value="CANCELLED">Cancelled</MenuItem>
+            <MenuItem value="" sx={{opacity: "0.6"}}>Semua Status</MenuItem>
+
+            <MenuItem value="PENDING">
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                {getStatusColor("PENDING").icon}
+                Pending
+              </Box>
+            </MenuItem>
+
+            <MenuItem value="PAID">
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                {getStatusColor("PAID").icon}
+                Paid
+              </Box>
+            </MenuItem>
+
+            <MenuItem value="CANCELLED">
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                {getStatusColor("CANCELLED").icon}
+                Cancelled
+              </Box>
+            </MenuItem>
           </Select>
         </Box>
       </Box>
 
+      <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: 3 }}>
+
+      {/* TANGGAL */}
+      <Select
+        value={draftFilter.day}
+        onChange={(e) =>
+          setDraftFilter({
+            ...draftFilter,
+            day: e.target.value,
+          })
+        }
+        displayEmpty
+        sx={{ minWidth: 90, height: 48 }}
+      >
+        <MenuItem value="">Tanggal</MenuItem>
+        {Array.from({ length: 31 }, (_, i) => {
+          const val = String(i + 1).padStart(2, "0");
+          return (
+            <MenuItem key={val} value={val}>
+              {val}
+            </MenuItem>
+          );
+        })}
+      </Select>
+
+      {/* BULAN */}
+      <Select
+        value={draftFilter.month}
+        onChange={(e) =>
+          setDraftFilter({
+            ...draftFilter,
+            month: e.target.value,
+          })
+        }
+        displayEmpty
+        sx={{ minWidth: 90, height: 48 }}
+      >
+        <MenuItem value="">Bulan</MenuItem>
+        {Array.from({ length: 12 }, (_, i) => {
+          const val = String(i + 1).padStart(2, "0");
+          return (
+            <MenuItem key={val} value={val}>
+              {val}
+            </MenuItem>
+          );
+        })}
+      </Select>
+
+      {/* TAHUN */}
+      <Select
+        value={draftFilter.year}
+        onChange={(e) =>
+          setDraftFilter({
+            ...draftFilter,
+            year: e.target.value,
+          })
+        }
+        displayEmpty
+        sx={{ minWidth: 110, height: 48 }}
+      >
+        <MenuItem value="">Tahun</MenuItem>
+
+        {[2024, 2025, 2026, 2027, 2028].map((year) => (
+          <MenuItem key={year} value={String(year)}>
+            {year}
+          </MenuItem>
+        ))}
+      </Select>
+
+      {/* RESET */}
+      <Button
+        variant="contained"
+        onClick={applyDateFilter}
+        sx={{
+          height: 48,
+          borderRadius: "12px",
+          bgcolor: themeColor,
+          textTransform: "none",
+          fontWeight: 700,
+          px: 3,
+          "&:hover": {
+            bgcolor: "#b71f15",
+          },
+        }}
+      >
+        Apply Filter
+      </Button>
+      <Button
+        variant="outlined"
+        onClick={resetDateFilter}
+        sx={{
+          height: 48,
+          borderRadius: "12px",
+          textTransform: "none",
+          fontWeight: 700,
+        }}
+      >
+        Reset Filter
+      </Button>
+    </Box>
+
       {/* LIST */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
         {filteredOrders.map((order) => {
-          const statusUI = getStatusColor(order.status);
-
           return (
             <Paper
               key={order.id}
@@ -241,51 +536,261 @@ export default function ListOrderPage() {
                   }}
                 >
                   {/* TIPE ORDER */}
-                  <Chip
-                    label={order.order_type === "DINE_IN" ? "Dine In" : "Take Away"}
-                    size="small"
-                    sx={{
-                      height: 30,
-                      px: 1,
-                      fontWeight: 700,
-                      borderRadius: "10px",
-                      bgcolor:
-                        order.order_type === "DINE_IN"
-                          ? "#E3F2FD"
-                          : "#FFF3E0",
-                      color:
-                        order.order_type === "DINE_IN"
-                          ? "#1565C0"
-                          : "#EF6C00",
-                    }}
-                  />
+                  <Box>
+                    <Select
+                      value={order.order_type}
+                      onChange={(e) =>
+                        handleChangeStatus(
+                          order.id,
+                          e.target.value,
+                          order.no_meja,
+                          order.status
+                        )
+                      }
+                      size="small"
+                      IconComponent={KeyboardArrowDownIcon}
+
+                      renderValue={(selected) => {
+                        const isDineIn = selected === "DINE_IN";
+
+                        return (
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                            }}
+                          >
+                            <Typography
+                              component="span"
+                              sx={{
+                                fontWeight: 700,
+                                fontSize: "0.82rem",
+                              }}
+                            >
+                              {isDineIn ? "Dine In" : "Take Away"}
+                            </Typography>
+                          </Box>
+                        );
+                      }}
+
+                      sx={{
+                        // minWidth: 130,
+                        width: 110,
+                        height: 36,
+                        borderRadius: "999px",
+                        fontWeight: 700,
+
+                        bgcolor:
+                          order.order_type === "DINE_IN"
+                            ? "#E3F2FD"
+                            : "#FFF3E0",
+
+                        color:
+                          order.order_type === "DINE_IN"
+                            ? "#1565C0"
+                            : "#EF6C00",
+
+                        "& .MuiSelect-select": {
+                          display: "flex",
+                          alignItems: "center",
+                          py: 0.5,
+                          px: 1.5,
+                        },
+
+                        "& fieldset": {
+                          border: "none",
+                        },
+
+                        "& .MuiSvgIcon-root": {
+                          color: "inherit",
+                        },
+                      }}
+                    >
+                      <MenuItem value="DINE_IN">
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                          Dine In
+                        </Box>
+                      </MenuItem>
+
+                      <MenuItem value="TAKEAWAY">
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                          Take Away
+                        </Box>
+                      </MenuItem>
+                    </Select>
+                  </Box>
 
                   {/* NOMOR MEJA */}
                   {order.order_type === "DINE_IN" && (
-                    <Chip
-                      label={`Meja ${order.no_meja}`}
-                      size="small"
+                    <Box
                       sx={{
-                        height: 30,
-                        px: 1,
-                        fontWeight: 700,
-                        borderRadius: "10px",
-                        bgcolor: "#F5F5F5",
-                        color: "#444",
+                        height: 36,
+                        minWidth: 108,
+                        px: 1.2,
+                        borderRadius: "999px",
+                        border: "1px solid #E5E7EB",
+                        bgcolor: "#FFFFFF",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 0.8,
+                        transition: "0.2s ease",
+                        "&:hover": {
+                          borderColor: "#CBD5E1",
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+                        },
                       }}
-                    />
+                    >
+                      <TableRestaurantIcon
+                        sx={{
+                          fontSize: 16,
+                          color: "#64748B",
+                          flexShrink: 0,
+                        }}
+                      />
+
+                      <Typography
+                        sx={{
+                          fontSize: "0.78rem",
+                          fontWeight: 700,
+                          color: "#64748B",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        Meja
+                      </Typography>
+
+                      <InputBase
+                        defaultValue={order.no_meja ?? ""}
+                        type="number"
+                        onBlur={(e) => {
+                          const newNoMeja = Number(e.target.value);
+
+                          if (!newNoMeja || newNoMeja < 1) return;
+
+                          const mejaSudahDipakai = orders.some(
+                            (item) =>
+                              item.id !== order.id &&
+                              item.order_type === "DINE_IN" &&
+                              item.no_meja === newNoMeja &&
+                              item.status !== "CANCELLED" && item.status !== "PAID"
+                          );
+
+                          if (mejaSudahDipakai) {
+                            alert(`Meja ${newNoMeja} sedang digunakan`);
+                            e.target.value = String(order.no_meja ?? "");
+                            return;
+                          }
+
+                          handleChangeStatus(
+                            order.id,
+                            order.order_type,
+                            newNoMeja,
+                            order.status
+                          );
+                        }}
+                        inputProps={{
+                          min: 1,
+                          style: {
+                            width: "34px",
+                            textAlign: "center",
+                            fontWeight: 800,
+                            fontSize: "0.82rem",
+                            padding: 0,
+                          },
+                        }}
+                      />
+                    </Box>
                   )}
                 </Box>
-                <Chip
-                  icon={statusUI.icon}
-                  label={order.status}
-                  sx={{
-                    bgcolor: statusUI.bg,
-                    color: statusUI.color,
-                    fontWeight: 700,
-                    px: 1,
-                  }}
-                />
+                {/* STATUS */}
+                <Box>
+              <Select
+                value={order.status}
+                onChange={(e) =>
+                  handleChangeStatus(
+                    order.id,
+                    order.order_type,
+                    order.no_meja,
+                    e.target.value
+                  )
+                }
+                size="small"
+                IconComponent={KeyboardArrowDownIcon}
+
+                renderValue={(selected) => {
+                  const statusUI = getStatusColor(selected as string);
+
+                  return (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                      }}
+                    >
+                      {statusUI.icon}
+
+                      <Typography
+                        component="span"
+                        sx={{
+                          fontWeight: 700,
+                          fontSize: "0.82rem",
+                        }}
+                      >
+                        {selected}
+                      </Typography>
+                    </Box>
+                  );
+                }}
+
+                sx={{
+                  minWidth: 145,
+                  height: 36,
+                  borderRadius: "999px",
+                  fontWeight: 700,
+
+                  bgcolor: getStatusColor(order.status).bg,
+                  color: getStatusColor(order.status).color,
+
+                  "& .MuiSelect-select": {
+                    display: "flex",
+                    alignItems: "center",
+                    py: 0.5,
+                    px: 1.5,
+                  },
+
+                  "& fieldset": {
+                    border: "none",
+                  },
+
+                  "& .MuiSvgIcon-root": {
+                    color: "inherit",
+                  },
+                }}
+              >
+                <MenuItem value="PENDING">
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <PendingActionsIcon sx={{ fontSize: 16 }} />
+                    Pending
+                  </Box>
+                </MenuItem>
+
+                <MenuItem value="PAID">
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <CheckCircleIcon sx={{ fontSize: 16 }} />
+                    Paid
+                  </Box>
+                </MenuItem>
+
+                <MenuItem value="CANCELLED">
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <CancelIcon sx={{ fontSize: 16 }} />
+                    Cancelled
+                  </Box>
+                </MenuItem>
+              </Select>
+            </Box>
               </Box>
 
               {/* TABLE HEADER */}
@@ -355,9 +860,19 @@ export default function ListOrderPage() {
                       </Typography>
                     </Box>
 
-                    <Box sx={{ width: "18%" }}>{item.varian_menu.nama}</Box>
+                    <Box sx={{ width: "18%" }}>{item.varian_menu?.nama ?? "-"}</Box>
 
-                    <Box sx={{ width: "22%" }}>{item.opsi_menu.nama}</Box>
+                    <Box sx={{ width: "22%" }}>
+                      {item.opsi_list && item.opsi_list.length > 0 ? (
+                        item.opsi_list.map((opsi, index) => (
+                          <Typography key={index}>
+                            {opsi.opsiMenu?.nama ?? "-"}
+                          </Typography>
+                        ))
+                      ) : (
+                        <Typography>-</Typography>
+                      )}
+                    </Box>
 
                     <Box sx={{ width: "10%", fontWeight: 700 }}>
                       x{item.quantity}

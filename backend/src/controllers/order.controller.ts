@@ -6,6 +6,76 @@ import { Op, where } from "sequelize";
 import { Order } from "../models/Order";
 import { OrderMenu } from "../models/OrderMenu";
 import { sequelize } from "../config/database";
+import { OrderMenu_Opsi } from "../models/OrderMenuOpsi";
+
+const formatDateKey = (date: Date): string => {
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const yyyy = date.getFullYear();
+  return `${dd}${mm}${yyyy}`;
+};
+
+const generateNoOrder = async (
+  date: Date,
+  transaction: any
+): Promise<string> => {
+  const dateKey = formatDateKey(date);
+
+  // Cari no_order terakhir untuk tanggal ini
+  // Pakai LIKE "DDMMYYYY-%" lalu ORDER DESC ambil 1
+  const lastOrder = await Order.findOne({
+    where: {
+      no_order: { [Op.like]: `${dateKey}-%` },
+    },
+    order: [["no_order", "DESC"]],
+    transaction,
+    paranoid: false, // include yang soft-deleted juga, biar sequence tidak collision
+  });
+
+  let nextSeq = 1;
+  if (lastOrder?.no_order) {
+    // Ambil bagian setelah dash → "0010" → parseInt → 10
+    const parts = lastOrder.no_order.split("-");
+    const lastSeq = parseInt(parts[1] as string, 10);
+    if (!isNaN(lastSeq)) {
+      nextSeq = lastSeq + 1;
+    }
+  }
+
+  // Format jadi 4 digit dengan leading zero
+  const seqStr = String(nextSeq).padStart(4, "0");
+  return `${dateKey}-${seqStr}`;
+};
+
+const findAvailableTable = async (transaction: any): Promise<number> => {
+  const MAX_TABLE = 50;
+
+  // Ambil semua no_meja yang lagi dipakai dengan status PENDING
+  const activeOrders = await Order.findAll({
+    attributes: ["no_meja"],
+    where: {
+      status: "PENDING",
+      order_type: "DINE_IN",
+      no_meja: { [Op.not]: null }, // hanya yang punya no_meja
+    },
+    transaction,
+  });
+
+  const occupiedTables = new Set(
+    activeOrders
+      .map((o) => o.no_meja)
+      .filter((no): no is number => no !== null && no !== undefined)
+  );
+
+  // Cari nomor meja terkecil yang belum dipakai
+  for (let i = 1; i <= MAX_TABLE; i++) {
+    if (!occupiedTables.has(i)) {
+      return i;
+    }
+  }
+
+  return 0; // semua penuh
+};
 
 export class OrderController {
   static async getAll(req: Request, res: Response) {
@@ -17,7 +87,11 @@ export class OrderController {
             include: [
               { model: Menu },
               { model: Varian_Menu },
-              { model: Opsi_Menu },
+              {
+                model: OrderMenu_Opsi,
+                as: "opsi_list",
+                include: [{ model: Opsi_Menu, as: "opsiMenu" }],
+              },
             ]
           },
         ],
@@ -41,94 +115,106 @@ export class OrderController {
   // 2. mapping dari cart ke table order_menu
   // 3. kalo berhasil, commit. kalo error, rollback (transaction)
   // kenapa pake trancaction? krn bikin 1 order kudu pake 2 table (Orders sama Order_Menu)
-  static async createOrder(req: Request, res:Response) {
-      const transaction = await sequelize.transaction()
+  static async createOrder(req: Request, res: Response) {
+    const transaction = await sequelize.transaction();
 
-      try {
-          const { order_type, no_meja, items, total_harga } = req.body
-          
-          // buat generate no_meja sama order_no
-          const lastOrder = await Order.findOne({
-              order: [['createdAt', 'DESC']],
-              transaction
-          })
+    try {
+      const { order_type, items, total_harga } = req.body;
 
-          // konsepnya dapet order_no brdsrkn order_no terakhir
-          // klo blm ada last order, otomatis 1
-        //   let nextOrder_no = 1
-        //   if (lastOrder && lastOrder.order_no) {
-        //       nextOrder_no = lastOrder.order_no + 1 
-        //   }
-
-          // konsepnya ngambil semua no_meja yg lagi dipake && status ga completed
-          // trus cari no_meja dari 1-50 yg gaada di list occupied
-          let assignedTable = 0
-          if (order_type === "DINE_IN") {
-              const activeOrders = await Order.findAll({
-                  attributes: ['no_meja'],
-                  where: {
-                      status: { [Op.not]: "COMPLETED"},
-                      order_type: "DINE_IN"
-                  },
-                  transaction
-              })
-
-              const occupiedTables = activeOrders.map(o => o.no_meja) // ngambil no_meja nya aja dari activeOrders
-
-              for (let i = 1; i <= 50; i++) {
-                  if (!occupiedTables.includes(i)) {
-                      assignedTable = i
-                      break
-                  }
-              }
-
-              if (assignedTable === 0) {
-                  await transaction.rollback()
-                  return res.status(400).json({
-                      message: "Semua meja penuh"
-                  })
-              }
-          }
-          
-          // bikin order
-          const newOrder = await Order.create({
-              waktu_pemesanan: new Date().toISOString(),
-              total_harga,
-              order_type,
-              no_meja: order_type === "TAKEAWAY" ? 0 : assignedTable,
-              status: "PENDING",
-            //   order_no: nextOrder_no
-          },
-          {
-              transaction
-          })
-
-          // bikin detail menu
-          const orderItems = items.map((item: any) => ({
-              order_id: newOrder.id,
-              menu_id: item.menu_id,
-              mv_id: item.mv_id || null,
-              mo_id: item.mo_id || null,
-              quantity: item.quantity,
-              harga_awal: item.harga_awal
-          }))
-
-          // pake bulkCreate krn mau add banyak data sekaligus
-          await OrderMenu.bulkCreate(orderItems, { transaction })
-
-          await transaction.commit()
-
-          return res.status(201).json({
-              message: "Order created",
-              order_no: newOrder.no_order,                                                  
-              data: newOrder
-          })
-      } catch (err: any) {
-          await transaction.rollback()
-          return res.status(500).json({
-              message: err.message
-          })
+      // ---------- Validasi awal ----------
+      if (!order_type || !["DINE_IN", "TAKEAWAY"].includes(order_type)) {
+        await transaction.rollback();
+        return res.status(400).json({
+          message: "order_type harus DINE_IN atau TAKEAWAY",
+        });
       }
+
+      if (!items || !Array.isArray(items) || items.length === 0) {
+        await transaction.rollback();
+        return res.status(400).json({
+          message: "items tidak boleh kosong",
+        });
+      }
+
+      // ---------- 1. ASSIGN NO MEJA (kalau DINE_IN) ----------
+      let assignedTable: number | null = null;
+
+      if (order_type === "DINE_IN") {
+        const availableTable = await findAvailableTable(transaction);
+
+        if (availableTable === 0) {
+          await transaction.rollback();
+          return res.status(400).json({
+            message:
+              "Maaf, semua meja sedang terisi (status PENDING). Silakan coba lagi nanti.",
+          });
+        }
+
+        assignedTable = availableTable;
+      }
+
+      // ---------- 2. GENERATE NO ORDER ----------
+      const waktuPemesanan = new Date();
+      const noOrder = await generateNoOrder(waktuPemesanan, transaction);
+
+      // ---------- 3. CREATE ORDER ----------
+      const newOrder = await Order.create(
+        {
+          no_order: noOrder,
+          waktu_pemesanan: waktuPemesanan,
+          total_harga,
+          order_type,
+          no_meja: assignedTable, // null untuk TAKEAWAY
+          status: "PENDING",
+        },
+        { transaction }
+      );
+
+      // ---------- 4. CREATE ORDER MENU + JUNCTION OPSI ----------
+      for (const item of items) {
+        const orderMenu = await OrderMenu.create(
+          {
+            order_id: newOrder.id,
+            menu_id: item.menu_id,
+            mv_id: item.mv_id || null,
+            quantity: item.quantity,
+            harga_awal: item.harga_awal,
+          },
+          { transaction }
+        );
+
+        const opsiIds = item.opsi_ids ?? [];
+        if (opsiIds.length > 0) {
+          const opsiRows = opsiIds.map((o: any) => ({
+            order_menu_id: orderMenu.id,
+            mo_id: o.mo_id,
+            harga_tambahan: o.harga_tambahan ?? 0,
+          }));
+          await OrderMenu_Opsi.bulkCreate(opsiRows, { transaction });
+        }
+      }
+
+      await transaction.commit();
+
+      return res.status(201).json({
+        message: "Order created",
+        data: {
+          id: newOrder.id,
+          no_order: newOrder.no_order,
+          no_meja: newOrder.no_meja,
+          order_type: newOrder.order_type,
+          status: newOrder.status,
+          total_harga: newOrder.total_harga,
+          waktu_pemesanan: newOrder.waktu_pemesanan,
+        },
+      });
+    } catch (err: any) {
+      await transaction.rollback();
+      console.error("ERROR CREATE ORDER:", err);
+      return res.status(500).json({
+        message: err.message ?? "Failed to create order",
+      });
+    }
   }
 
   // get by id
@@ -147,7 +233,14 @@ export class OrderController {
                   { 
                       model: OrderMenu, 
                       as: "orderMenuRelation",
-                      include: ["menu", "varian_menu", "opsi_menu"]
+                      include: [
+                        { model: Menu, as: "menu" },
+                        { model: Varian_Menu, as: "varian_menu" },
+                        {
+                          model: OrderMenu_Opsi,
+                          as: "opsi_list",
+                          include: [{ model: Opsi_Menu, as: "opsiMenu" }],
+                        },]
                   }
               ]
           })
@@ -265,146 +358,54 @@ export class OrderController {
   //     });
   //   }
   // }
-  // static async update(req: Request, res: Response) {
-  //   try {
-  //     const { id } = req.params;
 
-  //     const { kategori_id, nama, harga_awal, tipe, ketersediaan, tag } = req.body;
+  static async update(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
 
-  //     const existingMenu = await Menu.findByPk(id as string);
+      const { order_type, no_meja, status } = req.body;
 
-  //     if (!existingMenu) {
-  //       return res.status(404).json({
-  //         message: "Menu not found",
-  //       });
-  //     }
+      const existingOrder = await Order.findByPk(id as string);
 
+      if (!existingOrder) {
+        return res.status(404).json({
+          message: "Order not found",
+        });
+      }
 
-  //     const file = (req as any).file;
-  //     const { existingImage } = req.body;
+      if (!order_type) {
+        return res.status(400).json({
+          message: "Order type is required",
+        });
+      }
 
-  //     let imageUrl = existingMenu.gambar;
+      if (!status) {
+        return res.status(400).json({
+          message: "Order status is required",
+        });
+      }
 
-  //     if (file) {
-  //       imageUrl = `http://localhost:3000/uploads/assets/${file.filename}`;
-  //     } else if (existingImage) {
-  //       imageUrl = existingImage;
-  //     }
+      const order = await Order.update({
+        order_type,
+        no_meja,
+        status
+      },{
+        where: {
+          id,
+        },
+      },
+    );
 
-  //     if (!kategori_id) {
-  //       return res.status(400).json({
-  //         message: "Menu category is required",
-  //       });
-  //     }
-
-  //     if (!nama) {
-  //       return res.status(400).json({
-  //         message: "Menu name is required",
-  //       });
-  //     }
-
-  //     if (!harga_awal) {
-  //       return res.status(400).json({
-  //         message: "Menu price is required",
-  //       });
-  //     }
-
-  //     if (!tipe) {
-  //       return res.status(400).json({
-  //         message: "Menu type is required",
-  //       });
-  //     }
-
-  //     if (!ketersediaan) {
-  //       return res.status(400).json({
-  //         message: "Menu availability is required",
-  //       });
-  //     }
-
-  //     const menu = await Menu.update({
-  //       kategori_id,
-  //       nama,
-  //       harga_awal,
-  //       tipe,
-  //       gambar: imageUrl,
-  //       ketersediaan,
-  //       tag: tag ? tag : null,
-  //     },{
-  //       where: {
-  //         id,
-  //       },
-  //     },
-  //   );
-
-  //     res.json({
-  //       message: "Success",
-  //       data: menu,
-  //     });
-  //   } catch (error) {
-  //     console.error("ERROR EDIT MENU:", error);
-  //     res.status(500).json({
-  //       message: "Failed to edit menu",
-  //       error,
-  //     });
-  //   }
-  // }
-
-  // static async delete(req: Request, res: Response) {
-  //   try {
-  //     const { id } = req.params;
-
-  //     const menuVariant = await Varian_Menu.findAll({
-  //       where: {
-  //         menu_id: id,
-  //       },
-  //     });
-
-  //     const menuOption = await Opsi_Menu.findAll({
-  //       where: {
-  //         menu_id: id,
-  //       },
-  //     });
-
-  //     const menuPaket = await Paket_Menu.findAll({
-  //       where: {
-  //         menu_id: id,
-  //       },
-  //     });
-
-  //     if (!menuVariant && !menuOption && !menuPaket) {
-  //       return res.status(404).json({
-  //         message: "Menu not found",
-  //       });
-  //     }
-
-  //     menuVariant.forEach((element) => {
-  //       element.destroy();
-  //     })
-
-  //     menuOption.forEach((element) => {
-  //       element.destroy();
-  //     })
-
-  //     menuPaket.forEach((element) => {
-  //       element.destroy();
-  //     })
-
-  //     const menu = await Menu.destroy({
-  //       where: {
-  //         id,
-  //       },
-  //     });
-      
-  //     res.json({
-  //       message: "Success",
-  //       data: menu,
-  //     });
-  //   } catch (error) {
-  //     console.error("ERROR DELETE MENU:", error);
-  //     res.status(500).json({
-  //       message: "Failed to delete menu",
-  //       error,
-  //     });
-  //   }
-  // }
+      res.json({
+        message: "Success",
+        data: order,
+      });
+    } catch (error) {
+      console.error("ERROR EDIT ORDER:", error);
+      res.status(500).json({
+        message: "Failed to edit order",
+        error,
+      });
+    }
+  }
 }

@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
-import { Button, TextField, Typography, InputAdornment } from "@mui/material";
+import { Button, Typography, InputAdornment, TextField } from "@mui/material";
+
+
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import IconButton from "@mui/material/IconButton";
 import EmailIcon from "@mui/icons-material/Email";
@@ -14,6 +17,8 @@ import { isEmail } from "../../../utils/isEmail";
 import { authActions } from "../../../store/authSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useNavigate } from "react-router";
+
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState<string>("");
@@ -46,7 +51,7 @@ export default function LoginPage() {
       return;
     }
 
-    await fetch("http://localhost:5173/api/auth/forgot-password", {
+    await fetch("http://localhost:3000/auth/forgot-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: recoveryEmail }),
@@ -66,6 +71,7 @@ export default function LoginPage() {
     }
     const response = await fetch("http://localhost:3000/auth/login", {
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
@@ -86,10 +92,9 @@ export default function LoginPage() {
   };
 
   const setUserInfo = async () => {
-    const token = localStorage.getItem("token");
-
     const response = await fetch("http://localhost:3000/auth/me", {
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      headers: { "Content-Type": "application/json"},
+      credentials: "include",
       method: "GET",
     });
     const data = await response.json();
@@ -147,8 +152,7 @@ export default function LoginPage() {
         )}
         <Typography
           variant="h4"
-          fontWeight="800"
-          sx={{ color: colors.black, mb: 1, letterSpacing: -1 }}
+          sx={{ color: colors.black, mb: 1, letterSpacing: -1, fontWeight: 800 }}
         >
           {modeLogin === true ? "WELCOME BACK" : "FORGOT PASSWORD"}
         </Typography>
@@ -168,7 +172,7 @@ export default function LoginPage() {
                 variant="filled"
                 margin="normal"
                 onChange={(e) => setEmail(e.target.value)}
-                InputProps={{
+                inputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
                       <EmailIcon sx={{ color: colors.red }} />
@@ -192,7 +196,7 @@ export default function LoginPage() {
                 variant="filled"
                 margin="normal"
                 onChange={(e) => setPassword(e.target.value)}
-                InputProps={{
+                inputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
                       <LockIcon sx={{ color: colors.red }} />
@@ -246,7 +250,7 @@ export default function LoginPage() {
                 variant="filled"
                 margin="normal"
                 onChange={(e) => setRecoveryEmail(e.target.value)}
-                InputProps={{
+                inputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
                       <EmailIcon sx={{ color: colors.red }} />

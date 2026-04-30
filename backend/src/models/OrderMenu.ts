@@ -3,6 +3,7 @@ import { Order } from "./Order";
 import { Menu } from "./Menu";
 import { Varian_Menu } from "./VarianMenu";
 import { Opsi_Menu } from "./OpsiMenu";
+import { OrderMenu_Opsi } from "./OrderMenuOpsi"; 
 
 @Table({
   tableName: "OrderMenu",
@@ -37,12 +38,6 @@ export class OrderMenu extends Model {
   mv_id!: string;
 
   @Column({
-    type: DataType.UUID,
-    allowNull: true
-  })
-  mo_id!: string;
-
-  @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
@@ -63,6 +58,6 @@ export class OrderMenu extends Model {
   @BelongsTo(() => Varian_Menu, "mv_id")
   varian_menu!: Varian_Menu;
 
-  @BelongsTo(() => Opsi_Menu, "mo_id")
-  opsi_menu!: Opsi_Menu;
+  @HasMany(() => OrderMenu_Opsi, "order_menu_id")
+  opsi_list!: OrderMenu_Opsi[];
 }
