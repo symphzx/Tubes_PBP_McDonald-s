@@ -120,7 +120,7 @@ export class OrderController {
 
           return res.status(201).json({
               message: "Order created",
-              order_no: newOrder.order_no,
+              order_no: newOrder.no_order,                                                  
               data: newOrder
           })
       } catch (err: any) {
