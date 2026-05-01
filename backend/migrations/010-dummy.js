@@ -96,14 +96,14 @@ module.exports = {
 
     const menus = [
       // ---------- Burger & McNuggets ----------
-      m("Burger & McNuggets", "Big Mac", 49000, "Ala Carte", "Big Mac.webp"),
-      m("Burger & McNuggets", "Cheeseburger", 23000, "Ala Carte", "Cheeseburger.webp"),
-      m("Burger & McNuggets", "Double Cheeseburger", 39000, "Ala Carte", "Double Cheeseburger.webp"),
-      m("Burger & McNuggets", "McChicken Burger", 35000, "Ala Carte", "McChicken Burger.webp"),
-      m("Burger & McNuggets", "Beef Prosperity Burger", 45000, "Ala Carte", "Beef Prosperity Burger.webp"),
-      m("Burger & McNuggets", "Chicken Prosperity Burger", 42000, "Ala Carte", "Chicken Prosperity Burger.webp"),
-      m("Burger & McNuggets", "McNuggets 6 pcs", 35000, "Ala Carte", "McNuggets 6.webp"),
-      m("Burger & McNuggets", "McNuggets 9 pcs", 50000, "Ala Carte", "McNuggets 9.webp"),
+      m("Burger & McNuggets", "Big Mac", 49000, "Ala Carte", "bigmac.webp"),
+      m("Burger & McNuggets", "Cheeseburger", 23000, "Ala Carte", "cheeseburger.avif"),
+      m("Burger & McNuggets", "Double Cheeseburger", 39000, "Ala Carte", "DoubleChesseburger.avif"),
+      m("Burger & McNuggets", "McChicken Burger", 35000, "Ala Carte", "McChicken Burger.avif"),
+      m("Burger & McNuggets", "Beef Prosperity Burger", 45000, "Ala Carte", "BeefProsperityBurger.png"),
+      m("Burger & McNuggets", "Chicken Prosperity Burger", 42000, "Ala Carte", "ChickenProsperityBurger.png"),
+      m("Burger & McNuggets", "McNuggets 6 pcs", 35000, "Ala Carte", "6mcnuggets.avif"),
+      m("Burger & McNuggets", "McNuggets 9 pcs", 50000, "Ala Carte", "9mcnuggets.png"),
 
       // ---------- Ayam McD Krispy ----------
       m("Ayam McD Krispy", "PaNas 1 Krispy, Medium", 36500, "Paket", "PaNas 1 Krispy.webp"),
@@ -125,53 +125,54 @@ module.exports = {
       m("Ayam McD Spicy", "Ayam Spicy McDonald's", 22000, "Ala Carte", "Ayam Spicy McDonald's.webp"),
 
       // ---------- Paket Keluarga ----------
-      m("Paket Keluarga", "Bundle Hemat Bertiga", 130000, "Paket", "Bundle Bertiga.webp"),
+      m("Paket Keluarga", "Bundle Hemat Bertiga", 130000, "Paket", "paketHematKeluarga-2pie-3tea.png.png"),
       m("Paket Keluarga", "Bundle Hemat Berempat", 165000, "Paket", "Bundle Berempat.webp"),
       m("Paket Keluarga", "Bundle Hemat Berlima", 200000, "Paket", "Bundle Berlima.webp"),
       m("Paket Keluarga", "McD Family Time 8 pcs", 250000, "Paket", "Family Time 8.webp"),
 
       // ---------- Happy Meal ----------
-      m("Happy Meal", "Happy Meal Cheeseburger", 45000, "Paket", "Happy Meal Cheeseburger.webp"),
-      m("Happy Meal", "Happy Meal McNuggets 4 pcs", 50000, "Paket", "Happy Meal McNuggets.webp"),
-      m("Happy Meal", "Happy Meal Ayam McD", 50000, "Paket", "Happy Meal Ayam McD.webp"),
+      m("Happy Meal", "Happy Meal Hamburger", 45000, "Paket", "HamburgerHappyMeal.avif"),
+      m("Happy Meal", "Happy Meal McNuggets 4 pcs", 50000, "Paket", "4McNuggetsHappyMeal.avif"),
+      m("Happy Meal", "Happy Meal Ayam McD", 50000, "Paket", "AyamHappyMeal.webp"),
       m("Happy Meal", "Happy Meal McSpaghetti", 45000, "Paket", "Happy Meal McSpaghetti.webp"),
 
       // ---------- Paket HeBat ----------
-      m("Paket HeBat", "HeBat 1 Cheeseburger", 30000, "Paket", "HeBat 1.webp"),
+      m("Paket HeBat", "HeBat 1 Cheeseburger", 30000, "Paket", "Paket Hebat 1.png"),
       m("Paket HeBat", "HeBat 2 McChicken", 40000, "Paket", "HeBat 2.webp"),
       m("Paket HeBat", "HeBat 3 Double Cheeseburger", 50000, "Paket", "HeBat 3.webp"),
+      m("Paket HeBat", "Hebat McSpaghetti Ayam", 40000, "Paket", "Paket Hebat McSpaghetti Ayam.png"),
 
       // ---------- Menu Receh ----------
-      m("Menu Receh", "Pie Coklat Receh", 8000, "Ala Carte", "Pie Coklat.webp"),
-      m("Menu Receh", "Es Krim Cone Receh", 7000, "Ala Carte", "Es Krim Cone.webp"),
-      m("Menu Receh", "Mineral Water Receh", 6000, "Ala Carte", "Mineral Water.webp"),
+      m("Menu Receh", "Pie Ketan Hitam Kelapa Receh", 8000, "Ala Carte", "Pie Ketan Hitam Kelapa.webp", "Baru!"),
+      m("Menu Receh", "Es Krim Cone Receh", 7000, "Ala Carte", "icecreamCone.png"),
+      m("Menu Receh", "Mineral Water Receh", 6000, "Ala Carte", "MineralWaterPrima.png"),
 
       // ---------- McSpaghetti ----------
-      m("McSpaghetti", "McSpaghetti", 22000, "Ala Carte", "McSpaghetti.webp"),
-      m("McSpaghetti", "Paket McSpaghetti", 35000, "Paket", "Paket McSpaghetti.webp"),
+      m("McSpaghetti", "McSpaghetti", 22000, "Ala Carte", "Ala carte McSpaghetti.png"),
+      m("McSpaghetti", "Paket McSpaghetti", 35000, "Paket", "McSpaghetti.png"),
 
       // ---------- Camilan ----------
-      m("Camilan", "French Fries", 22000, "Ala Carte", "French Fries.webp"),
-      m("Camilan", "Hash Brown", 11000, "Ala Carte", "Hash Brown.webp"),
-      m("Camilan", "Apple Pie", 11000, "Ala Carte", "Apple Pie.webp"),
-      m("Camilan", "Cheese Bites", 25000, "Ala Carte", "Cheese Bites.webp", "Baru!"),
+      m("Camilan", "French Fries", 22000, "Ala Carte", "French Fries.avif"),
+      m("Camilan", "Hash Brown", 11000, "Ala Carte", "Hash_Brown.png"),
+      m("Camilan", "Apple Pie", 11000, "Ala Carte", "applepie.webp"),
+      m("Camilan", "Spicy Chicken Bites", 25000, "Ala Carte", "SpicyChickenBites.webp", "Baru!"),
 
       // ---------- Minuman ----------
-      m("Minuman", "Coca-Cola", 17000, "Ala Carte", "Coca-Cola.webp"),
-      m("Minuman", "Sprite", 17000, "Ala Carte", "Sprite.webp"),
-      m("Minuman", "Fanta", 17000, "Ala Carte", "Fanta.webp"),
-      m("Minuman", "Mineral Water", 11000, "Ala Carte", "Mineral Water.webp"),
+      m("Minuman", "Coca-Cola", 17000, "Ala Carte", "CocaCola.avif"),
+      m("Minuman", "Sprite", 17000, "Ala Carte", "Sprite.avif"),
+      m("Minuman", "Fanta", 17000, "Ala Carte", "FANTA.png"),
+      m("Minuman", "Mineral Water Prim-a", 11000, "Ala Carte", "MineralWaterPrima.png"),
       m("Minuman", "Hot Coffee", 17000, "Ala Carte", "Hot Coffee.webp"),
       m("Minuman", "Iced Coffee", 22000, "Ala Carte", "Iced Coffee.webp"),
-      m("Minuman", "Milo", 17000, "Ala Carte", "Milo.webp"),
+      m("Minuman", "Milo", 17000, "Ala Carte", "Milo.png"),
       m("Minuman", "Orange Juice", 22000, "Ala Carte", "Orange Juice.webp"),
       m("Minuman", "Tehbotol Kotak", 11000, "Ala Carte", "Tehbotol Sosro Kotak.webp"),
 
       // ---------- Pencuci Mulut ----------
-      m("Pencuci Mulut", "Sundae Cone Coklat", 11000, "Ala Carte", "Sundae Cone Coklat.webp"),
-      m("Pencuci Mulut", "Sundae Cone Stroberi", 11000, "Ala Carte", "Sundae Cone Stroberi.webp"),
-      m("Pencuci Mulut", "McFlurry Oreo", 22000, "Ala Carte", "McFlurry Oreo.webp"),
-      m("Pencuci Mulut", "McFlurry KitKat", 25000, "Ala Carte", "McFlurry KitKat.webp"),
+      m("Pencuci Mulut", "Sundae Cone Coklat", 11000, "Ala Carte", "Chocolate Sundae.png"),
+      m("Pencuci Mulut", "Sundae Cone Stroberi", 11000, "Ala Carte", "Strawberry Sundae.png"),
+      m("Pencuci Mulut", "McFlurry Oreo", 22000, "Ala Carte", "McFlurry.avif"),
+      m("Pencuci Mulut", "McFlurry Biscoff", 25000, "Ala Carte", "mcflurryBiscoff.webp","Baru!"),
       m("Pencuci Mulut", "Pie Coklat", 11000, "Ala Carte", "Pie Coklat.webp"),
 
       // ---------- Nasi ----------
@@ -315,8 +316,8 @@ module.exports = {
       opsiMenu.push(o(nama, "Extra Sambal", 2000));
     });
 
-    // Minuman add-ons
-    minumanWithSize.concat(["Mineral Water"]).forEach((nama) => {
+    // Minuman add-ons (FIXED NAMES HERE)
+    minumanWithSize.concat(["Mineral Water Prim-a", "Mineral Water Receh"]).forEach((nama) => {
       opsiMenu.push(o(nama, "No Ice", 0));
       opsiMenu.push(o(nama, "Less Sugar", 0));
       opsiMenu.push(o(nama, "Extra Ice", 0));
@@ -334,8 +335,8 @@ module.exports = {
       opsiMenu.push(o(nama, "Extra Chili Sauce", 1000));
     });
 
-    // Sundae & McFlurry add-ons
-    ["Sundae Cone Coklat", "Sundae Cone Stroberi", "McFlurry Oreo", "McFlurry KitKat"].forEach((nama) => {
+    // Sundae & McFlurry add-ons (FIXED BISCOFF HERE)
+    ["Sundae Cone Coklat", "Sundae Cone Stroberi", "McFlurry Oreo", "McFlurry Biscoff"].forEach((nama) => {
       opsiMenu.push(o(nama, "Extra Topping", 3000));
     });
 
@@ -444,10 +445,10 @@ module.exports = {
       p("HeBat 3 Double Cheeseburger", "French Fries"),
       p("HeBat 3 Double Cheeseburger", "Coca-Cola"),
 
-      // ---------- Happy Meal ----------
-      p("Happy Meal Cheeseburger", "Cheeseburger"),
-      p("Happy Meal Cheeseburger", "French Fries"),
-      p("Happy Meal Cheeseburger", "Milo"),
+      // ---------- Happy Meal (FIXED HAMBURGER HERE) ----------
+      p("Happy Meal Hamburger", "Cheeseburger"),
+      p("Happy Meal Hamburger", "French Fries"),
+      p("Happy Meal Hamburger", "Milo"),
 
       p("Happy Meal McNuggets 4 pcs", "McNuggets 6 pcs"),
       p("Happy Meal McNuggets 4 pcs", "French Fries"),
@@ -522,7 +523,7 @@ module.exports = {
       },
     ]);
 
-        // =====================================================================
+    // =====================================================================
     // 7. ORDERS, ORDER_MENU & ORDER_MENU_OPSI (15 orders, random 1 bulan terakhir)
     // =====================================================================
 
