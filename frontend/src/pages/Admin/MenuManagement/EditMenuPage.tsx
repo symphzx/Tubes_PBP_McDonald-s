@@ -22,7 +22,6 @@ import TuneIcon from "@mui/icons-material/Tune";
 import StyleIcon from "@mui/icons-material/Style";
 import { useParams, useNavigate } from "react-router";
 import { useKategori } from "../../../hooks/useKategori";
-import { useMenus } from "../../../hooks/useMenus";
 import type { Ketersediaan, MenuOption, MenuVarian, TipeMenu } from "../../../types";
 import { useUpdateMenu } from "../../../hooks/useUpdateMenu";
 import { useUpdateVarian } from "../../../hooks/useUpdateVarian";
@@ -31,6 +30,8 @@ import { useDeleteVarian } from "../../../hooks/useDeleteVarian";
 import { useDeleteOpsi } from "../../../hooks/useDeleteOpsi";
 import { useCreateVarian } from "../../../hooks/useCreateVarian";
 import { useCreateOpsi } from "../../../hooks/useCreateOpsi";
+import { useMenuDetail } from "../../../hooks/useMenuDetail";
+import { useMenus } from "../../../hooks/useMenus";
 
 // ✅ Type dengan optional id untuk membedakan existing vs baru
 interface VarianItem {
@@ -79,18 +80,17 @@ export default function EditMenuPage() {
   const createOpsi = useCreateOpsi();
 
   const { kategori, reload: reloadKategori } = useKategori();
-  const { menus, reload: reloadMenus } = useMenus();
+  const { reload: reloadMenus } = useMenus();
+  const { menu, reload: reloadMenu } = useMenuDetail(id as string);
 
   useEffect(() => {
     reloadKategori();
-    reloadMenus();
-  }, [reloadKategori, reloadMenus]);
+    reloadMenu();
+  }, [reloadKategori, reloadMenu]);
 
   useEffect(() => {
-    if (!menus) return;
-
-    const menu = menus.find((menu) => menu.id === id);
     if (!menu) return;
+
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setNama(menu.nama);
@@ -122,7 +122,7 @@ export default function EditMenuPage() {
       );
       setShowOpsi(true);
     }
-  }, [id, menus]);
+  }, [id, menu]);
 
   // ========== VARIAN HANDLERS ==========
   const handleAddVarian = () => {

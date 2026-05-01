@@ -18,7 +18,7 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useNavigate, useParams } from "react-router";
 import { isEmail } from "../../../utils/isEmail";
 import { useUpdateUser } from "../../../hooks/useUpdateUser";
-import { useUsers } from "../../../hooks/useUsers";
+import { useUserDetail } from "../../../hooks/useUserDetail";
 
 export default function EditUserPage() {
   const navigate = useNavigate();
@@ -31,25 +31,22 @@ export default function EditUserPage() {
   const [role, setRole] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const { users, reload } = useUsers();
+  const { user, reload: reloadUser } = useUserDetail(id as string);
   const updateUser = useUpdateUser();
 
   /* ================= FETCH USER ================= */
   useEffect(() => {
-    reload();
-    if (!id) return;
+    reloadUser();
+  }, [reloadUser]);
 
-    if (!users) return;
-
-    const user = users.find((u) => u.id === id);
+  useEffect(() => {;
     if (!user) return;
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setNama(user.nama ?? "");
     setEmail(user.email ?? "");
     setRole(user.role ?? "");
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, reload]);
+  }, [user]);
 
   /* ================= SUBMIT ================= */
   const handleSubmit = async () => {
@@ -63,7 +60,6 @@ export default function EditUserPage() {
       alert("Email tidak valid");
       return;
     }
-    // ✅ Password opsional saat edit
     if (password.length > 0 && password.length < 6) {
       alert("Password minimal 6 karakter");
       return;

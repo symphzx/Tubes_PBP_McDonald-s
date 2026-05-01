@@ -13,6 +13,9 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router";
 import { useKategori } from "../../../hooks/useKategori";
 import { useUpdateKategori } from "../../../hooks/useUpdateKategori";
+import { useKategoriDetail } from "../../../hooks/useKategoriDetail";
+import formatDate from "../../../utils/formatDate";
+import formatTime from "../../../utils/formatTime";
 
 export default function EditCategoryPage() {
   const themeColor = "#DA291C";
@@ -21,6 +24,7 @@ export default function EditCategoryPage() {
   const { id } = useParams();
 
   const { kategori, reload: reloadKategori } = useKategori();
+  const { kategori: kategoriDetail, reload: reloadKategoriDetail } = useKategoriDetail(id as string);
 
   const [nama, setNama] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<number | "">("");
@@ -35,31 +39,22 @@ export default function EditCategoryPage() {
 
   useEffect(() => {
     reloadKategori();
-  }, [reloadKategori]);
+    reloadKategoriDetail();
+  }, [reloadKategori, reloadKategoriDetail]);
 
   useEffect(() => {
-    if (!kategori) return;
-
-    const category = kategori.find((kategori) => kategori.id === id);
-    if (!category) return;
-
-    const rawStartTime = category.startTime;
+    if (!kategoriDetail) return;
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setNama(category.nama);
-    setSortOrder(category.sortOrder);
-    setStartDate(category.startDate.toString().split("T")[0]);
-    setEndDate(category.endDate?.toString().split("T")[0] || "");
-    if (rawStartTime && rawStartTime.toString().includes("T")) {
-      setStartTime(rawStartTime.toString().split("T")[1].slice(0, 5));
-    } else if (rawStartTime) {
-      setStartTime(rawStartTime.toString().slice(0, 5));
-    } else {
-      setStartTime("");
-    }
-  }, [kategori, id]);
+    setNama(kategoriDetail.nama ?? "");
+    setSortOrder(kategoriDetail.sortOrder ?? "");
+    setStartDate(formatDate(kategoriDetail.startDate));
+    setEndDate(formatDate(kategoriDetail.endDate));
+    setStartTime(formatTime(kategoriDetail.startTime));
+    setEndTime(formatTime(kategoriDetail.endTime));
+  }, [kategoriDetail]);
 
-  const lastOrderKategori = kategori.reduce((max, kategori) => {
+  const lastOrderKategori = kategori?.reduce((max, kategori) => {
     return Math.max(max, kategori.sortOrder);
   }, 0);
 
@@ -119,7 +114,7 @@ export default function EditCategoryPage() {
           bgcolor: "#FFFFFF",
         }}
       >
-        <Box sx={{ display:"flex", flexDirection:"column", gap: 3 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
           {/* INFORMASI */}
           <Box>
             <Typography
@@ -133,7 +128,7 @@ export default function EditCategoryPage() {
               Informasi Kategori
             </Typography>
 
-            <Box sx={{ display:"flex", flexDirection:"column", gap: 3 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
               {/* Nama */}
               <TextField
                 fullWidth
@@ -245,7 +240,7 @@ export default function EditCategoryPage() {
           <Divider />
 
           {/* BUTTON */}
-          <Box sx={{ display:"flex", gap: 2 }}>
+          <Box sx={{ display: "flex", gap: 2 }}>
             <Button
               fullWidth
               variant="outlined"
@@ -292,8 +287,7 @@ export default function EditCategoryPage() {
                     ? "none"
                     : "0 4px 14px rgba(218, 41, 28, 0.35)",
 
-                cursor:
-                  !nama || !sortOrder ? "not-allowed" : "pointer",
+                cursor: !nama || !sortOrder ? "not-allowed" : "pointer",
 
                 "&:hover": {
                   background:

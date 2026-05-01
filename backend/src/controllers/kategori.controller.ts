@@ -29,7 +29,8 @@ export class KategoriController {
           {
             model: Menu,
             as: "menuRelation",
-            where: { ketersediaan: "Tersedia" }
+            where: { ketersediaan: "Tersedia" },
+            required: false
           }
         ]
       })

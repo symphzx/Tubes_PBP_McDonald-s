@@ -191,7 +191,7 @@ export default function RecomendationPage() {
                 </Typography>
 
                 <Typography sx={{ fontSize: 12, color: "#555" }}>
-                  {item.harga_awal}
+                  Rp {item.harga_awal.toLocaleString("id-ID")}
                 </Typography>
               </CardContent>
             </Card>
@@ -296,7 +296,7 @@ export default function RecomendationPage() {
                 </Typography>
 
                 <Typography sx={{ fontSize: 12, color: "#555" }}>
-                  {item.harga_awal}
+                  Rp {item.harga_awal.toLocaleString("id-ID")}
                 </Typography>
               </CardContent>
             </Card>

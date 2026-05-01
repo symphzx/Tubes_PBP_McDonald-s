@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   Box,
   Card,
@@ -36,8 +36,6 @@ const categories = [
     link: "/menu/Menu%20Receh",
   },
 ];
-
-const formatHarga = (num: number) => num.toLocaleString("id-ID");
 
 export default function HomePage() {
   const navigate = useNavigate();
