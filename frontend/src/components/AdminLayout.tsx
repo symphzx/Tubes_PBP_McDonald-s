@@ -19,9 +19,11 @@ import { useAppDispatch } from "../hooks/useAppDispatch";
 import { authActions } from "../store/authSlice";
 import { useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
+import { useLogoutAuth } from "../hooks/useLogoutAuth";
 
 export function AdminLayout() {
     const { userInfo, reload: reloadAuth } = useAuth();
+    const logoutUser = useLogoutAuth();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
@@ -33,8 +35,9 @@ export function AdminLayout() {
     }, [reloadAuth]);
 
     const handleLogout = () => {
+        logoutUser();
         dispatch(authActions.setUserInfo(undefined));
-        localStorage.removeItem("token");
+        localStorage.removeItem("userInfo");
         navigate("/login");
     };
 

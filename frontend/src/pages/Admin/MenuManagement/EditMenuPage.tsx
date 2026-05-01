@@ -23,7 +23,14 @@ import StyleIcon from "@mui/icons-material/Style";
 import { useParams, useNavigate } from "react-router";
 import { useKategori } from "../../../hooks/useKategori";
 import { useMenus } from "../../../hooks/useMenus";
-import type { MenuOption, MenuVarian } from "../../../types";
+import type { Ketersediaan, MenuOption, MenuVarian, TipeMenu } from "../../../types";
+import { useUpdateMenu } from "../../../hooks/useUpdateMenu";
+import { useUpdateVarian } from "../../../hooks/useUpdateVarian";
+import { useUpdateOpsi } from "../../../hooks/useUpdateOpsi";
+import { useDeleteVarian } from "../../../hooks/useDeleteVarian";
+import { useDeleteOpsi } from "../../../hooks/useDeleteOpsi";
+import { useCreateVarian } from "../../../hooks/useCreateVarian";
+import { useCreateOpsi } from "../../../hooks/useCreateOpsi";
 
 // ✅ Type dengan optional id untuk membedakan existing vs baru
 interface VarianItem {
@@ -62,6 +69,14 @@ export default function EditMenuPage() {
 
   const [deletedVarianIds, setDeletedVarianIds] = useState<string[]>([]);
   const [deletedOpsiIds, setDeletedOpsiIds] = useState<string[]>([]);
+
+  const updateMenu = useUpdateMenu();
+  const updateVarian = useUpdateVarian();
+  const updateOpsi = useUpdateOpsi();
+  const deleteVarian = useDeleteVarian();
+  const deleteOpsi = useDeleteOpsi();
+  const createVarian = useCreateVarian();
+  const createOpsi = useCreateOpsi();
 
   const { kategori, reload: reloadKategori } = useKategori();
   const { menus, reload: reloadMenus } = useMenus();
@@ -168,108 +183,66 @@ export default function EditMenuPage() {
 
   // ========== SUBMIT ==========
   const handleSubmit = async () => {
+    if (!id) return;
+
     try {
-
-      const formData = new FormData();
-      formData.append("nama", nama);
-      formData.append("kategori_id", kategoriId);
-      formData.append("harga_awal", String(harga));
-      formData.append("tipe", tipe);
-      formData.append("ketersediaan", ketersediaan);
-      formData.append("tag", tag || "");
-
-      if (image) {
-        formData.append("gambar", image);
-      } else {
-        formData.append("existingImage", existingImage);
-      }
-
-      const res = await fetch(`http://localhost:3000/menu/${id}`, {
-        method: "PUT",
-        credentials: "include",
-        body: formData,
+      // 1. Update menu utama
+      await updateMenu({
+        id,
+        nama,
+        kategori_id: kategoriId,
+        harga_awal: String(harga),
+        tipe: tipe as TipeMenu,
+        ketersediaan: ketersediaan as Ketersediaan,
+        tag: tag || "",
+        gambar: image,
+        existingImage,
       });
 
-      const result = await res.json();
-
-      if (!res.ok) {
-        alert(result.message);
-        return;
-      }
-
+      // 2. Hapus varian & opsi yang ditandai dihapus
       for (const varianId of deletedVarianIds) {
-        await fetch(`http://localhost:3000/varian-menu/${varianId}`, {
-          method: "DELETE",
-          credentials: "include",
-        });
+        await deleteVarian(varianId);
       }
 
       for (const opsiId of deletedOpsiIds) {
-        await fetch(`http://localhost:3000/opsi-menu/${opsiId}`, {
-          method: "DELETE",
-          credentials: "include",
-        });
+        await deleteOpsi(opsiId);
       }
 
+      // 3. Update varian existing / create varian baru
       for (const varian of varianList) {
         if (varian.nama && varian.harga_tambahan !== "") {
           if (varian.id) {
-            await fetch(`http://localhost:3000/varian-menu/${varian.id}`, {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              credentials: "include",
-              body: JSON.stringify({
-                menu_id: id,
-                nama: varian.nama,
-                harga_tambahan: varian.harga_tambahan,
-              }),
+            await updateVarian({
+              id: varian.id,
+              menu_id: id,
+              nama: varian.nama,
+              harga_tambahan: Number(varian.harga_tambahan),
             });
           } else {
-            await fetch("http://localhost:3000/varian-menu", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              credentials: "include",
-              body: JSON.stringify({
-                menu_id: id,
-                nama: varian.nama,
-                harga_tambahan: varian.harga_tambahan,
-              }),
+            await createVarian({
+              menu_id: id,
+              nama: varian.nama,
+              harga_tambahan: Number(varian.harga_tambahan),
             });
           }
         }
       }
 
+      // 4. Update opsi existing / create opsi baru
       for (const opsi of opsiList) {
         if (opsi.nama && opsi.harga_tambahan !== "") {
           if (opsi.id) {
-            await fetch(`http://localhost:3000/opsi-menu/${opsi.id}`, {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              credentials: "include",
-              body: JSON.stringify({
-                menu_id: id,
-                nama: opsi.nama,
-                harga_tambahan: opsi.harga_tambahan,
-              }),
+            await updateOpsi({
+              id: opsi.id,
+              menu_id: id,
+              nama: opsi.nama,
+              harga_tambahan: Number(opsi.harga_tambahan),
             });
           } else {
-            await fetch("http://localhost:3000/opsi-menu", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              credentials: "include",
-              body: JSON.stringify({
-                menu_id: id,
-                nama: opsi.nama,
-                harga_tambahan: opsi.harga_tambahan,
-              }),
+            await createOpsi({
+              menu_id: id,
+              nama: opsi.nama,
+              harga_tambahan: Number(opsi.harga_tambahan),
             });
           }
         }

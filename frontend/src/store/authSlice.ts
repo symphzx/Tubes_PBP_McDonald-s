@@ -17,6 +17,12 @@ export const authSlice = createSlice({
     reducers: {
         setUserInfo: (state, action: PayloadAction<UserInfo | undefined>) => { 
             state.userInfo = action.payload 
+
+            if (action.payload) {
+              localStorage.setItem("userInfo", JSON.stringify(action.payload));
+            } else {
+              localStorage.removeItem("userInfo");
+            }
         },
         setAccessToken: (state, action: PayloadAction<string>) => { 
             state.accessToken = action.payload 

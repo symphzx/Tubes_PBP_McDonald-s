@@ -17,6 +17,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useNavigate } from "react-router";
 import { isEmail } from "../../../utils/isEmail";
+import { useCreateUser } from "../../../hooks/useCreateUser";
 
 export default function CreateUserPage() {
   const navigate = useNavigate();
@@ -27,6 +28,8 @@ export default function CreateUserPage() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const createUser = useCreateUser();
 
 
   /* ================= SUBMIT ================= */
@@ -49,27 +52,22 @@ export default function CreateUserPage() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/user", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ nama, email, password, role }),
+      await createUser({
+        nama: nama.trim(),
+        email: email.trim(),
+        password,
+        role: role as "Admin" | "Cashier",
       });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        alert(result.message || "Gagal membuat user");
-        return;
-      }
 
       alert("User berhasil dibuat!");
       navigate("/admin/list-user");
     } catch (error) {
       console.error("Error creating user:", error);
-      alert("Terjadi kesalahan saat membuat user");
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Terjadi kesalahan saat membuat user";
+      alert(message);
     }
   };
 

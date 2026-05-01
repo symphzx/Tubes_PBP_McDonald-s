@@ -17,6 +17,8 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useNavigate, useParams } from "react-router";
 import { isEmail } from "../../../utils/isEmail";
+import { useUpdateUser } from "../../../hooks/useUpdateUser";
+import { useUsers } from "../../../hooks/useUsers";
 
 export default function EditUserPage() {
   const navigate = useNavigate();
@@ -29,36 +31,30 @@ export default function EditUserPage() {
   const [role, setRole] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const { users, reload } = useUsers();
+  const updateUser = useUpdateUser();
+
   /* ================= FETCH USER ================= */
   useEffect(() => {
+    reload();
     if (!id) return;
 
-    const getUser = async () => {
-      try {
-        const response = await fetch(`http://localhost:3000/user/${id}`, {
-          method: "GET",
-          credentials: "include",
-        });
+    if (!users) return;
 
-        if (!response.ok) throw new Error("Failed to fetch user");
+    const user = users.find((u) => u.id === id);
+    if (!user) return;
 
-        const data = await response.json();
-        const user = data.data ?? data.record ?? data;
-
-        setNama(user.nama ?? "");
-        setEmail(user.email ?? "");
-        setRole(user.role ?? "");
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        alert("Gagal memuat data user");
-      }
-    };
-
-    getUser();
-  }, [id]);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setNama(user.nama ?? "");
+    setEmail(user.email ?? "");
+    setRole(user.role ?? "");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, reload]);
 
   /* ================= SUBMIT ================= */
   const handleSubmit = async () => {
+    if (!id) return;
+
     if (!nama.trim()) {
       alert("Nama wajib diisi");
       return;
@@ -67,7 +63,8 @@ export default function EditUserPage() {
       alert("Email tidak valid");
       return;
     }
-    if (password && password.length < 6) {
+    // ✅ Password opsional saat edit
+    if (password.length > 0 && password.length < 6) {
       alert("Password minimal 6 karakter");
       return;
     }
@@ -77,33 +74,21 @@ export default function EditUserPage() {
     }
 
     try {
-      // Hanya kirim password jika diisi
-      const body: Record<string, string> = { nama, email, role };
-      if (password) {
-        body.password = password;
-      }
-
-      const response = await fetch(`http://localhost:3000/user/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(body),
+      await updateUser({
+        id,
+        nama: nama.trim(),
+        email: email.trim(),
+        password: password || undefined, // hanya kirim kalau diisi
+        role: role as "Admin" | "Cashier",
       });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        alert(result.message || "Gagal mengupdate user");
-        return;
-      }
 
       alert("User berhasil diupdate!");
       navigate("/admin/list-user");
     } catch (error) {
-      console.error("Error updating user:", error);
-      alert("Terjadi kesalahan saat mengupdate user");
+      console.error(error);
+      const message =
+        error instanceof Error ? error.message : "Gagal update user";
+      alert(message);
     }
   };
 

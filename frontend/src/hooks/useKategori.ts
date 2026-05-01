@@ -9,7 +9,7 @@ export function useKategori() {
 
 
     const reload = useCallback(async () => {
-          const response = await fetch("http://localhost:3000/kategori");
+          const response = await fetch("/api/kategori");
 
           if (response.status !== 200) {
               alert("Failed to reload kategori");

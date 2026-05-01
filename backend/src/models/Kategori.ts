@@ -37,8 +37,7 @@ export class Kategori extends Model {
 
     @Column({
         type: DataType.DATE,
-        allowNull: false,
-        defaultValue: DataType.NOW,
+        allowNull: true,
     })
     declare startDate: Date;
 

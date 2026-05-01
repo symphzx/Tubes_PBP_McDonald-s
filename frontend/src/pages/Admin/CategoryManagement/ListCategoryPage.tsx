@@ -26,6 +26,7 @@ import InputBase from "@mui/material/InputBase";
 import { useNavigate } from "react-router";
 import { useKategori } from "../../../hooks/useKategori";
 import type { KategoriMenu } from "../../../types";
+import { useDeleteKategori } from "../../../hooks/useDeleteKategori";
 
 export default function ListCategoryPage() {
   const navigate = useNavigate();
@@ -34,6 +35,7 @@ export default function ListCategoryPage() {
   const [search, setSearch] = useState("");
 
   const { kategori, reload: reloadKategori } = useKategori();
+  const deleteKategori = useDeleteKategori();
 
   const [deleteTarget, setDeleteTarget] = useState<KategoriMenu | null>(null);
   const [loadingDelete, setLoadingDelete] = useState(false);
@@ -60,10 +62,7 @@ export default function ListCategoryPage() {
     try {
       setLoadingDelete(true);
 
-      await fetch(`http://localhost:3000/kategori/${deleteTarget.id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
+      await deleteKategori(deleteTarget.id);
 
       setDeleteTarget(null);
       reloadKategori();

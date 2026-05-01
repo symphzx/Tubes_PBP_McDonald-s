@@ -30,6 +30,7 @@ import { useNavigate } from "react-router";
 import { useMenus } from "../../../hooks/useMenus";
 import { useKategori } from "../../../hooks/useKategori";
 import type { Menu } from "../../../types";
+import { useDeleteMenu } from "../../../hooks/useDeleteMenu";
 
 export default function ListMenuPage() {
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ export default function ListMenuPage() {
 
   const { menus, reload: reloadMenu } = useMenus();
   const { kategori, reload: reloadKategori } = useKategori();
+  const deleteMenu = useDeleteMenu();
 
   const [search, setSearch] = useState("");
   const [selectedKategori, setSelectedKategori] = useState("");
@@ -89,10 +91,7 @@ export default function ListMenuPage() {
     try {
       setLoadingDelete(true);
 
-      await fetch(`http://localhost:3000/menu/${deleteTarget.id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
+      await deleteMenu(deleteTarget.id);
 
       setDeleteTarget(null);
       reloadMenu();

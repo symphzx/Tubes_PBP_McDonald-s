@@ -277,9 +277,7 @@ export default function AdminDashboard() {
               autoHideDuration={3000}
               onClose={() => setOpenSuccess(false)}
               anchorOrigin={{ vertical: "top", horizontal: "center" }}
-              slotProps={{
-                transition:{SlideTransition}
-              }}
+              slots={{ transition: SlideTransition }}
             >
                 <Alert
                   severity="success"

@@ -12,6 +12,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router";
 import { useKategori } from "../../../hooks/useKategori";
+import { useUpdateKategori } from "../../../hooks/useUpdateKategori";
 
 export default function EditCategoryPage() {
   const themeColor = "#DA291C";
@@ -27,6 +28,8 @@ export default function EditCategoryPage() {
   const [endDate, setEndDate] = useState<string>("");
   const [startTime, setStartTime] = useState<string>("");
   const [endTime, setEndTime] = useState<string>("");
+
+  const updateKategori = useUpdateKategori();
 
   const navigate = useNavigate();
 
@@ -64,31 +67,20 @@ export default function EditCategoryPage() {
     sortOrder !== "" && Number(sortOrder) <= lastOrderKategori;
 
   const handleSubmit = async () => {
+    if (!id) return;
+
     try {
-      const response = await fetch(`http://localhost:3000/kategori/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          nama,
-          sortOrder: Number(sortOrder),
-          startDate,
-          endDate,
-          startTime,
-          endTime,
-        }),
+      await updateKategori({
+        id,
+        nama,
+        sortOrder: Number(sortOrder),
+        startDate,
+        endDate,
+        startTime,
+        endTime,
       });
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        alert(result.message);
-        return;
-      }
-
-      alert("Kategori berhasil diedit!");
+      alert("Kategori berhasil diupdate!");
       navigate("/admin/list-category");
     } catch (error) {
       console.error(error);
@@ -282,7 +274,7 @@ export default function EditCategoryPage() {
               variant="contained"
               startIcon={<SaveIcon />}
               onClick={handleSubmit}
-              disabled={!nama || !sortOrder || !startDate}
+              disabled={!nama || !sortOrder}
               sx={{
                 bgcolor: themeColor,
                 py: 1.5,
@@ -291,21 +283,21 @@ export default function EditCategoryPage() {
                 textTransform: "none",
                 fontSize: "1rem",
                 background:
-                  !nama || !sortOrder || !startDate
+                  !nama || !sortOrder
                     ? "#ccc"
                     : `linear-gradient(135deg, ${themeColor}, #b71c1c)`,
 
                 boxShadow:
-                  !nama || !sortOrder || !startDate
+                  !nama || !sortOrder
                     ? "none"
                     : "0 4px 14px rgba(218, 41, 28, 0.35)",
 
                 cursor:
-                  !nama || !sortOrder || !startDate ? "not-allowed" : "pointer",
+                  !nama || !sortOrder ? "not-allowed" : "pointer",
 
                 "&:hover": {
                   background:
-                    !nama || !sortOrder || !startDate
+                    !nama || !sortOrder
                       ? "#ccc"
                       : "linear-gradient(135deg, #c62828, #8e0000)",
                 },

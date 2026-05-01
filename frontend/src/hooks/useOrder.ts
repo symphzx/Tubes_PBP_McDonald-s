@@ -9,7 +9,7 @@ export function useOrders() {
 
     const reload = useCallback(async () => {
         try{
-            const response = await fetch("http://localhost:3000/order");
+            const response = await fetch("/api/order");
 
             if (response.status !== 200) {
                 alert("Failed to reload order");

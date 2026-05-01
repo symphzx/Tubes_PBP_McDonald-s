@@ -54,13 +54,15 @@ export class KategoriController {
     try {
       const { nama, sortOrder, startDate, endDate, startTime, endTime } = req.body;
 
+      
+
       const kategori = await Kategori.create({
         nama,
         sortOrder,
-        startDate: new Date(startDate),
-        endDate: endDate ? new Date(endDate) : null,
+        startDate: startDate || null,
+        endDate: endDate || null,
         startTime: startTime || null,
-        endTime: startTime || null,
+        endTime: endTime || null,
       });
 
       res.json({
@@ -98,12 +100,6 @@ export class KategoriController {
       if(!sortOrder) {
         return res.status(400).json({
           message: "Kategori sort order is required",
-        });
-      }
-
-      if(!startDate) {
-        return res.status(400).json({
-          message: "Kategori start date is required",
         });
       }
 

@@ -20,6 +20,7 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
+import { useResetAuth } from "../../../hooks/useResetAuth";
 
 export default function ResetPasswordPage() {
   const [newPassword, setNewPassword] = useState<string>("");
@@ -30,6 +31,7 @@ export default function ResetPasswordPage() {
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const resetPassword = useResetAuth();
   const token = searchParams.get("token"); // token dari URL reset link
 
   const colors = {
@@ -63,22 +65,7 @@ export default function ResetPasswordPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(
-        "http://localhost:3000/auth/reset-password",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token, newPassword }),
-        },
-      );
-
-      if (response.status !== 200) {
-        const data = await response.json();
-        alert("Reset Failed: " + data.message);
-        return;
-      }
-
-      alert("Password has been reset successfully!");
+      await resetPassword(token, newPassword);
       navigate("/login");
     } catch {
       alert("Something went wrong. Please try again.");

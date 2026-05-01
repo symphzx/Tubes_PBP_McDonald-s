@@ -17,12 +17,11 @@ module.exports = {
       sortOrder: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        unique: true
+        // unique: true
       },
       startDate: {
         type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.NOW,
+        allowNull: true,
       },
       endDate: {
         type: Sequelize.DATE,

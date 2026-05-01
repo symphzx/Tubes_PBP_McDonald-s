@@ -22,6 +22,7 @@ import FastfoodIcon from "@mui/icons-material/Fastfood";
 import { Outlet } from "react-router";
 import { useEffect, useMemo, type JSX } from "react";
 import { useKategori } from "../hooks/useKategori";
+import { isKategoriAvailable } from "../utils/categoryAvailability";
 
 const homeItems = { Label: "Home", icon: <HomeIcon /> };
 const iconMap: Record<string, JSX.Element> = {
@@ -51,7 +52,10 @@ export function MenuLayout() {
     }, [reload]);
 
     const sortedKategori = useMemo(() => {
-        return [...kategori].sort((a, b) => a.sortOrder - b.sortOrder);
+        if (!kategori) return [];
+        return [...kategori]
+        .filter(isKategoriAvailable)
+        .sort((a, b) => a.sortOrder - b.sortOrder);
     }, [kategori]);
 
     const isHomeActive = location.pathname === "/";

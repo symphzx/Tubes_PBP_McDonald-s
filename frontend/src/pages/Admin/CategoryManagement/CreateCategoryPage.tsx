@@ -12,12 +12,14 @@ import SaveIcon from "@mui/icons-material/Save";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router";
 import { useKategori } from "../../../hooks/useKategori";
+import { useCreateKategori } from "../../../hooks/useCreateKategori";
 
 export default function CreateCategoryPage() {
   const themeColor = "#DA291C";
   const accentYellow = "#FFC72C";
 
   const { kategori, reload: reloadKategori } = useKategori();
+  const createKategori = useCreateKategori();
 
   const [nama, setNama] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<number | "">("");
@@ -41,28 +43,14 @@ export default function CreateCategoryPage() {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch("http://localhost:3000/kategori", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          nama,
-          sortOrder: Number(sortOrder),
-          startDate,
-          endDate,
-          startTime,
-          endTime,
-        }),
+      await createKategori({
+        nama,
+        sortOrder: Number(sortOrder),
+        startDate: startDate || null,
+        endDate: endDate || null,
+        startTime: startTime || null,
+        endTime: endTime || null,
       });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        alert(result.message);
-        return;
-      }
 
       alert("Kategori berhasil dibuat!");
       navigate("/admin/list-category");
@@ -299,7 +287,7 @@ export default function CreateCategoryPage() {
             variant="contained"
             startIcon={<SaveIcon />}
             onClick={handleSubmit}
-            disabled={!nama || !sortOrder || !startDate}
+            disabled={!nama || !sortOrder}
             sx={{
               flex: 1,
               py: 1.5,
@@ -309,21 +297,21 @@ export default function CreateCategoryPage() {
               fontSize: "1rem",
 
               background:
-                !nama || !sortOrder || !startDate
+                !nama || !sortOrder
                   ? "#ccc"
                   : `linear-gradient(135deg, ${themeColor}, #b71c1c)`,
 
               boxShadow:
-                !nama || !sortOrder || !startDate
+                !nama || !sortOrder
                   ? "none"
                   : "0 4px 14px rgba(218, 41, 28, 0.35)",
 
               cursor:
-                !nama || !sortOrder || !startDate ? "not-allowed" : "pointer",
+                !nama || !sortOrder ? "not-allowed" : "pointer",
 
               "&:hover": {
                 background:
-                  !nama || !sortOrder || !startDate
+                  !nama || !sortOrder
                     ? "#ccc"
                     : "linear-gradient(135deg, #c62828, #8e0000)",
               },

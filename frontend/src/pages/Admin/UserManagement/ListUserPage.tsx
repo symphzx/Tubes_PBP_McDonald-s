@@ -28,12 +28,13 @@ import PeopleIcon from "@mui/icons-material/People";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import { useNavigate } from "react-router";
 import type { UserInfo } from "../../../types";
+import { useDeleteUser } from "../../../hooks/useDeleteUser";
+import { useUsers } from "../../../hooks/useUsers";
 
 export default function ListUserPage() {
   const navigate = useNavigate();
   const themeColor = "#DA291C";
 
-  const [users, setUsers] = useState<UserInfo[]>([]);
   const [search, setSearch] = useState("");
   const [selectedRole, setSelectedRole] = useState("");
   const [sortNama, setSortNama] = useState("");
@@ -41,36 +42,39 @@ export default function ListUserPage() {
   const [deleteTarget, setDeleteTarget] = useState<UserInfo | null>(null);
   const [loadingDelete, setLoadingDelete] = useState(false);
 
+  const { users, reload } = useUsers();
+  const deleteUser = useDeleteUser();
+  
   /* ================= FETCH ================= */
-  const getUsers = async () => {
-    try {
-      const response = await fetch("http://localhost:3000/user", {
-        method: "GET",
-        credentials: "include",
-      });
+  // const getUsers = async () => {
+  //   try {
+  //     const response = await fetch("http://localhost:3000/user", {
+  //       method: "GET",
+  //       credentials: "include",
+  //     });
 
-      if (!response.ok) throw new Error("Failed to fetch users");
+  //     if (!response.ok) throw new Error("Failed to fetch users");
 
-      const data = await response.json();
+  //     const data = await response.json();
 
-      const mapped: UserInfo[] = data.records.map(
-        (u: { id: string; nama: string; email: string; role: string }) => ({
-          id: String(u.id),
-          nama: u.nama,
-          email: u.email,
-          role: u.role,
-        }),
-      );
+  //     const mapped: UserInfo[] = data.records.map(
+  //       (u: { id: string; nama: string; email: string; role: string }) => ({
+  //         id: String(u.id),
+  //         nama: u.nama,
+  //         email: u.email,
+  //         role: u.role,
+  //       }),
+  //     );
 
-      setUsers(mapped);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
+  //     setUsers(mapped);
+  //   } catch (error) {
+  //     console.error("Error fetching users:", error);
+  //   }
+  // };
 
   useEffect(() => {
-    getUsers();
-  }, []);
+    reload();
+  }, [reload]);
 
   /* ================= DELETE ================= */
   const handleDelete = async () => {
@@ -79,18 +83,10 @@ export default function ListUserPage() {
     try {
       setLoadingDelete(true);
 
-      const response = await fetch(
-        `http://localhost:3000/user/${deleteTarget.id}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        },
-      );
-
-      if (!response.ok) throw new Error("Failed to delete user");
+      await deleteUser(deleteTarget.id);
 
       setDeleteTarget(null);
-      getUsers();
+      reload();
     } catch (error) {
       console.error("Error deleting user:", error);
       alert("Gagal menghapus user");
@@ -101,20 +97,20 @@ export default function ListUserPage() {
 
   /* ================= FILTER + SORT ================= */
   const filteredUsers = useMemo(() => {
-    return users
-      .filter((user) => {
-        const matchSearch =
-          user.nama.toLowerCase().includes(search.toLowerCase()) ||
-          user.email.toLowerCase().includes(search.toLowerCase());
-        const matchRole = selectedRole ? user.role === selectedRole : true;
-        return matchSearch && matchRole;
-      })
-      .sort((a, b) => {
-        if (sortNama === "asc") return a.nama.localeCompare(b.nama);
-        if (sortNama === "desc") return b.nama.localeCompare(a.nama);
-        return 0;
-      });
-  }, [users, search, selectedRole, sortNama]);
+  return (users ?? [])
+    .filter((user) => {
+      const matchSearch =
+        user.nama.toLowerCase().includes(search.toLowerCase()) ||
+        user.email.toLowerCase().includes(search.toLowerCase());
+      const matchRole = selectedRole ? user.role === selectedRole : true;
+      return matchSearch && matchRole;
+    })
+    .sort((a, b) => {
+      if (sortNama === "asc") return a.nama.localeCompare(b.nama);
+      if (sortNama === "desc") return b.nama.localeCompare(a.nama);
+      return 0;
+    });
+}, [users, search, selectedRole, sortNama]);
 
   /* ================= ROLE CHIP COLOR ================= */
   const getRoleColor = (role: string) => {

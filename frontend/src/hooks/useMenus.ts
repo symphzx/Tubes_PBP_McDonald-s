@@ -12,7 +12,7 @@ export function useMenus() {
         dispatch(menuActions.setState('loading'));
 
         try{
-            const response = await fetch("http://localhost:3000/menu");
+            const response = await fetch("/api/menu");
 
             if (response.status !== 200) {
                 alert("Failed to reload menu");

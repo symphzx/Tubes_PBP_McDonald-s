@@ -18,12 +18,6 @@ export class OpsiMenuController {
         });
       }
 
-      if (!harga_tambahan) {
-        return res.status(400).json({
-          message: "Opsi Menu price is required",
-        });
-      }
-
       const opsiMenu = await Opsi_Menu.create({
         menu_id,
         nama,
@@ -65,12 +59,6 @@ export class OpsiMenuController {
       if (!nama) {
         return res.status(400).json({
           message: "Opsi Menu name is required",
-        });
-      }
-
-      if (!harga_tambahan) {
-        return res.status(400).json({
-          message: "Opsi Menu price is required",
         });
       }
 

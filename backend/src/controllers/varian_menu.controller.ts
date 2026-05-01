@@ -19,12 +19,6 @@ export class VarianMenuController {
         });
       }
 
-      if (!harga_tambahan) {
-        return res.status(400).json({
-          message: "Varian Menu price is required",
-        });
-      }
-
       const varianMenu = await Varian_Menu.create({
         menu_id,
         nama,
@@ -66,12 +60,6 @@ export class VarianMenuController {
         if (!nama) {
           return res.status(400).json({
             message: "Varian Menu name is required",
-          });
-        }
-  
-        if (!harga_tambahan) {
-          return res.status(400).json({
-            message: "Varian Menu price is required",
           });
         }
   

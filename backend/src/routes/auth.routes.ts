@@ -6,6 +6,7 @@ const router: Router = Router();
 
 // router.post("/register", AuthController.register);
 router.post("/login", AuthController.login);
+router.post("/logout", auth, AuthController.logout);
 router.get("/me", auth, AuthController.me);
 router.post("/logout", auth, AuthController.logout);
 router.post("/forgot-password", AuthController.forgotPassword);

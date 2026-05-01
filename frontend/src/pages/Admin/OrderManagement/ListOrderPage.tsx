@@ -23,6 +23,7 @@ import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import CancelIcon from '@mui/icons-material/Cancel';
 
 import { useOrders } from "../../../hooks/useOrder";
+import { useUpdateOrder } from "../../../hooks/useUpdateOrder";
 
 export default function ListOrderPage() {
   const today = new Date();
@@ -42,6 +43,7 @@ export default function ListOrderPage() {
   const [activeFilter, setActiveFilter] = useState(defaultFilter);
 
   const { orders, reload: reloadOrder } = useOrders();
+  const updateOrder = useUpdateOrder();
 
   useEffect(() => {
     reloadOrder();
@@ -166,37 +168,31 @@ export default function ListOrderPage() {
     }
   };
 
-  const handleChangeStatus = async (orderId: string, orderType: string, noMeja: number | null, newStatus: string) => {
-    try {
-      if (orderType === "TAKEAWAY") {
-        noMeja = null;
-      }
-      const response = await fetch(`http://localhost:3000/order/${orderId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ 
-          order_type: orderType, 
-          no_meja: noMeja,
-          status: newStatus }),
-      })
+  const handleChangeStatus = async (
+  orderId: string,
+  orderType: string,
+  noMeja: number | null,
+  newStatus: string
+) => {
+  try {
+    // Kalau TAKEAWAY, no_meja harus null
+    const finalNoMeja = orderType === "TAKEAWAY" ? null : noMeja;
 
-      
-      const result = await response.json();
+    await updateOrder({
+      id: orderId,
+      order_type: orderType as "DINE_IN" | "TAKEAWAY",
+      no_meja: finalNoMeja,
+      status: newStatus as "PENDING" | "PAID" | "CANCELLED",
+    });
 
-      if (!response.ok) {
-        alert(result.message);
-        return;
-      }
-
-      await reloadOrder();
-    } catch (error) {
-      console.error(error);
-      alert("Gagal update status");
-    }
-  };
+    await reloadOrder();
+  } catch (error) {
+    console.error(error);
+    const message =
+      error instanceof Error ? error.message : "Gagal update status";
+    alert(message);
+  }
+};
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>

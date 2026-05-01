@@ -23,6 +23,10 @@ import StyleIcon from "@mui/icons-material/Style";
 import { useKategori } from "../../../hooks/useKategori";
 import { useNavigate } from "react-router";
 import { useMenus } from "../../../hooks/useMenus";
+import { useCreateMenu } from "../../../hooks/useCreateMenu";
+import { useCreateVarian } from "../../../hooks/useCreateVarian";
+import { useCreateOpsi } from "../../../hooks/useCreateOpsi";
+import type { Ketersediaan, TipeMenu } from "../../../types";
 
 // Type untuk Variasi & Opsi
 interface VarianItem {
@@ -54,6 +58,10 @@ export default function CreateMenuPage() {
   const { kategori, reload: reloadKategori } = useKategori();
   const { reload: reloadMenus } = useMenus();
   const navigate = useNavigate();
+
+  const createMenu = useCreateMenu();
+  const createVarian = useCreateVarian();
+  const createOpsi = useCreateOpsi();
 
   useEffect(() => {
     reloadKategori();
@@ -110,65 +118,37 @@ export default function CreateMenuPage() {
   // ========== SUBMIT ==========
   const handleSubmit = async () => {
     try {
-      const formData = new FormData();
-
-      formData.append("nama", nama);
-      formData.append("kategori_id", kategoriId);
-      formData.append("harga_awal", String(harga));
-      formData.append("tipe", tipe);
-      formData.append("ketersediaan", ketersediaan);
-      formData.append("tag", tag || "");
-
-      if (image) {
-        formData.append("gambar", image);
-      }
-
-      const response = await fetch("http://localhost:3000/menu", {
-        method: "POST",
-        credentials: "include",
-        body: formData,
+      // 1. Buat menu utama
+      const result = await createMenu({
+        nama,
+        kategori_id: kategoriId,
+        harga_awal: String(harga),
+        tipe: tipe as TipeMenu,
+        ketersediaan: ketersediaan as Ketersediaan,
+        tag: tag || null,
+        gambar: image,
       });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        alert(result.message);
-        return;
-      }
 
       const menuId = result.data.id;
 
+      // 2. Buat varian
       for (const varian of varianList) {
         if (varian.nama && varian.harga_tambahan !== "") {
-          await fetch("http://localhost:3000/varian-menu", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify({
-              menu_id: menuId,
-              nama: varian.nama,
-              harga_tambahan: varian.harga_tambahan,
-            }),
+          await createVarian({
+            menu_id: menuId,
+            nama: varian.nama,
+            harga_tambahan: varian.harga_tambahan,
           });
         }
       }
 
-
+      // 3. Buat opsi
       for (const opsi of opsiList) {
         if (opsi.nama && opsi.harga_tambahan !== "") {
-          await fetch("http://localhost:3000/opsi-menu", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify({
-              menu_id: menuId,
-              nama: opsi.nama,
-              harga_tambahan: opsi.harga_tambahan,
-            }),
+          await createOpsi({
+            menu_id: menuId,
+            nama: opsi.nama,
+            harga_tambahan: opsi.harga_tambahan,
           });
         }
       }

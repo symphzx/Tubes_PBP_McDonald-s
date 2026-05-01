@@ -9,14 +9,10 @@ export function useAuth() {
 
 
     const reload = useCallback(async () => {
-          const token = localStorage.getItem("token");
 
-          if (!token) return;
-
-          const res = await fetch("http://localhost:3000/auth/me", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+          const res = await fetch("/api/auth/me", {
+              method: "GET",
+              credentials: "include",
           });
 
           if (!res.ok) throw new Error();

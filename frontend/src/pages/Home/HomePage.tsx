@@ -147,7 +147,7 @@ export default function HomePage() {
             sx={{ width: "calc(33.333% - 10.67px)" }}
           >
             <Card
-              onClick={() => navigate(`/menu/${item.nama}`)}
+              onClick={() => navigate(`/set-quantity/${item.id}`)}
               sx={{
                 borderRadius: "8px",
                 border: "1px solid #36363666",

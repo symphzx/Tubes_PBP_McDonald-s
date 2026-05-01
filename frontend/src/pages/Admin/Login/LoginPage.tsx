@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
@@ -12,9 +11,10 @@ import IconButton from "@mui/material/IconButton";
 import EmailIcon from "@mui/icons-material/Email";
 import { useState } from "react";
 import { isEmail } from "../../../utils/isEmail";
-import { authActions } from "../../../store/authSlice";
-import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useNavigate } from "react-router";
+import { useAuth } from "../../../hooks/useAuth";
+import { useLoginAuth } from "../../../hooks/useLoginAuth";
+import { useFrogetAuth } from "../../../hooks/useForgetAuth";
 
 export default function LoginPage() {
   const [email, setEmail] = useState<string>("");
@@ -22,8 +22,11 @@ export default function LoginPage() {
   const [modeLogin, setModeLogin] = useState(true);
   const [recoveryEmail, setRecoveryEmail] = useState<string>("");
 
+  const { reload } = useAuth();
+  const login = useLoginAuth();
+  const forget = useFrogetAuth();
+
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
 
   // Palet Warna
   const colors = {
@@ -47,11 +50,7 @@ export default function LoginPage() {
       return;
     }
 
-    await fetch("http://localhost:3000/auth/forgot-password", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: recoveryEmail }),
-    });
+    await forget(recoveryEmail);
 
     alert("Recovery email sent!");
   };
@@ -65,36 +64,11 @@ export default function LoginPage() {
       alert("Password must be at least 6 characters");
       return;
     }
-    const response = await fetch("http://localhost:3000/auth/login", {
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-    });
 
-    if (response.status !== 200) {
-      const data = await response.json();
-      alert("Login Failed: " + data.message);
-      throw new Error("Connection Error");
-    }
+    await login(email, password);
 
-    const result = await response.json();
-    const token = result.data.token;
-
-    localStorage.setItem("token", token);
-
-    await setUserInfo();
+    await reload();
     navigate("/admin", { state: { success: true } });
-  };
-
-  const setUserInfo = async () => {
-    const response = await fetch("http://localhost:3000/auth/me", {
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      method: "GET",
-    });
-    const data = await response.json();
-    dispatch(authActions.setUserInfo(data.data.user));
   };
 
   return (

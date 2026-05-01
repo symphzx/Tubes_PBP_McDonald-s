@@ -98,4 +98,93 @@ export type UserInfo = {
   role: "Admin" | "Cashier";
 }
 
+export type CreateMenuPayload = {
+  nama: string;
+  kategori_id: string; 
+  harga_awal: string;
+  tipe: TipeMenu;         
+  ketersediaan: Ketersediaan;
+  tag?: string | null;
+  gambar?: File | null;  
+}
+
+export type CreateVarianPayload = {
+  menu_id: string;
+  nama: string; 
+  harga_tambahan?: number;
+};
+
+export type CreateOpsiPayload = {
+  menu_id: string;
+  nama: string; 
+  harga_tambahan?: number;
+};
+
+export type UpdateMenuPayload = {
+  id: string;
+  nama: string;
+  kategori_id: string; 
+  harga_awal: string;
+  tipe: TipeMenu;         
+  ketersediaan: Ketersediaan;
+  tag?: string | null;
+  gambar?: File | null;  
+  existingImage?: string;
+}
+
+export type UpdateVarianPayload = {
+  id: string;
+  menu_id: string;
+  nama: string; 
+  harga_tambahan?: number;
+};
+
+export type UpdateOpsiPayload = {
+  id: string;
+  menu_id: string;
+  nama: string; 
+  harga_tambahan?: number;
+};
+
+export type CreateKategoriPayload ={
+  nama: string;
+  sortOrder: number;
+  startDate?: string | null;
+  endDate?: string | null;
+  startTime?: string | null;
+  endTime?: string | null;
+}
+
+export type UpdateKategoriPayload = {
+  id: string;
+  nama: string;
+  sortOrder: number;
+  startDate: string;
+  endDate?: string;
+  startTime?: string;
+  endTime?: string;
+};
+
+export type UpdateOrderPayload = {
+  id: string;
+  order_type: "DINE_IN" | "TAKEAWAY";
+  no_meja: number | null;
+  status: OrderStatus;
+};
+
+export type CreateUserPayload = {
+  nama: string;
+  email: string;
+  password: string;
+  role: "Admin" | "Cashier";
+};
+
+export type UpdateUserPayload = {
+  id: string;
+  nama: string;
+  email: string;
+  password?: string;
+  role: "Admin" | "Cashier";
+};
+
 export type AsyncDataState = 'pending' | 'loading' | 'fullfilled' | 'error';

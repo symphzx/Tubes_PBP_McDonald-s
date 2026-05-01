@@ -5,6 +5,7 @@ import { categoryReducer } from "../store/categorySlice"
 import { orderReducer } from "../store/orderSlice"
 import { paymentReducer } from "../store/paymentSlice"
 import { cartReducer } from "../store/cartSlice"
+import { userReducer } from "../store/userSlice"
 
 export const store = configureStore({
   reducer: {
@@ -13,8 +14,8 @@ export const store = configureStore({
     auth: authReducer,// ngedaftarin reducer, nanti dipanggil pake state.payment
     cart: cartReducer,
     payment: paymentReducer,
-    order: orderReducer
-
+    order: orderReducer,
+    user: userReducer
   },
 })
 
