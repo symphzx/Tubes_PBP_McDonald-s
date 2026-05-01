@@ -161,21 +161,42 @@ export default function OrderCart() {
                             fontFamily: "Speedee-Regular"
                         }}
                     >
-                        {/* REMOVE */}
-                        <Button
-                            variant="outlined"
-                            size="small"
-                            onClick={() => handleRemoveItem(item)}
-                            sx={{ borderColor: "text.secondary" }}
-                        >
-                            <Typography sx={{
-                                color: "text.secondary",
-                                fontFamily: "Speedee-Regular",
-                                fontSize: "12px"
-                            }}>
-                                Remove
-                            </Typography>
-                        </Button>
+                        {/* REMOVE & EDIT */}
+                        <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                onClick={() => handleRemoveItem(item)}
+                                sx={{ borderColor: "text.secondary" }}
+                            >
+                                <Typography sx={{
+                                    color: "text.secondary",
+                                    fontFamily: "Speedee-Regular",
+                                    fontSize: "12px"
+                                }}>
+                                    Remove
+                                </Typography>
+                            </Button>
+
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                onClick={() =>
+                                    navigate(`/set-quantity/${item.menu_id}`, {
+                                        state: { editItem: item },
+                                    })
+                                }
+                                sx={{ borderColor: "#FFAC00" }}
+                            >
+                                <Typography sx={{
+                                    color: "#FFAC00",
+                                    fontFamily: "Speedee-Regular",
+                                    fontSize: "12px"
+                                }}>
+                                    Edit
+                                </Typography>
+                            </Button>
+                        </Box>
 
                         {/* IMAGE */}
                         <Box

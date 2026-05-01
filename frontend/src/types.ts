@@ -48,6 +48,19 @@ export type PaketItem = {
   menu_id: string;
 };
 
+export type PaketRelation = {
+    id: string;            // Paket_Menu.id (dipakai sebagai slot_key)
+    paket_id: string;
+    menu_id: string;
+    menuRelation: Menu;    // sub-item dalam paket (sudah include varian & opsi-nya sendiri)
+};
+
+export type MenuDetail = Menu & {
+    paketRelation?: PaketRelation[];
+    kategoriRelation?: KategoriMenu;
+    recommendation_id?: string | null;
+};
+
 export type OrderStatus = "PENDING" | "PAID" | "CANCELLED";
 
 export type Order = {

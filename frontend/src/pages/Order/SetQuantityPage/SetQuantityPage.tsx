@@ -1,149 +1,165 @@
-import { Box, Button, CircularProgress, IconButton, Typography } from "@mui/material";
-import { useState, useEffect } from "react";
+import {
+    Box,
+    Button,
+    CircularProgress,
+    IconButton,
+    Typography,
+} from "@mui/material";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router";
+import { v4 as uuidv4 } from "uuid";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 
-// buat redux
-import { useAppDispatch } from "../../../hooks/useAppDispatch"
-import { addItemToCart, updateItemQuantity } from "../../../store/cartSlice"
-import type { Menu } from "../../../types";
-
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { addItemToCart, updateItemQuantity } from "../../../store/cartSlice";
+import { useMenuDetailCustomization } from "../../../hooks/useMenuDetailCustomization";
 
 export default function SetQuantityPage() {
     const { id } = useParams();
-    const [quantity, setQuantity] = useState(1);
     const navigate = useNavigate();
-    const dispatch = useAppDispatch()
-    const location = useLocation()
-    const [loading, setLoading] = useState(true);
+    const location = useLocation();
+    const dispatch = useAppDispatch();
 
-    // fetch menu (id) dari backend
-    const [menu, setMenu] = useState<Menu | null>(null);
-    useEffect(() => {
-        const fetchMenu = async () => {
-            try {
-                setLoading(true);
-                const res = await fetch(`/api/menu`);
-                if (!res.ok) throw new Error("Gagal fetch menu");
-                const data = await res.json();
-                const found = data.records.find((m: Menu) => m.id === id);
-                setMenu(found || null);
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchMenu();
-    }, [id]);
+    // Cek apakah halaman ini dibuka untuk EDIT item dari cart.
+    // Kalau ada editItem, berarti user mau update qty item yang sudah ada.
+    const editItem = location.state?.editItem;
 
-    // cek ada kiriman dari OrderCart buat editItem ga
-    const editItem = location.state?.editItem
-    // quantity ngikutin yg ada di cart
+    // Quantity awal: ikuti qty dari editItem kalau ada, kalau tidak mulai dari 1
+    const [quantity, setQuantity] = useState<number>(editItem?.qty ?? 1);
+
+    // Fetch detail menu by id
+    const { menu, reload } = useMenuDetailCustomization(id);
+
     useEffect(() => {
-        if (editItem) {
-            setQuantity(editItem.qty)
+        reload();
+    }, [reload]);
+
+    // ---------- HANDLERS QUANTITY ----------
+    const handleIncrement = () => {
+        setQuantity(quantity + 1);
+    };
+
+    const handleDecrement = () => {
+        if (quantity > 1) {
+            setQuantity(quantity - 1);
         }
-    }, [editItem])
+    };
 
-    // const dataMenuDummy = [
-    //     { id: 1, name: "Fries", price: 25000, imageUrl: testMenuImg },
-    //     { id: 2, name: "Chicken", price: 5050050, imageUrl: testMenuImg },
-    // ];
+    // ---------- HANDLER CUSTOMIZE ----------
+    const handleCustomize = () => {
+        if (!menu) return;
+        navigate(`/customize-order/${menu.id}`, {
+            state: { selectedItem: menu, quantity, editItem }
+        });
+    };
 
-    // const selectedItem = dataMenuDummy.find((item) => item.id === Number(id));
-
-    // if (!selectedItem) {
-    //     return (
-    //         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80vh" }}>
-    //             <Typography sx={{ fontFamily: "Speedee-Bold", fontSize: "20px", textAlign: "center" }}>
-    //             Item Not noItemFound</Typography>
-    //         </Box>
-    //     );
-    // }
-
-    // const handleAddToCart = () => {
-    //     alert("Item added to cart: " + selectedItem.name);
-    //     return navigate("/menu");
-    // }
-
+    // ---------- HANDLER ADD / UPDATE CART ----------
     const handleAddToCart = () => {
         if (!menu) return;
 
         if (editItem) {
-            // edit
-            dispatch(updateItemQuantity({
-                id: editItem.id, 
-                qty: quantity
-            }));
+            // MODE EDIT: cuma update qty item yang sudah ada di cart
+            dispatch(
+                updateItemQuantity({
+                    id: editItem.id,
+                    qty: quantity,
+                })
+            );
+            navigate("/cart");
         } else {
-            // add
-            dispatch(addItemToCart({
-                id: Date.now().toString(),
-                menu_id: menu.id,
-                menu_nama: menu.nama,
-                menu_harga: menu.harga_awal,
-                menu_gambar: menu.gambar || "",
-                qty: quantity,
-                isPaket: false,
-                customizations: [{        
-                    slot_key: "main",
+            // MODE TAMBAH: bikin cart item baru tanpa customization
+            dispatch(
+                addItemToCart({
+                    id: uuidv4(),
                     menu_id: menu.id,
                     menu_nama: menu.nama,
                     menu_harga: menu.harga_awal,
-                    varian: null,
-                    opsi: []             
-                }],
-                subtotal: menu.harga_awal * quantity
-            }));
+                    menu_gambar: menu.gambar ?? "",
+                    qty: quantity,
+                    isPaket: false,
+                    customizations: [
+                        {
+                            slot_key: "main",
+                            menu_id: menu.id,
+                            menu_nama: menu.nama,
+                            menu_harga: menu.harga_awal,
+                            varian: null,
+                            opsi: [],
+                        },
+                    ],
+                    subtotal: menu.harga_awal * quantity,
+                })
+            );
         }
+
         navigate("/recommendation");
+    };
+
+    // ---------- LOADING / NOT FOUND ----------
+    if (!menu) {
+        return (
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
+                <CircularProgress />
+            </Box>
+        );
     }
 
-    if (loading) return (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
-            <CircularProgress />
-        </Box>
-    );
-
-    if (!menu) return (
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80vh" }}>
-            <Typography sx={{ fontSize: "20px", textAlign: "center" }}>
-                Menu tidak ditemukan
-            </Typography>
-        </Box>
-    );
-
+    // ---------- RENDER ----------
     return (
-        <Box sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "space-between",
-            minHeight: "80vh",
-            p: 2,
-            maxWidth: "400px",
-            margin: "0 auto",
-            border: "1px solid #ccc",
-        }}>
-
-            {/*  Iamgee */}
-            <Box sx={{ width: "100%", display: "flex", justifyContent: "center", mt: 2 }}>
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "space-between",
+                minHeight: "80vh",
+                p: 2,
+                maxWidth: "400px",
+                margin: "0 auto",
+                border: "1px solid #ccc",
+            }}
+        >
+            {/* Image */}
+            <Box
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    mt: 2,
+                }}
+            >
                 <img
                     src={menu.gambar || "https://via.placeholder.com/150"}
                     alt={menu.nama}
-                    style={{ width: "60%", objectFit: "cover", borderRadius: "8px"  }}
+                    style={{
+                        width: "60%",
+                        objectFit: "cover",
+                        borderRadius: "8px",
+                    }}
                 />
             </Box>
 
-            {/*  Name ,Price , Buttons */}
+            {/* Name, Price, Buttons */}
             <Box sx={{ width: "100%" }}>
-
-                <Typography sx={{ fontFamily: "Speedee-Bold", fontSize: "20px", textAlign: "center" }}>
+                <Typography
+                    sx={{
+                        fontFamily: "Speedee-Bold",
+                        fontSize: "20px",
+                        textAlign: "center",
+                    }}
+                >
                     {menu.nama}
                 </Typography>
-                <Typography sx={{ fontFamily: "Speedee-Regular", fontSize: "14px", textAlign: "center", color: "text.secondary", mb: 3 }}>
+                <Typography
+                    sx={{
+                        fontFamily: "Speedee-Regular",
+                        fontSize: "14px",
+                        textAlign: "center",
+                        color: "text.secondary",
+                        mb: 3,
+                    }}
+                >
                     Rp {menu.harga_awal.toLocaleString("id-ID")}
                 </Typography>
 
@@ -157,43 +173,47 @@ export default function SetQuantityPage() {
                         color: "text.primary",
                         borderRadius: "4px",
                     }}
-                    onClick={() => navigate(`/customize-order/${menu.id}`, {
-                        state: { 
-                            selectedItem: menu, quantity, 
-                        }
-                    })}
+                    onClick={handleCustomize}
                 >
                     Customize
                 </Button>
 
-                <Box sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    border: "1px solid #ccc",
-                    borderRadius: "4px",
-                    px: 1,
-                }}>
-                    <IconButton onClick={() => setQuantity(Math.max(quantity - 1, 1))}>
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        border: "1px solid #ccc",
+                        borderRadius: "4px",
+                        px: 1,
+                    }}
+                >
+                    <IconButton onClick={handleDecrement}>
                         <RemoveIcon />
                     </IconButton>
 
-                    <Typography sx={{ fontFamily: "Speedee-Regular", fontSize: "16px" }}>
+                    <Typography
+                        sx={{ fontFamily: "Speedee-Regular", fontSize: "16px" }}
+                    >
                         {quantity}
                     </Typography>
 
-                    <IconButton onClick={() => setQuantity(quantity + 1)}>
+                    <IconButton onClick={handleIncrement}>
                         <AddIcon />
                     </IconButton>
                 </Box>
             </Box>
 
-            { /* BUttonss */}
+            {/* Action Buttons */}
             <Box sx={{ display: "flex", gap: 2, width: "100%", mt: 3, mb: 2 }}>
                 <Button
                     fullWidth
                     variant="outlined"
-                    sx={{ fontFamily: "Speedee-Regular", borderColor: "#ccc", color: "text.primary" }}
+                    sx={{
+                        fontFamily: "Speedee-Regular",
+                        borderColor: "#ccc",
+                        color: "text.primary",
+                    }}
                     onClick={() => navigate(-1)}
                 >
                     Cancel
@@ -202,7 +222,11 @@ export default function SetQuantityPage() {
                 <Button
                     fullWidth
                     variant="contained"
-                    sx={{ backgroundColor: "#FFD700", color: "black", fontFamily: "Speedee-Regular" }}
+                    sx={{
+                        backgroundColor: "#FFD700",
+                        color: "black",
+                        fontFamily: "Speedee-Regular",
+                    }}
                     onClick={handleAddToCart}
                 >
                     {editItem ? "Update Cart" : "Add to Cart"}

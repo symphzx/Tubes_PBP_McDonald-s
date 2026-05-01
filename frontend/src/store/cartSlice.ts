@@ -1,13 +1,13 @@
 // store/cartSlice.ts
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-interface varianMenu {
+export interface varianMenu {
     mv_id: string;
     nama_varian: string;
     harga_tambahan: number;
 }
 
-interface opsiMenu {
+export interface opsiMenu {
     mo_id: string;
     nama_option: string;
     tambahan_harga: number;
@@ -16,7 +16,7 @@ interface opsiMenu {
 // 🆕 Customization per "slot":
 // - Untuk Ala Carte: 1 customization (slot_key = "main")
 // - Untuk Paket: N customization, satu per item dalam paket (slot_key = paket_menu.id)
-interface customization {
+export interface customization {
     slot_key: string;          // "main" untuk ala carte, paket_menu.id untuk paket
     menu_id: string;           // sub-item id (sama dengan menu_id utama kalau ala carte)
     menu_nama: string;
@@ -25,7 +25,7 @@ interface customization {
     opsi: opsiMenu[];          // 🔥 sekarang array (multi-select)
 }
 
-interface cartItem {
+export interface cartItem {
     id: string;
     menu_id: string;
     menu_nama: string;
@@ -145,6 +145,21 @@ export const cartSlice = createSlice({
             }
         },
 
+        // Update isi sebuah cart item (qty + customizations) tanpa bikin item baru.
+        // Dipakai untuk fitur edit item dari halaman cart.
+        updateItemCustomization(state, action: PayloadAction<cartItem>) {
+            const incoming = action.payload;
+            const idx = state.items.findIndex((item) => item.id === incoming.id);
+            if (idx === -1) return;
+
+            // Replace seluruh isi item, lalu recompute subtotal
+            state.items[idx] = {
+                ...incoming,
+                subtotal: hitungSubtotal(incoming),
+            };
+            state.totalHarga = hitungTotalHarga(state.items);
+        },
+
         setOrderType(state, action: PayloadAction<"DINE_IN" | "TAKEAWAY">) {
             state.orderType = action.payload;
         },
@@ -161,6 +176,7 @@ export const {
     addItemToCart,
     removeItem,
     updateItemQuantity,
+    updateItemCustomization,
     setOrderType,
     clearCart,
 } = cartSlice.actions;

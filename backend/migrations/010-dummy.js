@@ -48,25 +48,31 @@ module.exports = {
     // 1. KATEGORI
     // =====================================================================
     const kategoriData = [
-      { id: uuidv4(), nama: "Burger & McNuggets", sortOrder: 1 },
-      { id: uuidv4(), nama: "Ayam McD Krispy", sortOrder: 2 },
-      { id: uuidv4(), nama: "Ayam McD Spicy", sortOrder: 3 },
-      { id: uuidv4(), nama: "Paket Keluarga", sortOrder: 4 },
-      { id: uuidv4(), nama: "Happy Meal", sortOrder: 5 },
-      { id: uuidv4(), nama: "Paket HeBat", sortOrder: 6 },
-      { id: uuidv4(), nama: "Menu Receh", sortOrder: 7 },
-      { id: uuidv4(), nama: "McSpaghetti", sortOrder: 8 },
-      { id: uuidv4(), nama: "Camilan", sortOrder: 9 },
-      { id: uuidv4(), nama: "Minuman", sortOrder: 10 },
-      { id: uuidv4(), nama: "Pencuci Mulut", sortOrder: 11 },
-      { id: uuidv4(), nama: "Nasi", sortOrder: 12 },
+      { id: uuidv4(), nama: "Sarapan", sortOrder: 1, startTime: "04:00:00", endTime: "11:00:00" },
+      { id: uuidv4(), nama: "Burger & McNuggets", sortOrder: 2 },
+      { id: uuidv4(), nama: "Ayam McD Krispy", sortOrder: 3 },
+      { id: uuidv4(), nama: "Ayam McD Spicy", sortOrder: 4 },
+      { id: uuidv4(), nama: "Paket Keluarga", sortOrder: 5 },
+      { id: uuidv4(), nama: "Happy Meal", sortOrder: 6 },
+      { id: uuidv4(), nama: "Paket HeBat", sortOrder: 7 },
+      { id: uuidv4(), nama: "Menu Receh", sortOrder: 8 },
+      { id: uuidv4(), nama: "McSpaghetti", sortOrder: 9 },
+      { id: uuidv4(), nama: "Camilan", sortOrder: 10 },
+      { id: uuidv4(), nama: "Minuman", sortOrder: 11 },
+      { id: uuidv4(), nama: "Pencuci Mulut", sortOrder: 12 },
+      { id: uuidv4(), nama: "Nasi", sortOrder: 13 },
     ];
 
     await queryInterface.bulkInsert(
       "Kategori",
       kategoriData.map((k) => ({
-        ...k,
-        startDate: now(),
+        id: k.id,
+        nama: k.nama,
+        sortOrder: k.sortOrder,
+        startDate: k.startDate ?? null,
+        endDate: k.endDate ?? null,
+        startTime: k.startTime ?? null,
+        endTime: k.endTime ?? null,
         createdAt: now(),
         updatedAt: now(),
       }))
@@ -80,7 +86,6 @@ module.exports = {
     // =====================================================================
     const ASSET = "http://localhost:3000/uploads/assets/";
 
-    // Helper bikin menu lebih ringkas
     const m = (kategori, nama, harga, tipe, gambar, tag = null) => ({
       id: uuidv4(),
       kategori_id: kategoriMap[kategori],
@@ -95,6 +100,16 @@ module.exports = {
     });
 
     const menus = [
+      // ---------- Sarapan ----------
+      m("Sarapan", "Chicken Muffin", 25000, "Ala Carte", "Chicken Muffin.webp"),
+      m("Sarapan", "Sausage McMuffin", 23000, "Ala Carte", "Sausage McMuffin.webp"),
+      m("Sarapan", "Egg McMuffin", 22000, "Ala Carte", "Egg McMuffin.webp"),
+      m("Sarapan", "Sausage Wrap", 28000, "Ala Carte", "Sausage Wrap.webp"),
+      m("Sarapan", "Big Breakfast", 50000, "Paket", "Big Breakfast.webp"),
+      m("Sarapan", "Breakfast Wrap", 30000, "Ala Carte", "Breakfast Wrap.webp"),
+      m("Sarapan", "Hotcakes 2 pcs", 25000, "Ala Carte", "Hotcakes.webp"),
+      m("Sarapan", "Bubur Ayam McD", 25000, "Ala Carte", "Bubur Ayam McD.webp"),
+
       // ---------- Burger & McNuggets ----------
       m("Burger & McNuggets", "Big Mac", 49000, "Ala Carte", "bigmac.webp"),
       m("Burger & McNuggets", "Cheeseburger", 23000, "Ala Carte", "cheeseburger.avif"),
@@ -143,12 +158,12 @@ module.exports = {
       m("Paket HeBat", "Hebat McSpaghetti Ayam", 40000, "Paket", "Paket Hebat McSpaghetti Ayam.png"),
 
       // ---------- Menu Receh ----------
-      m("Menu Receh", "Pie Ketan Hitam Kelapa Receh", 8000, "Ala Carte", "Pie Ketan Hitam Kelapa.webp", "Baru!"),
-      m("Menu Receh", "Es Krim Cone Receh", 7000, "Ala Carte", "icecreamCone.png"),
-      m("Menu Receh", "Mineral Water Receh", 6000, "Ala Carte", "MineralWaterPrima.png"),
+      m("Menu Receh", "Pie Ketan Hitam Kelapa", 8000, "Ala Carte", "Pie Ketan Hitam Kelapa.webp", "Baru!"),
+      m("Menu Receh", "Es Krim Cone", 7000, "Ala Carte", "icecreamCone.png"),
+      m("Menu Receh", "Mineral Water", 6000, "Ala Carte", "MineralWaterPrima.png"),
 
       // ---------- McSpaghetti ----------
-      m("McSpaghetti", "McSpaghetti", 22000, "Ala Carte", "Ala carte McSpaghetti.png"),
+      m("McSpaghetti", "McSpaghetti", 22000, "Ala Carte", "Ala carte McSpaghetti.jpg"),
       m("McSpaghetti", "Paket McSpaghetti", 35000, "Paket", "McSpaghetti.png"),
 
       // ---------- Camilan ----------
@@ -165,23 +180,23 @@ module.exports = {
       m("Minuman", "Hot Coffee", 17000, "Ala Carte", "Hot Coffee.webp"),
       m("Minuman", "Iced Coffee", 22000, "Ala Carte", "Iced Coffee.webp"),
       m("Minuman", "Milo", 17000, "Ala Carte", "Milo.png"),
-      m("Minuman", "Orange Juice", 22000, "Ala Carte", "Orange Juice.webp"),
+      m("Minuman", "Orange Juice", 22000, "Ala Carte", "Orange Juice.avif"),
       m("Minuman", "Tehbotol Kotak", 11000, "Ala Carte", "Tehbotol Sosro Kotak.webp"),
+      m("Minuman", "Fruit Tea Lemon", 13000, "Ala Carte", "Fruit Tea Lemon.png"),
 
       // ---------- Pencuci Mulut ----------
       m("Pencuci Mulut", "Sundae Cone Coklat", 11000, "Ala Carte", "Chocolate Sundae.png"),
       m("Pencuci Mulut", "Sundae Cone Stroberi", 11000, "Ala Carte", "Strawberry Sundae.png"),
       m("Pencuci Mulut", "McFlurry Oreo", 22000, "Ala Carte", "McFlurry.avif"),
-      m("Pencuci Mulut", "McFlurry Biscoff", 25000, "Ala Carte", "mcflurryBiscoff.webp","Baru!"),
-      m("Pencuci Mulut", "Pie Coklat", 11000, "Ala Carte", "Pie Coklat.webp"),
+      m("Pencuci Mulut", "McFlurry Biscoff", 25000, "Ala Carte", "mcflurryBiscoff.webp", "Baru!"),
+      m("Pencuci Mulut", "Pie Coklat", 11000, "Ala Carte", "Pie Coklat.avif"),
 
       // ---------- Nasi ----------
-      m("Nasi", "Nasi Putih", 11000, "Ala Carte", "Nasi Putih.webp"),
+      m("Nasi", "Nasi Putih", 11000, "Ala Carte", "Nasi Putih.jpg"),
       m("Nasi", "Nasi Uduk", 13000, "Ala Carte", "Nasi Uduk.webp"),
     ];
 
-    // Set up beberapa recommendation_id (self-reference)
-    // Big Mac merekomendasikan French Fries, dst.
+    // Recommendation (self-reference)
     const findMenuId = (nama) => menus.find((x) => x.nama === nama)?.id;
     const setRec = (nama, recNama) => {
       const target = menus.find((x) => x.nama === nama);
@@ -195,14 +210,11 @@ module.exports = {
 
     await queryInterface.bulkInsert("Menu", menus);
 
-    // Map nama -> id menu (untuk dipakai relasi berikutnya)
     const menuMap = {};
     menus.forEach((x) => (menuMap[x.nama] = x.id));
 
     // =====================================================================
     // 3. VARIAN_MENU
-    //    - Size Small/Medium/Large untuk minuman & paket tertentu
-    //    - Potongan ayam untuk menu paket ayam
     // =====================================================================
     const v = (menuNama, nama, harga) => ({
       id: uuidv4(),
@@ -213,50 +225,34 @@ module.exports = {
       updatedAt: now(),
     });
 
+    const varianMenu = [];
+
+    // --- Minuman: Small/Medium/Large (yang punya size) ---
     const minumanWithSize = [
       "Coca-Cola",
       "Sprite",
       "Fanta",
-      "Hot Coffee",
       "Iced Coffee",
       "Milo",
       "Orange Juice",
-      "Tehbotol Kotak",
+      "Fruit Tea Lemon",
     ];
-
-    const paketAyam = [
-      "PaNas 1 Spicy, Medium",
-      "PaNas 2 Spicy, Medium",
-      "PaNas 2 with Fries Spicy",
-      "PaMer 5 Spicy",
-      "PaNas 1 Krispy, Medium",
-      "PaNas 2 Krispy, Medium",
-      "PaNas 2 Krispy with Fries, Medium",
-      "PaMer 5 Krispy",
-      "PaMer 7 Krispy",
-      "PaNas Special Krispy",
-      "PaNas 2 Ayam McD Gulai Spicy Perkedel",
-      "PaNas 2 with Fries Ayam McD Gulai Spicy",
-      "Paket Spesial Ayam McD Gulai Spicy Perkedel",
-      "Ayam Spicy McDonald's",
-      "Ayam Krispy McDonald's",
-    ];
-
-    const varianMenu = [];
-
-    // Size untuk minuman
     minumanWithSize.forEach((nama) => {
       varianMenu.push(v(nama, "Small", 0));
       varianMenu.push(v(nama, "Medium", 5000));
       varianMenu.push(v(nama, "Large", 10000));
     });
 
-    // Size untuk French Fries
+    // Hot Coffee: cuma Regular/Large (gak ada small di kopi panas McD ID)
+    varianMenu.push(v("Hot Coffee", "Regular", 0));
+    varianMenu.push(v("Hot Coffee", "Large", 5000));
+
+    // --- French Fries: Small/Medium/Large ---
     varianMenu.push(v("French Fries", "Small", 0));
     varianMenu.push(v("French Fries", "Medium", 5000));
     varianMenu.push(v("French Fries", "Large", 10000));
 
-    // Size untuk paket ayam (Medium/Large)
+    // --- Paket dengan upgrade size minuman (Medium → Large) ---
     [
       "PaNas 1 Spicy, Medium",
       "PaNas 2 Spicy, Medium",
@@ -269,19 +265,36 @@ module.exports = {
       varianMenu.push(v(nama, "Large", 8000));
     });
 
-    // Potongan ayam untuk paket ayam & ala carte ayam
-    paketAyam.forEach((nama) => {
+    // --- Ayam ala carte: pilihan potongan ayam ---
+    // Hanya di ala carte. Untuk paket, customize potongan dilakukan di sub-item ayam-nya.
+    ["Ayam Spicy McDonald's", "Ayam Krispy McDonald's"].forEach((nama) => {
       varianMenu.push(v(nama, "Paha Atas", 0));
       varianMenu.push(v(nama, "Paha Bawah", 0));
       varianMenu.push(v(nama, "Sayap", 0));
       varianMenu.push(v(nama, "Dada", 0));
-      varianMenu.push(v(nama, "Dada Tanpa Tulang", 0));
+      varianMenu.push(v(nama, "Dada Tanpa Tulang", 3000));
     });
+
+    // --- McNuggets: pilihan saus utama (single-select) ---
+    ["McNuggets 6 pcs", "McNuggets 9 pcs"].forEach((nama) => {
+      varianMenu.push(v(nama, "BBQ Sauce", 0));
+      varianMenu.push(v(nama, "Sweet & Sour", 0));
+      varianMenu.push(v(nama, "Chili Sauce", 0));
+    });
+
+    // --- Sundae: pilihan topping utama ---
+    varianMenu.push(v("Sundae Cone Coklat", "Topping Coklat", 0));
+    varianMenu.push(v("Sundae Cone Coklat", "Topping Karamel", 0));
+    varianMenu.push(v("Sundae Cone Stroberi", "Topping Stroberi", 0));
+
+    // --- Bubur Ayam: pilihan level pedas ---
+    varianMenu.push(v("Bubur Ayam McD", "Tidak Pedas", 0));
+    varianMenu.push(v("Bubur Ayam McD", "Pedas", 0));
 
     await queryInterface.bulkInsert("Varian_Menu", varianMenu);
 
     // =====================================================================
-    // 4. OPSI_MENU (Add-ons)
+    // 4. OPSI_MENU (Add-ons, multi-select)
     // =====================================================================
     const o = (menuNama, nama, harga) => ({
       id: uuidv4(),
@@ -294,7 +307,7 @@ module.exports = {
 
     const opsiMenu = [];
 
-    // Burger add-ons
+    // --- Burger add-ons ---
     [
       "Big Mac",
       "Cheeseburger",
@@ -304,188 +317,242 @@ module.exports = {
       "Chicken Prosperity Burger",
     ].forEach((nama) => {
       opsiMenu.push(o(nama, "Extra Cheese", 5000));
-      opsiMenu.push(o(nama, "Extra Sauce", 1000));
+      opsiMenu.push(o(nama, "Extra Patty", 12000));
+      opsiMenu.push(o(nama, "Extra Pickles", 1000));
       opsiMenu.push(o(nama, "No Onion", 0));
       opsiMenu.push(o(nama, "No Pickle", 0));
     });
 
-    // Ayam add-ons (paket & ala carte)
-    paketAyam.forEach((nama) => {
-      opsiMenu.push(o(nama, "Extra Sauce", 1000));
-      opsiMenu.push(o(nama, "Extra Salt", 0));
-      opsiMenu.push(o(nama, "Extra Sambal", 2000));
+    // --- Ayam ala carte add-ons ---
+    ["Ayam Spicy McDonald's", "Ayam Krispy McDonald's"].forEach((nama) => {
+      opsiMenu.push(o(nama, "Extra Saus Sambal", 2000));
+      opsiMenu.push(o(nama, "Extra Saus Tomat", 1000));
+      opsiMenu.push(o(nama, "Tanpa Garam", 0));
     });
 
-    // Minuman add-ons (FIXED NAMES HERE)
-    minumanWithSize.concat(["Mineral Water Prim-a", "Mineral Water Receh"]).forEach((nama) => {
+    // --- Minuman bersoda & jus add-ons ---
+    ["Coca-Cola", "Sprite", "Fanta", "Iced Coffee", "Milo", "Orange Juice", "Fruit Tea Lemon", "Tehbotol Kotak"].forEach((nama) => {
       opsiMenu.push(o(nama, "No Ice", 0));
-      opsiMenu.push(o(nama, "Less Sugar", 0));
+      opsiMenu.push(o(nama, "Less Ice", 0));
       opsiMenu.push(o(nama, "Extra Ice", 0));
     });
 
-    // Fries add-ons
+    // --- Hot Coffee: opsi gula (bukan ice) ---
+    opsiMenu.push(o("Hot Coffee", "Less Sugar", 0));
+    opsiMenu.push(o("Hot Coffee", "No Sugar", 0));
+    opsiMenu.push(o("Hot Coffee", "Extra Sugar", 0));
+
+    // --- Mineral Water: cuma ice (gak ada gula) ---
+    ["Mineral Water Prim-a", "Mineral Water"].forEach((nama) => {
+      opsiMenu.push(o(nama, "No Ice", 0));
+      opsiMenu.push(o(nama, "Extra Ice", 0));
+    });
+
+    // --- Fries add-ons ---
     opsiMenu.push(o("French Fries", "Extra Salt", 0));
     opsiMenu.push(o("French Fries", "No Salt", 0));
-    opsiMenu.push(o("French Fries", "Extra Ketchup", 1000));
+    opsiMenu.push(o("French Fries", "Extra Saus Tomat", 1000));
 
-    // McNuggets add-ons
+    // --- McNuggets: extra saus tambahan (selain saus utama dari varian) ---
     ["McNuggets 6 pcs", "McNuggets 9 pcs"].forEach((nama) => {
       opsiMenu.push(o(nama, "Extra BBQ Sauce", 1000));
       opsiMenu.push(o(nama, "Extra Sweet & Sour", 1000));
       opsiMenu.push(o(nama, "Extra Chili Sauce", 1000));
     });
 
-    // Sundae & McFlurry add-ons (FIXED BISCOFF HERE)
-    ["Sundae Cone Coklat", "Sundae Cone Stroberi", "McFlurry Oreo", "McFlurry Biscoff"].forEach((nama) => {
+    // --- Pencuci Mulut ---
+    ["McFlurry Oreo", "McFlurry Biscoff"].forEach((nama) => {
       opsiMenu.push(o(nama, "Extra Topping", 3000));
     });
 
-    // McSpaghetti
+    // --- Hash Brown ---
+    opsiMenu.push(o("Hash Brown", "Extra Saus Tomat", 1000));
+    opsiMenu.push(o("Hash Brown", "Extra Saus Sambal", 2000));
+
+    // --- Spicy Chicken Bites ---
+    opsiMenu.push(o("Spicy Chicken Bites", "Extra Saus Sambal", 2000));
+    opsiMenu.push(o("Spicy Chicken Bites", "Extra Mayonnaise", 2000));
+
+    // --- McSpaghetti ---
     ["McSpaghetti", "Paket McSpaghetti"].forEach((nama) => {
       opsiMenu.push(o(nama, "Extra Cheese", 5000));
-      opsiMenu.push(o(nama, "Extra Sauce", 2000));
+      opsiMenu.push(o(nama, "Extra Saus Bolognese", 3000));
     });
+
+    // --- Muffin (Chicken/Sausage/Egg) ---
+    ["Chicken Muffin", "Sausage McMuffin", "Egg McMuffin"].forEach((nama) => {
+      opsiMenu.push(o(nama, "Extra Cheese", 5000));
+      opsiMenu.push(o(nama, "Extra Egg", 5000));
+      opsiMenu.push(o(nama, "No Sauce", 0));
+    });
+
+    // --- Sausage Wrap & Breakfast Wrap ---
+    ["Sausage Wrap", "Breakfast Wrap"].forEach((nama) => {
+      opsiMenu.push(o(nama, "Extra Cheese", 5000));
+      opsiMenu.push(o(nama, "Extra Sauce", 1000));
+      opsiMenu.push(o(nama, "Tanpa Bawang", 0));
+    });
+
+    // --- Big Breakfast ---
+    opsiMenu.push(o("Big Breakfast", "Extra Sausage", 8000));
+    opsiMenu.push(o("Big Breakfast", "Extra Hash Brown", 11000));
+
+    // --- Hotcakes ---
+    opsiMenu.push(o("Hotcakes 2 pcs", "Extra Syrup", 0));
+    opsiMenu.push(o("Hotcakes 2 pcs", "Extra Butter", 0));
+
+    // --- Bubur Ayam ---
+    opsiMenu.push(o("Bubur Ayam McD", "Extra Kerupuk", 2000));
+    opsiMenu.push(o("Bubur Ayam McD", "Extra Sambal", 1000));
+    opsiMenu.push(o("Bubur Ayam McD", "Tanpa Daun Bawang", 0));
+    opsiMenu.push(o("Bubur Ayam McD", "Tanpa Kacang", 0));
 
     await queryInterface.bulkInsert("Opsi_Menu", opsiMenu);
 
     // =====================================================================
     // 5. PAKET_MENU
-    //    Bundling: paket_id = parent paket, menu_id = item dalam paket
-    //    Contoh: PaNas 1 = Ayam Spicy + Nasi Putih + Coca-Cola
     // =====================================================================
-    const p = (paketNama, itemNama) => ({
-      id: uuidv4(),
-      paket_id: menuMap[paketNama],
-      menu_id: menuMap[itemNama],
-      createdAt: now(),
-      updatedAt: now(),
-    });
+    // Helper: bikin N row paket sekaligus (auto-replicate qty)
+    const p = (paketNama, itemNama, qty = 1) => {
+      const rows = [];
+      for (let i = 0; i < qty; i++) {
+        rows.push({
+          id: uuidv4(),
+          paket_id: menuMap[paketNama],
+          menu_id: menuMap[itemNama],
+          createdAt: now(),
+          updatedAt: now(),
+        });
+      }
+      return rows;
+    };
 
     const paketMenu = [
       // ---------- PaNas Spicy ----------
-      p("PaNas 1 Spicy, Medium", "Ayam Spicy McDonald's"),
-      p("PaNas 1 Spicy, Medium", "Nasi Putih"),
-      p("PaNas 1 Spicy, Medium", "Coca-Cola"),
+      ...p("PaNas 1 Spicy, Medium", "Ayam Spicy McDonald's", 1),
+      ...p("PaNas 1 Spicy, Medium", "Nasi Putih", 1),
+      ...p("PaNas 1 Spicy, Medium", "Coca-Cola", 1),
 
-      p("PaNas 2 Spicy, Medium", "Ayam Spicy McDonald's"),
-      p("PaNas 2 Spicy, Medium", "Ayam Spicy McDonald's"),
-      p("PaNas 2 Spicy, Medium", "Nasi Putih"),
-      p("PaNas 2 Spicy, Medium", "Coca-Cola"),
+      ...p("PaNas 2 Spicy, Medium", "Ayam Spicy McDonald's", 2),
+      ...p("PaNas 2 Spicy, Medium", "Nasi Putih", 1),
+      ...p("PaNas 2 Spicy, Medium", "Coca-Cola", 1),
 
-      p("PaNas 2 with Fries Spicy", "Ayam Spicy McDonald's"),
-      p("PaNas 2 with Fries Spicy", "Nasi Putih"),
-      p("PaNas 2 with Fries Spicy", "French Fries"),
-      p("PaNas 2 with Fries Spicy", "Coca-Cola"),
+      // PaNas 2 with Fries → 2 ayam + 1 fries + 1 minuman (no nasi)
+      ...p("PaNas 2 with Fries Spicy", "Ayam Spicy McDonald's", 2),
+      ...p("PaNas 2 with Fries Spicy", "French Fries", 1),
+      ...p("PaNas 2 with Fries Spicy", "Fruit Tea Lemon", 1),
 
-      p("PaMer 5 Spicy", "Ayam Spicy McDonald's"),
-      p("PaMer 5 Spicy", "Ayam Spicy McDonald's"),
-      p("PaMer 5 Spicy", "Nasi Putih"),
-      p("PaMer 5 Spicy", "Nasi Putih"),
-      p("PaMer 5 Spicy", "Coca-Cola"),
-      p("PaMer 5 Spicy", "Coca-Cola"),
+      // PaMer 5 Spicy → 5 ayam + 3 nasi + 3 Fruit Tea Lemon
+      ...p("PaMer 5 Spicy", "Ayam Spicy McDonald's", 5),
+      ...p("PaMer 5 Spicy", "Nasi Putih", 3),
+      ...p("PaMer 5 Spicy", "Fruit Tea Lemon", 3),
 
       // ---------- PaNas Krispy ----------
-      p("PaNas 1 Krispy, Medium", "Ayam Krispy McDonald's"),
-      p("PaNas 1 Krispy, Medium", "Nasi Putih"),
-      p("PaNas 1 Krispy, Medium", "Coca-Cola"),
+      ...p("PaNas 1 Krispy, Medium", "Ayam Krispy McDonald's", 1),
+      ...p("PaNas 1 Krispy, Medium", "Nasi Putih", 1),
+      ...p("PaNas 1 Krispy, Medium", "Coca-Cola", 1),
 
-      p("PaNas 2 Krispy, Medium", "Ayam Krispy McDonald's"),
-      p("PaNas 2 Krispy, Medium", "Ayam Krispy McDonald's"),
-      p("PaNas 2 Krispy, Medium", "Nasi Putih"),
-      p("PaNas 2 Krispy, Medium", "Coca-Cola"),
+      ...p("PaNas 2 Krispy, Medium", "Ayam Krispy McDonald's", 2),
+      ...p("PaNas 2 Krispy, Medium", "Nasi Putih", 1),
+      ...p("PaNas 2 Krispy, Medium", "Coca-Cola", 1),
 
-      p("PaNas 2 Krispy with Fries, Medium", "Ayam Krispy McDonald's"),
-      p("PaNas 2 Krispy with Fries, Medium", "Nasi Putih"),
-      p("PaNas 2 Krispy with Fries, Medium", "French Fries"),
-      p("PaNas 2 Krispy with Fries, Medium", "Coca-Cola"),
+      // PaNas 2 Krispy with Fries → 2 ayam + 1 fries + 1 minuman (no nasi)
+      ...p("PaNas 2 Krispy with Fries, Medium", "Ayam Krispy McDonald's", 2),
+      ...p("PaNas 2 Krispy with Fries, Medium", "French Fries", 1),
+      ...p("PaNas 2 Krispy with Fries, Medium", "Fruit Tea Lemon", 1),
 
-      p("PaNas Special Krispy", "Ayam Krispy McDonald's"),
-      p("PaNas Special Krispy", "Nasi Uduk"),
-      p("PaNas Special Krispy", "Coca-Cola"),
+      // PaNas Special Krispy → 1 ayam + 1 nasi uduk + 1 Fruit Tea Lemon
+      ...p("PaNas Special Krispy", "Ayam Krispy McDonald's", 1),
+      ...p("PaNas Special Krispy", "Nasi Uduk", 1),
+      ...p("PaNas Special Krispy", "Fruit Tea Lemon", 1),
 
-      p("PaMer 5 Krispy", "Ayam Krispy McDonald's"),
-      p("PaMer 5 Krispy", "Ayam Krispy McDonald's"),
-      p("PaMer 5 Krispy", "Nasi Putih"),
-      p("PaMer 5 Krispy", "Nasi Putih"),
-      p("PaMer 5 Krispy", "Coca-Cola"),
-      p("PaMer 5 Krispy", "Coca-Cola"),
+      // PaMer 5 Krispy → 5 ayam + 3 nasi + 3 Fruit Tea Lemon
+      ...p("PaMer 5 Krispy", "Ayam Krispy McDonald's", 5),
+      ...p("PaMer 5 Krispy", "Nasi Putih", 3),
+      ...p("PaMer 5 Krispy", "Fruit Tea Lemon", 3),
 
-      p("PaMer 7 Krispy", "Ayam Krispy McDonald's"),
-      p("PaMer 7 Krispy", "Ayam Krispy McDonald's"),
-      p("PaMer 7 Krispy", "Ayam Krispy McDonald's"),
-      p("PaMer 7 Krispy", "Nasi Putih"),
-      p("PaMer 7 Krispy", "Nasi Putih"),
-      p("PaMer 7 Krispy", "Nasi Putih"),
-      p("PaMer 7 Krispy", "Coca-Cola"),
+      // PaMer 7 Krispy → 7 ayam + 5 nasi + 5 Fruit Tea Lemon
+      ...p("PaMer 7 Krispy", "Ayam Krispy McDonald's", 7),
+      ...p("PaMer 7 Krispy", "Nasi Putih", 5),
+      ...p("PaMer 7 Krispy", "Fruit Tea Lemon", 5),
 
-      // ---------- PaNas Gulai ----------
-      p("PaNas 2 Ayam McD Gulai Spicy Perkedel", "Ayam Spicy McDonald's"),
-      p("PaNas 2 Ayam McD Gulai Spicy Perkedel", "Nasi Uduk"),
-      p("PaNas 2 Ayam McD Gulai Spicy Perkedel", "Coca-Cola"),
+      // ---------- PaNas Gulai (minuman → Tehbotol Kotak) ----------
+      ...p("PaNas 2 Ayam McD Gulai Spicy Perkedel", "Ayam Spicy McDonald's", 2),
+      ...p("PaNas 2 Ayam McD Gulai Spicy Perkedel", "Nasi Uduk", 1),
+      ...p("PaNas 2 Ayam McD Gulai Spicy Perkedel", "Tehbotol Kotak", 1),
 
-      p("PaNas 2 with Fries Ayam McD Gulai Spicy", "Ayam Spicy McDonald's"),
-      p("PaNas 2 with Fries Ayam McD Gulai Spicy", "Nasi Uduk"),
-      p("PaNas 2 with Fries Ayam McD Gulai Spicy", "French Fries"),
-      p("PaNas 2 with Fries Ayam McD Gulai Spicy", "Coca-Cola"),
+      ...p("PaNas 2 with Fries Ayam McD Gulai Spicy", "Ayam Spicy McDonald's", 2),
+      ...p("PaNas 2 with Fries Ayam McD Gulai Spicy", "French Fries", 1),
+      ...p("PaNas 2 with Fries Ayam McD Gulai Spicy", "Tehbotol Kotak", 1),
 
-      p("Paket Spesial Ayam McD Gulai Spicy Perkedel", "Ayam Spicy McDonald's"),
-      p("Paket Spesial Ayam McD Gulai Spicy Perkedel", "Nasi Uduk"),
-      p("Paket Spesial Ayam McD Gulai Spicy Perkedel", "Coca-Cola"),
+      ...p("Paket Spesial Ayam McD Gulai Spicy Perkedel", "Ayam Spicy McDonald's", 1),
+      ...p("Paket Spesial Ayam McD Gulai Spicy Perkedel", "Nasi Uduk", 1),
+      ...p("Paket Spesial Ayam McD Gulai Spicy Perkedel", "Tehbotol Kotak", 1),
 
       // ---------- HeBat ----------
-      p("HeBat 1 Cheeseburger", "Cheeseburger"),
-      p("HeBat 1 Cheeseburger", "French Fries"),
-      p("HeBat 1 Cheeseburger", "Coca-Cola"),
+      ...p("HeBat 1 Cheeseburger", "Cheeseburger", 1),
+      ...p("HeBat 1 Cheeseburger", "French Fries", 1),
+      ...p("HeBat 1 Cheeseburger", "Coca-Cola", 1),
 
-      p("HeBat 2 McChicken", "McChicken Burger"),
-      p("HeBat 2 McChicken", "French Fries"),
-      p("HeBat 2 McChicken", "Coca-Cola"),
+      ...p("HeBat 2 McChicken", "McChicken Burger", 1),
+      ...p("HeBat 2 McChicken", "French Fries", 1),
+      ...p("HeBat 2 McChicken", "Coca-Cola", 1),
 
-      p("HeBat 3 Double Cheeseburger", "Double Cheeseburger"),
-      p("HeBat 3 Double Cheeseburger", "French Fries"),
-      p("HeBat 3 Double Cheeseburger", "Coca-Cola"),
+      ...p("HeBat 3 Double Cheeseburger", "Double Cheeseburger", 1),
+      ...p("HeBat 3 Double Cheeseburger", "French Fries", 1),
+      ...p("HeBat 3 Double Cheeseburger", "Coca-Cola", 1),
 
-      // ---------- Happy Meal (FIXED HAMBURGER HERE) ----------
-      p("Happy Meal Hamburger", "Cheeseburger"),
-      p("Happy Meal Hamburger", "French Fries"),
-      p("Happy Meal Hamburger", "Milo"),
+      ...p("Hebat McSpaghetti Ayam", "McSpaghetti", 1),
+      ...p("Hebat McSpaghetti Ayam", "Ayam Krispy McDonald's", 1),
+      ...p("Hebat McSpaghetti Ayam", "Coca-Cola", 1),
 
-      p("Happy Meal McNuggets 4 pcs", "McNuggets 6 pcs"),
-      p("Happy Meal McNuggets 4 pcs", "French Fries"),
-      p("Happy Meal McNuggets 4 pcs", "Milo"),
+      // ---------- Happy Meal ----------
+      ...p("Happy Meal Hamburger", "Cheeseburger", 1),
+      ...p("Happy Meal Hamburger", "French Fries", 1),
+      ...p("Happy Meal Hamburger", "Milo", 1),
 
-      p("Happy Meal Ayam McD", "Ayam Krispy McDonald's"),
-      p("Happy Meal Ayam McD", "Nasi Putih"),
-      p("Happy Meal Ayam McD", "Milo"),
+      ...p("Happy Meal McNuggets 4 pcs", "McNuggets 6 pcs", 1),
+      ...p("Happy Meal McNuggets 4 pcs", "French Fries", 1),
+      ...p("Happy Meal McNuggets 4 pcs", "Milo", 1),
 
-      p("Happy Meal McSpaghetti", "McSpaghetti"),
-      p("Happy Meal McSpaghetti", "Milo"),
+      ...p("Happy Meal Ayam McD", "Ayam Krispy McDonald's", 1),
+      ...p("Happy Meal Ayam McD", "Nasi Putih", 1),
+      ...p("Happy Meal Ayam McD", "Milo", 1),
+
+      ...p("Happy Meal McSpaghetti", "McSpaghetti", 1),
+      ...p("Happy Meal McSpaghetti", "Milo", 1),
 
       // ---------- Paket Keluarga ----------
-      p("Bundle Hemat Bertiga", "Ayam Krispy McDonald's"),
-      p("Bundle Hemat Bertiga", "Ayam Krispy McDonald's"),
-      p("Bundle Hemat Bertiga", "Ayam Krispy McDonald's"),
-      p("Bundle Hemat Bertiga", "Nasi Putih"),
-      p("Bundle Hemat Bertiga", "Nasi Putih"),
-      p("Bundle Hemat Bertiga", "Nasi Putih"),
-      p("Bundle Hemat Bertiga", "Coca-Cola"),
-      p("Bundle Hemat Bertiga", "Coca-Cola"),
-      p("Bundle Hemat Bertiga", "Coca-Cola"),
+      // Bertiga: 3 ayam + 3 nasi + 3 cola
+      ...p("Bundle Hemat Bertiga", "Ayam Krispy McDonald's", 3),
+      ...p("Bundle Hemat Bertiga", "Nasi Putih", 3),
+      ...p("Bundle Hemat Bertiga", "Coca-Cola", 3),
 
-      p("McD Family Time 8 pcs", "Ayam Krispy McDonald's"),
-      p("McD Family Time 8 pcs", "Ayam Krispy McDonald's"),
-      p("McD Family Time 8 pcs", "Ayam Krispy McDonald's"),
-      p("McD Family Time 8 pcs", "Ayam Krispy McDonald's"),
-      p("McD Family Time 8 pcs", "Ayam Spicy McDonald's"),
-      p("McD Family Time 8 pcs", "Ayam Spicy McDonald's"),
-      p("McD Family Time 8 pcs", "Ayam Spicy McDonald's"),
-      p("McD Family Time 8 pcs", "Ayam Spicy McDonald's"),
-      p("McD Family Time 8 pcs", "Nasi Putih"),
-      p("McD Family Time 8 pcs", "Nasi Putih"),
+      // Berempat: 4 ayam + 4 nasi + 4 cola
+      ...p("Bundle Hemat Berempat", "Ayam Krispy McDonald's", 4),
+      ...p("Bundle Hemat Berempat", "Nasi Putih", 4),
+      ...p("Bundle Hemat Berempat", "Coca-Cola", 4),
+
+      // Berlima: 5 ayam + 5 nasi + 5 cola
+      ...p("Bundle Hemat Berlima", "Ayam Krispy McDonald's", 5),
+      ...p("Bundle Hemat Berlima", "Nasi Putih", 5),
+      ...p("Bundle Hemat Berlima", "Coca-Cola", 5),
+
+      // Family Time 8 pcs: 4 krispy + 4 spicy + 4 nasi + 4 cola
+      ...p("McD Family Time 8 pcs", "Ayam Krispy McDonald's", 4),
+      ...p("McD Family Time 8 pcs", "Ayam Spicy McDonald's", 4),
+      ...p("McD Family Time 8 pcs", "Nasi Putih", 4),
+      ...p("McD Family Time 8 pcs", "Coca-Cola", 4),
 
       // ---------- Paket McSpaghetti ----------
-      p("Paket McSpaghetti", "McSpaghetti"),
-      p("Paket McSpaghetti", "Coca-Cola"),
+      ...p("Paket McSpaghetti", "McSpaghetti", 1),
+      ...p("Paket McSpaghetti", "Coca-Cola", 1),
+
+      // ---------- Big Breakfast (Sarapan) ----------
+      // Komposisi: Hotcakes 2 pcs + Hash Brown + Hot Coffee
+      ...p("Big Breakfast", "Hotcakes 2 pcs", 1),
+      ...p("Big Breakfast", "Hash Brown", 1),
+      ...p("Big Breakfast", "Hot Coffee", 1),
     ];
 
     await queryInterface.bulkInsert("Paket_Menu", paketMenu);
@@ -524,10 +591,8 @@ module.exports = {
     ]);
 
     // =====================================================================
-    // 7. ORDERS, ORDER_MENU & ORDER_MENU_OPSI (15 orders, random 1 bulan terakhir)
+    // 7. ORDERS, ORDER_MENU & ORDER_MENU_OPSI
     // =====================================================================
-
-    // Ambil opsi & varian per menu untuk lookup cepat
     const opsiByMenu = {};
     opsiMenu.forEach((x) => {
       (opsiByMenu[x.menu_id] = opsiByMenu[x.menu_id] || []).push(x);
@@ -537,12 +602,11 @@ module.exports = {
       (varianByMenu[x.menu_id] = varianByMenu[x.menu_id] || []).push(x);
     });
 
-    const allMenus = menus; // alias
+    const allMenus = menus;
     const ordersToInsert = [];
     const orderMenusToInsert = [];
-    const orderMenuOpsisToInsert = []; // 🆕 junction rows
+    const orderMenuOpsisToInsert = [];
 
-    // Distribusi konfigurasi
     const statusDist = [
       { value: "PAID", weight: 65 },
       { value: "PENDING", weight: 25 },
@@ -554,15 +618,12 @@ module.exports = {
     ];
 
     const TOTAL_ORDERS = 15;
-    // Sort by date supaya no_order incremental per hari
     const orderDates = Array.from({ length: TOTAL_ORDERS }, () =>
       randomDateInLastMonth()
     ).sort((a, b) => a - b);
 
-    // Counter sequence per tanggal (DDMMYYYY-XXXX)
     const sequenceByDate = {};
 
-    // Helper: pilih N elemen unik random dari array
     const pickRandomUnique = (arr, count) => {
       const shuffled = arr.slice().sort(() => Math.random() - 0.5);
       return shuffled.slice(0, Math.min(count, arr.length));
@@ -579,7 +640,6 @@ module.exports = {
       const status = pickWeighted(statusDist);
       const noMeja = orderType === "DINE_IN" ? randInt(1, 30) : null;
 
-      // Pilih 1-4 menu random
       const itemCount = randInt(1, 4);
       const chosenMenuIds = new Set();
       let totalHarga = 0;
@@ -592,14 +652,13 @@ module.exports = {
         const quantity = randInt(1, 3);
         const orderMenuId = uuidv4();
 
-        // Pilih varian (kalau ada) — 70% chance pakai varian
         let varianId = null;
         let varianHarga = 0;
         const varians = varianByMenu[menu.id];
         if (varians && Math.random() < 0.7) {
-          const v = varians[randInt(0, varians.length - 1)];
-          varianId = v.id;
-          varianHarga = v.harga_tambahan;
+          const vRandom = varians[randInt(0, varians.length - 1)];
+          varianId = vRandom.id;
+          varianHarga = vRandom.harga_tambahan;
         }
 
         let totalOpsiHarga = 0;
@@ -608,20 +667,19 @@ module.exports = {
           const opsiCount = randInt(1, Math.min(3, opsis.length));
           const chosenOpsis = pickRandomUnique(opsis, opsiCount);
 
-          chosenOpsis.forEach((o) => {
-            totalOpsiHarga += o.harga_tambahan;
+          chosenOpsis.forEach((op) => {
+            totalOpsiHarga += op.harga_tambahan;
             orderMenuOpsisToInsert.push({
               id: uuidv4(),
               order_menu_id: orderMenuId,
-              mo_id: o.id,
-              harga_tambahan: o.harga_tambahan,
+              mo_id: op.id,
+              harga_tambahan: op.harga_tambahan,
               createdAt: waktu,
               updatedAt: waktu,
             });
           });
         }
 
-        // harga_awal sudah include varian + total opsi (snapshot)
         const hargaSatuan = menu.harga_awal + varianHarga + totalOpsiHarga;
         const subtotal = hargaSatuan * quantity;
         totalHarga += subtotal;
