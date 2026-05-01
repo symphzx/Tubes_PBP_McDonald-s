@@ -24,7 +24,7 @@ export default function SetQuantityPage() {
         const fetchMenu = async () => {
             try {
                 setLoading(true);
-                const res = await fetch(`http://localhost:3000/menu`);
+                const res = await fetch(`/api/menu`);
                 if (!res.ok) throw new Error("Gagal fetch menu");
                 const data = await res.json();
                 const found = data.records.find((m: Menu) => m.id === id);

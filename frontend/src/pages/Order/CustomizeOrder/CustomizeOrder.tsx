@@ -101,7 +101,7 @@ export default function CustomizeOrder() {
         // - varian_menus, opsi_menus
         // - paketRelation (with nested menuRelation that includes its own varian_menus & opsi_menus)
         const response = await fetch(
-          `http://localhost:3000/menu/${selectedItem.id}`,
+          `/api/menu/${selectedItem.id}`,
           {
             method: "GET",
             headers: {

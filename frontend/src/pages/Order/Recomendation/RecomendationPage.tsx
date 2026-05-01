@@ -23,7 +23,7 @@ export default function RecomendationPage() {
   useEffect(() => {
         const fetchRekomendasi = async () => {
             try {
-                const res = await fetch("http://localhost:3000/menu");
+                const res = await fetch("/api/menu");
                 const data = await res.json();
                 // Filter menu yang punya tag "Baru!" atau kategori dessert
                 const filtered = data.records.filter(
