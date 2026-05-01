@@ -26,9 +26,10 @@ export default function PaymentPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { total, cart, order_id, no_meja } = useAppSelector(
+  const { total, cart, order_id, no_meja, cartSnapshot } = useAppSelector(
     (state) => state.payment,
   );
+
   const handleProcessPayment = (method: "DEBIT" | "QRIS" | "CASHIER") => {
     dispatch(paymentActions.setPaymentMethod(method));
     console.log(`Processing payment ${method} for order ${order_id}`);
@@ -38,7 +39,7 @@ export default function PaymentPage() {
   const [showDetail, setShowDetail] = useState(false);
   const [timeLeft, setTimeLeft] = useState(300); // 5 menit
 
-  const displayOrderId = order_id || "blm ada ya krn blm dibuat backendnya";
+  // const displayOrderId = order_id || "blm ada ya krn blm dibuat backendnya";
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -231,33 +232,47 @@ export default function PaymentPage() {
             overflow: "hidden",
           }}
         >
-          <Box
-            sx={{
-              p: 3,
-              bgcolor: "#f9f9f9",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="h6" sx={{ fontWeight: 800 }}>
-              Order Details
-            </Typography>
-            <IconButton onClick={() => setShowDetail(false)}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-          <Box sx={{ p: 3, textAlign: "center" }}>
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                  Total Pembayaran
-              </Typography>
-              <Typography variant="h4" sx={{ color: "#FFBC0D", fontWeight: 900, mt: 1 }}>
-                  Rp {total.toLocaleString("id-ID")}
-              </Typography>
-              <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>
-                  Detail order tersimpan di sistem
-              </Typography>
-          </Box>
+            <Box sx={{ p: 3, maxHeight: "60vh", overflowY: "auto" }}>
+                {cartSnapshot.length > 0 ? (
+                    <>
+                        {cartSnapshot.map((item: any, idx: number) => (
+                            <Stack
+                                key={idx}
+                                direction="row"
+                                sx={{ justifyContent: "space-between", mb: 2 }}
+                            >
+                                <Box>
+                                    <Typography sx={{ fontWeight: 700 }}>
+                                        {item.menu_nama}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                                        {item.qty} x Rp {item.menu_harga?.toLocaleString("id-ID")}
+                                    </Typography>
+                                </Box>
+                                <Typography sx={{ fontWeight: 700 }}>
+                                    Rp {item.subtotal?.toLocaleString("id-ID")}
+                                </Typography>
+                            </Stack>
+                        ))}
+                        <Divider sx={{ my: 1 }} />
+                        <Stack direction="row" sx={{ justifyContent: "space-between" }}>
+                            <Typography sx={{ fontWeight: 700 }}>Total</Typography>
+                            <Typography sx={{ fontWeight: 700, color: "#FFBC0D" }}>
+                                Rp {total.toLocaleString("id-ID")}
+                            </Typography>
+                        </Stack>
+                    </>
+                ) : (
+                    <Box sx={{ textAlign: "center" }}>
+                        <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                            Total Pembayaran
+                        </Typography>
+                        <Typography variant="h4" sx={{ color: "#FFBC0D", fontWeight: 900, mt: 1 }}>
+                            Rp {total.toLocaleString("id-ID")}
+                        </Typography>
+                    </Box>
+                )}
+            </Box>
         </Paper>
       </Modal>
     </Box>

@@ -108,8 +108,9 @@ export default function OrderCart() {
             ));
             dispatch(paymentActions.setTotal(total));
 
-            navigate("/payment");
+            dispatch(paymentActions.setCartSnapshot(cartItems));
             dispatch(clearCart());
+            navigate("/payment");
         } catch (err) {
             console.error("Checkout error:", err);
             alert("Checkout gagal, coba lagi");
@@ -255,14 +256,14 @@ export default function OrderCart() {
                             })}
 
                             {/* Edit options */}
-                            <Button
+                            {/* <Button
                                 size="small"
                                 color="secondary"
                                 sx={{ mt: 0.5, fontSize: "11px", p: 0 }}
                                 onClick={() => navigate(`/set-quantity/${item.menu_id}`, { state: { editItem: item } })}
                             >
                                 Edit Options
-                            </Button>
+                            </Button> */}
                         </Box>
 
                         {/* QTY */}

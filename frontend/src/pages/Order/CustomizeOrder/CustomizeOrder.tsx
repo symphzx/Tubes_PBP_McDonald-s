@@ -278,6 +278,33 @@ export default function CustomizeOrder() {
       subtotal,
     };
 
+    const mainItem = location.state?.mainItem;
+    if (mainItem) {
+        dispatch(addItemToCart({
+            id: uuidv4(),
+            menu_id: mainItem.id,
+            menu_nama: mainItem.nama,
+            menu_harga: mainItem.harga_awal,
+            menu_gambar: mainItem.gambar ?? "",
+            qty: quantity,
+            isPaket: false,
+            customizations: [{
+                slot_key: "main",
+                menu_id: mainItem.id,
+                menu_nama: mainItem.nama,
+                menu_harga: mainItem.harga_awal,
+                varian: null,
+                opsi: []
+            }],
+            subtotal: mainItem.harga_awal * quantity
+        }));
+    }
+
+    // buat cek subtotal udh bnr blm soalnya msh slh
+    // Di handleSave CustomizeOrder, sebelum dispatch:
+    console.log("subtotal dari useMemo:", subtotal);
+    console.log("customizationsPayload:", JSON.stringify(customizationsPayload, null, 2));
+
     dispatch(addItemToCart(orderData));
     navigate("/recommendation");
   };

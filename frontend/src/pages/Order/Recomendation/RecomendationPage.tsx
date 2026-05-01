@@ -13,61 +13,53 @@ import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { addItemToCart } from "../../../store/cartSlice";
 import { useNavigate } from "react-router";
 import { v4 as uuidv4 } from 'uuid';
-
-
-const menuData = [
-  {
-    title: "Choco Matcha Sundae",
-    price: 14.000,
-    image: "http://localhost:3000/uploads/assets/Choco Matcha Sundae.png",
-    tag: "Baru!",
-  },
-  {
-    title: "Dark Choco McFlurry With OREO",
-    price: "Rp17.500",
-    image:
-      "http://localhost:3000/uploads/assets/Dark Choco McFlurry With OREO.webp",
-    tag: "Baru!",
-  },
-  {
-    title: "Biscoff McFlurry",
-    price: 17.500,
-    image: "http://localhost:3000/uploads/assets/Biscoff%20McFlurry.png",
-    tag: "Baru!",
-  },
-  {
-    title: "Pie Ketan Hitam Kelapa",
-    price: 17.000,
-    image: "http://localhost:3000/uploads/assets/Pie Ketan Hitam Kelapa.png",
-    tag: "Baru!",
-  },
-  {
-    title: "Ice Cream Cone Matcha",
-    price: 10.000,
-    image: "http://localhost:3000/uploads/assets/Ice Cream Cone Matcha.png",
-  },
-];
+import { useEffect, useState } from "react";
 
 export default function RecomendationPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [menuData, setMenuData] = useState<any[]>([])
+
+  useEffect(() => {
+        const fetchRekomendasi = async () => {
+            try {
+                const res = await fetch("http://localhost:3000/menu");
+                const data = await res.json();
+                // Filter menu yang punya tag "Baru!" atau kategori dessert
+                const filtered = data.records.filter(
+                    (m: any) =>
+                        m.tag === "Baru!" ||
+                        m.kategoriRelation?.nama === "Pencuci Mulut"
+                );
+                setMenuData(filtered.slice(0, 5)); // ambil max 5
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        fetchRekomendasi();
+    }, []);
 
   const handleAddRecommendation = (item: any) => {
-    const orderData = {
-      id: uuidv4(),
-      menu_id: item.id,
-      menu_nama: item.title,
-      menu_harga: item.price,
-      menu_gambar: item.image,
-      qty: 1,
-      varian: null,
-      opsi: null,
-      subtotal: item.price
+        dispatch(addItemToCart({
+            id: uuidv4(),
+            menu_id: item.id,        
+            menu_nama: item.nama,  
+            menu_harga: item.harga_awal,
+            menu_gambar: item.gambar || "",
+            qty: 1,
+            isPaket: false,
+            customizations: [{
+                slot_key: "main",
+                menu_id: item.id,
+                menu_nama: item.nama,
+                menu_harga: item.harga_awal,
+                varian: null,
+                opsi: []
+            }],
+            subtotal: item.harga_awal
+        }));
+        navigate("/");
     };
-
-    dispatch(addItemToCart(orderData));
-    navigate("/"); 
-  };
 
   return (
     <Box
@@ -165,7 +157,7 @@ export default function RecomendationPage() {
               >
                 <CardMedia
                   component="img"
-                  image={item.image}
+                  image={item.gambar}
                   sx={{
                     maxHeight: "100%",
                     maxWidth: "100%",
@@ -195,11 +187,11 @@ export default function RecomendationPage() {
                     minHeight: 32,
                   }}
                 >
-                  {item.title}
+                  {item.nama}
                 </Typography>
 
                 <Typography sx={{ fontSize: 12, color: "#555" }}>
-                  {item.price}
+                  {item.harga_awal}
                 </Typography>
               </CardContent>
             </Card>
@@ -270,7 +262,7 @@ export default function RecomendationPage() {
               >
                 <CardMedia
                   component="img"
-                  image={item.image}
+                  image={item.gambar}
                   sx={{
                     maxHeight: "100%",
                     maxWidth: "100%",
@@ -300,11 +292,11 @@ export default function RecomendationPage() {
                     minHeight: 32,
                   }}
                 >
-                  {item.title}
+                  {item.nama}
                 </Typography>
 
                 <Typography sx={{ fontSize: 12, color: "#555" }}>
-                  {item.price}
+                  {item.harga_awal}
                 </Typography>
               </CardContent>
             </Card>

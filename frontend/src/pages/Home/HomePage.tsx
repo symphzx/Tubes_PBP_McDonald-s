@@ -7,9 +7,12 @@ import {
   CardMedia,
 } from "@mui/material";
 import { useNavigate } from "react-router";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+
 
 import { useMenus } from "../../hooks/useMenus";
 import { useKategori } from "../../hooks/useKategori";
+import { useAppSelector } from "../../hooks/useAppSelector";
 
 const categories = [
   {
@@ -45,6 +48,17 @@ export default function HomePage() {
   useEffect(() => {
     reload();
   }, [reload]);
+
+  const cartItems = useAppSelector((state) => state.cart.items);
+  // ini buat ngitung jml menu sama jml bayar di cartnya
+  const totalQty = useMemo(() => {
+      return cartItems.reduce((acc, item) => acc + item.qty, 0);
+  }, [cartItems]);
+
+  const formatHarga = (harga: number) => harga.toLocaleString("id-ID");
+
+      const totalHarga = useAppSelector((state) => state.cart.totalHarga);
+
 
   
   const recommendations = useMemo(() => {
@@ -209,6 +223,55 @@ export default function HomePage() {
           </Box>
         ))}
       </Box>
+
+      {/* nat nambah inii soalnya udah ada redux cart */}
+      {/* FLOATING CART BAR */}
+      {cartItems.length > 0 && (
+          <Box
+              sx={{
+                  position: "fixed",
+                  bottom: 20,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  width: "90%",
+                  maxWidth: "500px",
+                  bgcolor: "#FFC72C", // Kuning McD
+                  borderRadius: "50px",
+                  boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  px: 3,
+                  py: 1.5,
+                  zIndex: 1000,
+                  cursor: "pointer"
+              }}
+              onClick={() => navigate("/cart")}
+          >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                  <Box sx={{ position: "relative" }}>
+                      <ShoppingCartIcon sx={{ color: "#000" }} />
+                      <Box sx={{
+                          position: "absolute", top: -8, right: -8,
+                          bgcolor: "#DB0007", color: "white",
+                          fontSize: "10px", borderRadius: "50%",
+                          width: 18, height: 18,
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontWeight: "bold"
+                      }}>
+                          {totalQty}
+                      </Box>
+                  </Box>
+                  <Typography sx={{ fontWeight: "bold", color: "#000" }}>
+                      View Cart
+                  </Typography>
+              </Box>
+
+              <Typography sx={{ fontWeight: "bold", color: "#000" }}>
+                  Rp {formatHarga(totalHarga)}
+              </Typography>
+          </Box>
+      )}
     </Box>
   );
 }
