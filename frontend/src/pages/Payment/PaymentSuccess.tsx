@@ -50,7 +50,7 @@ export default function PaymentSuccess() {
           Your order is being processed.
         </Typography>
 
-        <Paper
+        {/* <Paper
           elevation={0}
           sx={{
             bgcolor: "#f9f9f9",
@@ -67,11 +67,10 @@ export default function PaymentSuccess() {
           >
             YOUR ORDER NUMBER
           </Typography>
-          <Typography variant="h2" sx={{ fontWeight: 900, color: "#FFBC0D" }}>
-            {/* klo ada dari redux, pake. klo gada, pake strip */}
-            #{order_no ? order_no.toString().padStart(3, "0") : "---"}
+          <Typography variant="h6" sx={{ fontWeight: 500, color: "#FFBC0D" }}>
+              #{order_no ? order_no.split("-")[1] : "---"}
           </Typography>
-        </Paper>
+        </Paper> */}
 
         <Typography
           variant="body2"

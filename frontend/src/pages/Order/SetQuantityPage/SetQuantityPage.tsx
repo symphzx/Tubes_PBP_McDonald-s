@@ -74,9 +74,7 @@ export default function SetQuantityPage() {
         if (editItem) {
             // edit
             dispatch(updateItemQuantity({
-                menu_id: editItem.menu_id,
-                mv_id: editItem.varian?.mv_id,
-                mo_id: editItem.opsi?.mo_id,
+                id: editItem.id, 
                 qty: quantity
             }));
         } else {
@@ -87,13 +85,20 @@ export default function SetQuantityPage() {
                 menu_nama: menu.nama,
                 menu_harga: menu.harga_awal,
                 menu_gambar: menu.gambar || "",
-                varian: null,
-                opsi: null,
                 qty: quantity,
+                isPaket: false,
+                customizations: [{        
+                    slot_key: "main",
+                    menu_id: menu.id,
+                    menu_nama: menu.nama,
+                    menu_harga: menu.harga_awal,
+                    varian: null,
+                    opsi: []             
+                }],
                 subtotal: menu.harga_awal * quantity
             }));
         }
-        navigate("/");
+        navigate("/recommendation");
     }
 
     if (loading) return (

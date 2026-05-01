@@ -123,6 +123,7 @@ export default function PackageSelectionPage() {
                   navigate(`/customize-order/${selectedItem.recommendation.id}`, {
                     state: { 
                       selectedItem: selectedItem.recommendation,
+                      mainItem: selectedItem,
                       isPaket: true 
                     },
                   })

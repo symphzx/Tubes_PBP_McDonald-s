@@ -10,6 +10,7 @@ export type PaymentState = {
   metode_pembayaran: PaymentMethod | undefined
   cart: OrderMenu[]
   total: number
+  cartSnapshot: any[]
 }
 
 // state waktu programnya jalan pertama kali baru dibuka (blm ada user login)
@@ -21,6 +22,7 @@ const initialState: PaymentState = {
   metode_pembayaran: undefined,
   cart: [],
   total: 0,
+  cartSnapshot: []
 }
 
 export const paymentSlice = createSlice({
@@ -59,9 +61,13 @@ export const paymentSlice = createSlice({
       state.metode_pembayaran = undefined
       state.cart = []
       state.total = 0
+      state.cartSnapshot = []
     },
     setTotal: (state, action: PayloadAction<number>) => {
         state.total = action.payload
+    },
+    setCartSnapshot: (state, action: PayloadAction<any[]>) => { 
+      state.cartSnapshot = action.payload
     },
   }
 })
