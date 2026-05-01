@@ -55,8 +55,6 @@ export class KategoriController {
     try {
       const { nama, sortOrder, startDate, endDate, startTime, endTime } = req.body;
 
-      
-
       const kategori = await Kategori.create({
         nama,
         sortOrder,
@@ -107,8 +105,8 @@ export class KategoriController {
       const kategori = await Kategori.update({
         nama,
         sortOrder,
-        startDate: new Date(startDate),
-        endDate: endDate ? new Date(endDate) : null,
+        startDate: startDate || null,
+        endDate: endDate || null,
         startTime: startTime || null,
         endTime: endTime || null,
       },{

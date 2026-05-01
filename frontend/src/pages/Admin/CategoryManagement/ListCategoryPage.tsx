@@ -222,7 +222,7 @@ export default function ListCategoryPage() {
             {/* START DATE */}
             <Box sx={{ width: "15%" }}>
               <Typography>
-                {new Date(cat.startDate).toLocaleDateString()}
+                {cat.startDate ? new Date(cat.startDate).toLocaleDateString() : "-"}
               </Typography>
             </Box>
 

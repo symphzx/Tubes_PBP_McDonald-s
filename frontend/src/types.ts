@@ -172,10 +172,10 @@ export type UpdateKategoriPayload = {
   id: string;
   nama: string;
   sortOrder: number;
-  startDate: string;
-  endDate?: string;
-  startTime?: string;
-  endTime?: string;
+  startDate?: string | null;
+  endDate?: string | null;
+  startTime?: string | null;
+  endTime?: string | null;
 };
 
 export type UpdateOrderPayload = {
