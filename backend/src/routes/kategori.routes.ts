@@ -8,7 +8,7 @@ const router: Router = Router();
 
 router.get("/", KategoriController.getAll);
 router.get("/:id", kategoriExist, KategoriController.getById)
-router.post("/", auth, validateKategori, kategoriExist, KategoriController.create);
+router.post("/", auth, validateKategori, KategoriController.create);
 router.put("/:id", auth, validateKategori, kategoriExist, KategoriController.update);
 router.delete("/:id", auth, kategoriExist, KategoriController.delete);
 
