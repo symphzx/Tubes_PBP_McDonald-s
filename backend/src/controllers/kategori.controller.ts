@@ -35,12 +35,6 @@ export class KategoriController {
         ]
       })
 
-      if (!kategori) {
-        return res.status(404).json({
-          message: "Kategori tidak ditemukan"
-        })
-      }
-
       return res.status(200).json({
         data: kategori
       })
@@ -83,24 +77,6 @@ export class KategoriController {
       const { nama, sortOrder, startDate, endDate, startTime, endTime } = req.body;
 
       const existingKategori = await Kategori.findByPk(id as string);
-
-      if (!existingKategori) {
-        return res.status(404).json({
-          message: "Kategori not found",
-        });
-      }
-
-      if(!nama) {
-        return res.status(400).json({
-          message: "Kategori name is required",
-        });
-      }
-
-      if(!sortOrder) {
-        return res.status(400).json({
-          message: "Kategori sort order is required",
-        });
-      }
 
       const kategori = await Kategori.update({
         nama,

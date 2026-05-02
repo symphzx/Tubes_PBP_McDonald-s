@@ -25,12 +25,6 @@ export class UserController {
 
       const user = await User.findByPk(id as string);
 
-      if (!user) {
-        return res.status(404).json({
-          message: "User not found",
-        });
-      }
-
       res.json({
         message: "Success",
         data: user,
@@ -51,6 +45,12 @@ export class UserController {
       if (!nama) {
         return res.status(400).json({
           message: "Nama is required",
+        });
+      }
+
+      if (typeof nama !== "string" || /\d/.test(nama)) {
+        return res.status(400).json({
+          message: "Nama must be a string",
         });
       }
 
@@ -108,19 +108,17 @@ export class UserController {
       const { id } = req.params;
       const { nama, email, password, role } = req.body;
 
-      const user = await User.findByPk(id as string);
-
-      if (!user) {
-        return res.status(404).json({
-          message: "User not found",
-        });
-      }
-
       if (!nama) {
         return res.status(400).json({
           message: "Nama is required",
         });
       }
+
+      if (typeof nama !== "string" || /\d/.test(nama)) {
+        return res.status(400).json({
+          message: "Nama must be a string",
+        });
+      }      
 
       if (!email) {
         return res.status(400).json({

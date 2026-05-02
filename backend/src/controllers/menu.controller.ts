@@ -75,12 +75,6 @@ export class MenuController {
         ],
       })
 
-      if (!menu) {
-        return res.status(404).json({
-          message: "Menu not found",
-        });
-      }
-
       res.json({
         message: "Success",
         records: menu,
@@ -103,36 +97,6 @@ export class MenuController {
       const imageUrl = file
         ? `http://localhost:3000/uploads/assets/${file.filename}`
         : null;
-
-      if (!kategori_id) {
-        return res.status(400).json({
-          message: "Menu category is required",
-        });
-      }
-
-      if (!nama) {
-        return res.status(400).json({
-          message: "Menu name is required",
-        });
-      }
-
-      if (!harga_awal) {
-        return res.status(400).json({
-          message: "Menu price is required",
-        });
-      }
-
-      if (!tipe) {
-        return res.status(400).json({
-          message: "Menu type is required",
-        });
-      }
-
-      if (!ketersediaan) {
-        return res.status(400).json({
-          message: "Menu availability is required",
-        });
-      }
 
       const menu = await Menu.create({
         kategori_id,
